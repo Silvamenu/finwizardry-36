@@ -1,12 +1,31 @@
 
 import { useEffect } from "react";
+import { useForm } from "react-hook-form";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription } from "@/components/ui/form";
+import { Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage } from "@/components/ui/form";
 import { toast } from "sonner";
+import * as z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+// Define form schema with zod
+const formSchema = z.object({
+  name: z.string().min(2, { message: "O nome deve ter pelo menos 2 caracteres" }),
+  email: z.string().email({ message: "Email inválido" }),
+  password: z.string().optional(),
+  confirmPassword: z.string().optional(),
+}).refine(data => {
+  if (data.password && data.password !== data.confirmPassword) {
+    return false;
+  }
+  return true;
+}, {
+  message: "As senhas não coincidem",
+  path: ["confirmPassword"],
+});
 
 const Perfil = () => {
   useEffect(() => {
@@ -21,11 +40,23 @@ const Perfil = () => {
     initials: "MS"
   };
 
+  // Initialize form with react-hook-form
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: user.name,
+      email: user.email,
+      password: "",
+      confirmPassword: "",
+    },
+  });
+
   const handleAvatarUpload = () => {
     toast.success("Funcionalidade será implementada em breve");
   };
 
-  const handleSaveProfile = () => {
+  const handleSaveProfile = (values: z.infer<typeof formSchema>) => {
+    console.log("Form values:", values);
     toast.success("Perfil atualizado com sucesso!");
   };
 
@@ -54,43 +85,41 @@ const Perfil = () => {
               </div>
               
               <div className="w-full max-w-md space-y-6">
-                <Form>
-                  <div className="space-y-4">
+                <Form {...form}>
+                  <form onSubmit={form.handleSubmit(handleSaveProfile)} className="space-y-4">
                     <FormField
+                      control={form.control}
                       name="name"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Nome completo</FormLabel>
                           <FormControl>
-                            <Input 
-                              placeholder="Seu nome" 
-                              defaultValue={user.name}
-                            />
+                            <Input placeholder="Seu nome" {...field} />
                           </FormControl>
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
                     
                     <FormField
+                      control={form.control}
                       name="email"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Email</FormLabel>
                           <FormControl>
-                            <Input 
-                              type="email" 
-                              placeholder="seu@email.com" 
-                              defaultValue={user.email}
-                            />
+                            <Input type="email" placeholder="seu@email.com" {...field} />
                           </FormControl>
                           <FormDescription>
                             Este email será usado para login e recuperação de senha.
                           </FormDescription>
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
                     
                     <FormField
+                      control={form.control}
                       name="password"
                       render={({ field }) => (
                         <FormItem>
@@ -99,16 +128,19 @@ const Perfil = () => {
                             <Input 
                               type="password" 
                               placeholder="••••••••" 
+                              {...field}
                             />
                           </FormControl>
                           <FormDescription>
                             Deixe em branco para manter a senha atual.
                           </FormDescription>
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
                     
                     <FormField
+                      control={form.control}
                       name="confirmPassword"
                       render={({ field }) => (
                         <FormItem>
@@ -117,18 +149,20 @@ const Perfil = () => {
                             <Input 
                               type="password" 
                               placeholder="••••••••" 
+                              {...field}
                             />
                           </FormControl>
+                          <FormMessage />
                         </FormItem>
                       )}
                     />
                     
                     <div className="pt-4">
-                      <Button onClick={handleSaveProfile} className="w-full sm:w-auto">
+                      <Button type="submit" className="w-full sm:w-auto">
                         Salvar alterações
                       </Button>
                     </div>
-                  </div>
+                  </form>
                 </Form>
               </div>
             </div>
