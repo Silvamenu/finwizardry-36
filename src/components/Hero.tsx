@@ -2,6 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, BarChart3, DollarSign, PieChart, TrendingUp } from "lucide-react";
 import AnimatedIcon from "./AnimatedIcon";
+import { Link } from "react-router-dom";
 
 const Hero = () => {
   return (
@@ -26,8 +27,10 @@ const Hero = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 pt-4 animate-fade-in reveal-delay-3">
-              <Button className="bg-momoney-500 hover:bg-momoney-600 neo-button text-white text-lg py-6 px-8">
-                Começar Agora <ArrowRight className="ml-2 h-5 w-5" />
+              <Button className="bg-momoney-500 hover:bg-momoney-600 neo-button text-white text-lg py-6 px-8" asChild>
+                <Link to="/dashboard">
+                  Começar Agora <ArrowRight className="ml-2 h-5 w-5" />
+                </Link>
               </Button>
               <Button variant="outline" className="border-momoney-300 hover:bg-momoney-50 text-momoney-700 text-lg py-6 px-8">
                 Saiba Mais
@@ -88,8 +91,10 @@ const Hero = () => {
                 </div>
                 
                 <div className="flex justify-center animate-fade-in reveal-delay-4">
-                  <Button variant="outline" className="w-full border-momoney-200 text-momoney-700">
-                    Ver Relatório Completo
+                  <Button variant="outline" className="w-full border-momoney-200 text-momoney-700" asChild>
+                    <Link to="/dashboard">
+                      Ver Relatório Completo
+                    </Link>
                   </Button>
                 </div>
               </div>
