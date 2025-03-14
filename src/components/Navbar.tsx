@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { Menu, X } from 'lucide-react';
+import { Menu, X, LogIn } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
 
@@ -60,10 +60,18 @@ const Navbar = () => {
             </a>
           ))}
           <Button 
-            className="bg-momoney-500 hover:bg-momoney-600 neo-button"
-            onClick={() => navigate('/dashboard')}
+            variant="outline"
+            className="border-momoney-500 text-momoney-600 hover:bg-momoney-50"
+            onClick={() => navigate('/login')}
           >
-            Acessar Dashboard
+            <LogIn className="mr-2 h-4 w-4" />
+            Entrar
+          </Button>
+          <Button 
+            className="bg-momoney-500 hover:bg-momoney-600 neo-button"
+            onClick={() => navigate('/login')}
+          >
+            Começar Agora
           </Button>
         </nav>
 
@@ -95,15 +103,26 @@ const Navbar = () => {
               {item.title}
             </a>
           ))}
-          <div className="mt-8">
+          <div className="mt-8 space-y-4">
             <Button 
-              className="w-full bg-momoney-500 hover:bg-momoney-600 neo-button"
+              variant="outline"
+              className="w-full border-momoney-500 text-momoney-600 hover:bg-momoney-50"
               onClick={() => {
-                navigate('/dashboard');
+                navigate('/login');
                 setIsMenuOpen(false);
               }}
             >
-              Acessar Dashboard
+              <LogIn className="mr-2 h-4 w-4" />
+              Entrar
+            </Button>
+            <Button 
+              className="w-full bg-momoney-500 hover:bg-momoney-600 neo-button"
+              onClick={() => {
+                navigate('/login');
+                setIsMenuOpen(false);
+              }}
+            >
+              Começar Agora
             </Button>
           </div>
         </div>

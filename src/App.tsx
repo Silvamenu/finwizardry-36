@@ -14,6 +14,7 @@ import Metas from "./pages/dashboard/Metas";
 import Assistente from "./pages/dashboard/Assistente";
 import Configuracoes from "./pages/dashboard/Configuracoes";
 import Perfil from "./pages/dashboard/Perfil";
+import Login from "./pages/Login";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/orcamento" element={<Orcamento />} />
           <Route path="/dashboard/investimentos" element={<Investimentos />} />
