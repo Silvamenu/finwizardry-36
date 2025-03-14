@@ -3,8 +3,10 @@ import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = () => {
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -57,8 +59,11 @@ const Navbar = () => {
               {item.title}
             </a>
           ))}
-          <Button className="bg-momoney-500 hover:bg-momoney-600 neo-button">
-            Começar Agora
+          <Button 
+            className="bg-momoney-500 hover:bg-momoney-600 neo-button"
+            onClick={() => navigate('/dashboard')}
+          >
+            Acessar Dashboard
           </Button>
         </nav>
 
@@ -91,8 +96,14 @@ const Navbar = () => {
             </a>
           ))}
           <div className="mt-8">
-            <Button className="w-full bg-momoney-500 hover:bg-momoney-600 neo-button">
-              Começar Agora
+            <Button 
+              className="w-full bg-momoney-500 hover:bg-momoney-600 neo-button"
+              onClick={() => {
+                navigate('/dashboard');
+                setIsMenuOpen(false);
+              }}
+            >
+              Acessar Dashboard
             </Button>
           </div>
         </div>
