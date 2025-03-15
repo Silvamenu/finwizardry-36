@@ -11,6 +11,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { toast } from "sonner";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { useAuth } from "@/contexts/AuthContext";
+import { Loader2 } from "lucide-react";
 
 // Login schema
 const loginSchema = z.object({
@@ -31,7 +33,9 @@ const signupSchema = z.object({
 
 // Login form component
 const LoginForm = () => {
-  const navigate = useNavigate();
+  const { signIn } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -40,14 +44,15 @@ const LoginForm = () => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof loginSchema>) => {
-    // Simulate login API call
-    console.log("Login values:", values);
-    toast.success("Login realizado com sucesso!");
-    // Redirect to dashboard
-    setTimeout(() => {
-      navigate("/dashboard");
-    }, 1000);
+  const onSubmit = async (values: z.infer<typeof loginSchema>) => {
+    setIsSubmitting(true);
+    try {
+      await signIn(values.email, values.password);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -79,8 +84,15 @@ const LoginForm = () => {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full mt-6">
-          Entrar
+        <Button type="submit" className="w-full mt-6" disabled={isSubmitting}>
+          {isSubmitting ? (
+            <>
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              Entrando...
+            </>
+          ) : (
+            'Entrar'
+          )}
         </Button>
       </form>
     </Form>
@@ -89,7 +101,9 @@ const LoginForm = () => {
 
 // Signup form component
 const SignupForm = () => {
-  const navigate = useNavigate();
+  const { signUp } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
   const form = useForm<z.infer<typeof signupSchema>>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -100,14 +114,15 @@ const SignupForm = () => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof signupSchema>) => {
-    // Simulate signup API call
-    console.log("Signup values:", values);
-    toast.success("Cadastro realizado com sucesso!");
-    // Redirect to dashboard
-    setTimeout(() => {
-      navigate("/dashboard");
-    }, 1000);
+  const onSubmit = async (values: z.infer<typeof signupSchema>) => {
+    setIsSubmitting(true);
+    try {
+      await signUp(values.email, values.password, values.name);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -165,8 +180,15 @@ const SignupForm = () => {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full mt-6">
-          Cadastrar
+        <Button type="submit" className="w-full mt-6" disabled={isSubmitting}>
+          {isSubmitting ? (
+            <>
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              Cadastrando...
+            </>
+          ) : (
+            'Cadastrar'
+          )}
         </Button>
       </form>
     </Form>
@@ -179,16 +201,14 @@ const Login = () => {
   }, []);
 
   const navigate = useNavigate();
+  const { signIn } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleGoogleLogin = () => {
     setIsLoading(true);
-    // Simulate Google login API call
-    toast.success("Login com Google iniciado!");
-    setTimeout(() => {
-      setIsLoading(false);
-      navigate("/dashboard");
-    }, 1500);
+    // This would be implemented with Supabase's OAuth
+    toast.info("Login com Google será implementado em breve!");
+    setIsLoading(false);
   };
 
   return (
