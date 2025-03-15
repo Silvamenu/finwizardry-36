@@ -6,9 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Bot, Send, Info, User, Sparkles, ArrowUp, HelpCircle, Clock, ThumbsUp, ThumbsDown } from "lucide-react";
+import { Bot, Send, Info, User, Sparkles, ArrowUp, HelpCircle, Clock, ThumbsUp, ThumbsDown, Volume2, VolumeX } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface Message {
   id: string;
@@ -82,6 +83,35 @@ const suggestedQuestions: Record<string, string[]> = {
   ]
 };
 
+// Histórico de conversas por assistente
+interface ConversationHistory {
+  id: string;
+  title: string;
+  date: Date;
+  assistantId: string;
+}
+
+const sampleHistories: ConversationHistory[] = [
+  {
+    id: "hist-1",
+    title: "Planejamento para aposentadoria",
+    date: new Date(2023, 5, 15),
+    assistantId: "financial-advisor"
+  },
+  {
+    id: "hist-2",
+    title: "Revisão de gastos mensais",
+    date: new Date(2023, 6, 22),
+    assistantId: "budget-assistant"
+  },
+  {
+    id: "hist-3",
+    title: "Como configurar categorias",
+    date: new Date(2023, 7, 3),
+    assistantId: "help-center"
+  }
+];
+
 const Assistente = () => {
   useEffect(() => {
     document.title = "MoMoney | Assistente IA";
@@ -91,6 +121,9 @@ const Assistente = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [activeTab, setActiveTab] = useState<string>("chat");
+  const [conversations, setConversations] = useState<ConversationHistory[]>(sampleHistories);
+  const [audioEnabled, setAudioEnabled] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Efeito para rolar para a última mensagem
@@ -139,6 +172,11 @@ const Assistente = () => {
       
       setMessages(prev => [...prev, assistantMessage]);
       setIsTyping(false);
+
+      // Simular leitura em voz alta
+      if (audioEnabled) {
+        speakMessage(randomResponse);
+      }
     }, 1500);
   };
 
@@ -168,6 +206,11 @@ const Assistente = () => {
       
       setMessages(prev => [...prev, assistantMessage]);
       setIsTyping(false);
+
+      // Simular leitura em voz alta
+      if (audioEnabled) {
+        speakMessage(randomResponse);
+      }
     }, 1500);
   };
 
@@ -177,53 +220,178 @@ const Assistente = () => {
       icon: positive ? <ThumbsUp className="h-4 w-4" /> : <ThumbsDown className="h-4 w-4" />,
     });
   };
+
+  const loadConversation = (conversationId: string) => {
+    // Simular carregamento de uma conversa anterior
+    toast.info("Carregando conversa...", {
+      description: `Conversa ${conversationId} selecionada.`
+    });
+    
+    // Para demonstração, apenas muda o assistente baseado na conversa
+    const conversation = conversations.find(c => c.id === conversationId);
+    if (conversation) {
+      const selectedAssistant = assistants.find(a => a.id === conversation.assistantId);
+      if (selectedAssistant) {
+        setActiveAssistant(selectedAssistant);
+      }
+    }
+    
+    setActiveTab("chat");
+  };
+
+  const createNewConversation = () => {
+    // Limpar mensagens e começar nova conversa
+    const welcomeMessage = {
+      id: `welcome-${Date.now()}`,
+      content: `Olá! Sou o assistente ${activeAssistant.name}. ${activeAssistant.description}. Como posso ajudar você hoje?`,
+      role: "assistant" as const,
+      timestamp: new Date()
+    };
+    
+    setMessages([welcomeMessage]);
+    toast.success("Nova conversa iniciada!");
+  };
+
+  const speakMessage = (text: string) => {
+    // Simulação de leitura em voz alta
+    const speech = new SpeechSynthesisUtterance(text);
+    speech.lang = 'pt-BR';
+    window.speechSynthesis.speak(speech);
+  };
+
+  const toggleAudio = () => {
+    setAudioEnabled(!audioEnabled);
+    toast.info(
+      !audioEnabled ? "Áudio ativado" : "Áudio desativado", 
+      { description: !audioEnabled ? "As respostas serão lidas em voz alta." : "As respostas não serão mais lidas." }
+    );
+  };
   
   return (
     <DashboardLayout activePage="Assistente IA">
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-[calc(100vh-12rem)]">
         {/* Assistants Sidebar */}
         <div className="lg:col-span-1">
-          <Card className="h-full">
+          <Card className="h-full flex flex-col">
             <CardHeader>
-              <CardTitle>Assistentes</CardTitle>
-              <CardDescription>Escolha o assistente ideal para sua necessidade</CardDescription>
+              <CardTitle>Assistente IA</CardTitle>
+              <CardDescription>Seu parceiro financeiro inteligente</CardDescription>
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mt-2">
+                <TabsList className="w-full grid grid-cols-2">
+                  <TabsTrigger value="chat">Assistentes</TabsTrigger>
+                  <TabsTrigger value="history">Histórico</TabsTrigger>
+                </TabsList>
+              </Tabs>
             </CardHeader>
-            <CardContent className="space-y-4">
-              {assistants.map((assistant) => (
-                <Button
-                  key={assistant.id}
-                  variant={activeAssistant.id === assistant.id ? "default" : "outline"}
-                  className={cn(
-                    "w-full justify-start h-auto py-3",
-                    activeAssistant.id === assistant.id ? "bg-momoney-500" : ""
-                  )}
-                  onClick={() => setActiveAssistant(assistant)}
+            
+            <CardContent className="flex-1 overflow-y-auto">
+              <TabsContent value="chat" className="space-y-4 mt-0">
+                {assistants.map((assistant) => (
+                  <Button
+                    key={assistant.id}
+                    variant={activeAssistant.id === assistant.id ? "default" : "outline"}
+                    className={cn(
+                      "w-full justify-start h-auto py-3",
+                      activeAssistant.id === assistant.id ? "bg-momoney-500" : ""
+                    )}
+                    onClick={() => setActiveAssistant(assistant)}
+                  >
+                    <div className="mr-2">
+                      {assistant.icon}
+                    </div>
+                    <div className="text-left">
+                      <p className="font-medium">{assistant.name}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1 mt-1">
+                        {assistant.description}
+                      </p>
+                    </div>
+                  </Button>
+                ))}
+              </TabsContent>
+              
+              <TabsContent value="history" className="space-y-3 mt-0">
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start mb-4"
+                  onClick={createNewConversation}
                 >
-                  <div className="mr-2">
-                    {assistant.icon}
-                  </div>
-                  <div className="text-left">
-                    <p className="font-medium">{assistant.name}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1 mt-1">
-                      {assistant.description}
-                    </p>
-                  </div>
+                  <Bot className="h-4 w-4 mr-2 text-momoney-500" />
+                  Nova Conversa
                 </Button>
-              ))}
+                
+                {conversations.map((convo) => (
+                  <Button
+                    key={convo.id}
+                    variant="ghost"
+                    className="w-full justify-start h-auto py-2 px-3 hover:bg-gray-100"
+                    onClick={() => loadConversation(convo.id)}
+                  >
+                    <div className="w-full flex flex-col items-start">
+                      <div className="flex items-center w-full">
+                        <span className="font-medium line-clamp-1 text-sm">{convo.title}</span>
+                        <Clock className="h-3 w-3 ml-auto text-gray-400" />
+                      </div>
+                      <div className="flex items-center w-full mt-1">
+                        <span className="text-xs text-gray-500">
+                          {convo.date.toLocaleDateString()}
+                        </span>
+                        <span className="ml-auto text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
+                          {assistants.find(a => a.id === convo.assistantId)?.name.split(' ')[0]}
+                        </span>
+                      </div>
+                    </div>
+                  </Button>
+                ))}
+              </TabsContent>
             </CardContent>
+            
             <CardFooter className="flex justify-center border-t pt-4">
-              <Button variant="outline" size="sm" className="w-full">
-                <Info className="h-4 w-4 mr-2" />
-                Sobre IA
-              </Button>
+              <div className="flex space-x-2 w-full">
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1"
+                        onClick={toggleAudio}
+                      >
+                        {audioEnabled ? (
+                          <Volume2 className="h-4 w-4 mr-2 text-green-500" />
+                        ) : (
+                          <VolumeX className="h-4 w-4 mr-2" />
+                        )}
+                        {audioEnabled ? "Áudio Ligado" : "Áudio Desligado"}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>{audioEnabled ? "Desativar leitura em voz alta" : "Ativar leitura em voz alta"}</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="outline" size="sm" className="flex-1">
+                        <Info className="h-4 w-4 mr-2" />
+                        Sobre IA
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Informações sobre nosso assistente IA</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
             </CardFooter>
           </Card>
         </div>
 
         {/* Chat Area */}
         <div className="lg:col-span-3 flex flex-col">
-          <Card className="flex-1 flex flex-col h-full overflow-hidden">
-            <CardHeader className="pb-3 border-b">
+          <Card className="flex-1 flex flex-col h-full overflow-hidden relative">
+            <CardHeader className="pb-3 border-b flex-shrink-0">
               <div className="flex items-center">
                 <div className="mr-2">
                   {activeAssistant.icon}
@@ -340,7 +508,7 @@ const Assistente = () => {
             )}
             
             {/* Input Area */}
-            <CardFooter className="border-t pt-4">
+            <CardFooter className="border-t pt-4 flex-shrink-0">
               <form
                 className="flex w-full items-center space-x-2"
                 onSubmit={(e) => {
@@ -355,7 +523,12 @@ const Assistente = () => {
                   onChange={(e) => setInput(e.target.value)}
                   className="flex-1"
                 />
-                <Button type="submit" size="icon" disabled={!input.trim() || isTyping}>
+                <Button 
+                  type="submit" 
+                  size="icon" 
+                  className="bg-momoney-500 hover:bg-momoney-600"
+                  disabled={!input.trim() || isTyping}
+                >
                   <Send className="h-4 w-4" />
                 </Button>
               </form>
