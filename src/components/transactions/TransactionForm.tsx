@@ -72,7 +72,18 @@ export function TransactionForm({
   const handleSubmit = async (data: z.infer<typeof transactionSchema>) => {
     setIsSubmitting(true);
     try {
-      await onSubmit(data);
+      // Ensure all required fields are present in the data
+      const transactionData: TransactionFormData = {
+        description: data.description,
+        amount: data.amount,
+        category_id: data.category_id,
+        type: data.type,
+        date: data.date,
+        payment_method: data.payment_method,
+        status: data.status
+      };
+      
+      await onSubmit(transactionData);
       form.reset();
       onOpenChange(false);
     } catch (error) {

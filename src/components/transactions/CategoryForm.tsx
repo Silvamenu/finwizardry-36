@@ -48,7 +48,15 @@ export function CategoryForm({
   const handleSubmit = async (data: z.infer<typeof categorySchema>) => {
     setIsSubmitting(true);
     try {
-      await onSubmit(data);
+      // Ensure all required fields are present in the data
+      const categoryData: CategoryFormData = {
+        name: data.name,
+        type: data.type,
+        color: data.color,
+        icon: data.icon
+      };
+      
+      await onSubmit(categoryData);
       form.reset();
       onOpenChange(false);
     } catch (error) {
