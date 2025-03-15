@@ -45,7 +45,8 @@ export function useTransactions() {
 
       if (error) throw error;
 
-      setTransactions(data || []);
+      // Use type assertion to ensure data is treated as Transaction[]
+      setTransactions(data as Transaction[] || []);
     } catch (err: any) {
       console.error('Erro ao buscar transações:', err);
       setError(err.message);
@@ -63,19 +64,28 @@ export function useTransactions() {
     if (!user) return null;
     
     try {
+      // Create object that matches the Supabase table schema
+      const newTransaction = {
+        description: transactionData.description,
+        amount: transactionData.amount,
+        category_id: transactionData.category_id,
+        type: transactionData.type,
+        date: transactionData.date,
+        payment_method: transactionData.payment_method,
+        status: transactionData.status,
+        user_id: user.id
+      };
+
       const { data, error } = await supabase
         .from('transactions')
-        .insert([{
-          ...transactionData,
-          user_id: user.id
-        }])
+        .insert([newTransaction])
         .select();
 
       if (error) throw error;
       
       toast.success('Transação criada com sucesso!');
       await fetchTransactions();
-      return data[0];
+      return data[0] as Transaction;
     } catch (err: any) {
       console.error('Erro ao adicionar transação:', err);
       toast.error('Erro ao criar transação');
@@ -87,9 +97,28 @@ export function useTransactions() {
     if (!user) return false;
     
     try {
+      // Create update object that matches the Supabase table schema
+      const updateData: { 
+        description?: string;
+        amount?: number;
+        category_id?: string | null;
+        type?: string;
+        date?: string;
+        payment_method?: string | null;
+        status?: string;
+      } = {};
+      
+      if (transactionData.description !== undefined) updateData.description = transactionData.description;
+      if (transactionData.amount !== undefined) updateData.amount = transactionData.amount;
+      if (transactionData.category_id !== undefined) updateData.category_id = transactionData.category_id;
+      if (transactionData.type !== undefined) updateData.type = transactionData.type;
+      if (transactionData.date !== undefined) updateData.date = transactionData.date;
+      if (transactionData.payment_method !== undefined) updateData.payment_method = transactionData.payment_method;
+      if (transactionData.status !== undefined) updateData.status = transactionData.status;
+
       const { error } = await supabase
         .from('transactions')
-        .update(transactionData)
+        .update(updateData)
         .eq('id', id);
 
       if (error) throw error;

@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { Database } from '@/integrations/supabase/types';
 
 export interface Category {
   id: string;
@@ -39,7 +40,8 @@ export function useCategories() {
 
       if (error) throw error;
 
-      setCategories(data || []);
+      // Use type assertion to ensure the data is treated as Category[]
+      setCategories(data as Category[] || []);
     } catch (err: any) {
       console.error('Erro ao buscar categorias:', err);
       setError(err.message);
@@ -57,19 +59,25 @@ export function useCategories() {
     if (!user) return null;
     
     try {
+      // Create object that matches the Supabase table schema
+      const newCategory = {
+        name: categoryData.name,
+        type: categoryData.type,
+        color: categoryData.color || null,
+        icon: categoryData.icon || null,
+        user_id: user.id
+      };
+
       const { data, error } = await supabase
         .from('categories')
-        .insert([{
-          ...categoryData,
-          user_id: user.id
-        }])
+        .insert([newCategory])
         .select();
 
       if (error) throw error;
       
       toast.success('Categoria criada com sucesso!');
       await fetchCategories();
-      return data[0];
+      return data[0] as Category;
     } catch (err: any) {
       console.error('Erro ao adicionar categoria:', err);
       toast.error('Erro ao criar categoria');
@@ -81,9 +89,22 @@ export function useCategories() {
     if (!user) return false;
     
     try {
+      // Create update object that matches the Supabase table schema
+      const updateData: { 
+        name?: string; 
+        type?: string; 
+        color?: string | null; 
+        icon?: string | null 
+      } = {};
+      
+      if (categoryData.name !== undefined) updateData.name = categoryData.name;
+      if (categoryData.type !== undefined) updateData.type = categoryData.type;
+      if (categoryData.color !== undefined) updateData.color = categoryData.color;
+      if (categoryData.icon !== undefined) updateData.icon = categoryData.icon;
+
       const { error } = await supabase
         .from('categories')
-        .update(categoryData)
+        .update(updateData)
         .eq('id', id);
 
       if (error) throw error;

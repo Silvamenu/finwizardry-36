@@ -24,9 +24,9 @@ export const supabase = createClient<Database>(
   SUPABASE_PUBLISHABLE_KEY,
   {
     auth: {
-      redirectTo: `${getBaseUrl()}/dashboard`,
-      persistSession: true,
+      flowType: 'implicit',
       autoRefreshToken: true,
+      persistSession: true,
       detectSessionInUrl: true,
       storage: typeof window !== 'undefined' ? window.localStorage : undefined
     }

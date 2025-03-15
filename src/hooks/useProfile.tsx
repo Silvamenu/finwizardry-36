@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -35,15 +34,25 @@ export function useProfile() {
       throw error;
     }
 
-    return data;
+    return data as Profile;
   };
 
   const updateProfile = async (profileData: ProfileUpdateData): Promise<Profile> => {
     if (!user?.id) throw new Error('User not authenticated');
 
+    const updateData: { 
+      name?: string; 
+      email?: string; 
+      avatar_url?: string;
+    } = {};
+    
+    if (profileData.name !== undefined) updateData.name = profileData.name;
+    if (profileData.email !== undefined) updateData.email = profileData.email;
+    if (profileData.avatar_url !== undefined) updateData.avatar_url = profileData.avatar_url;
+
     const { data, error } = await supabase
       .from('profiles')
-      .update(profileData)
+      .update(updateData)
       .eq('id', user.id)
       .select()
       .single();
@@ -53,7 +62,7 @@ export function useProfile() {
       throw error;
     }
 
-    return data;
+    return data as Profile;
   };
 
   const uploadAvatar = async (file: File): Promise<string> => {
