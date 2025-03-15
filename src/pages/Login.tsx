@@ -201,14 +201,18 @@ const Login = () => {
   }, []);
 
   const navigate = useNavigate();
-  const { signIn } = useAuth();
+  const { signInWithGoogle } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleGoogleLogin = () => {
+  const handleGoogleLogin = async () => {
     setIsLoading(true);
-    // This would be implemented with Supabase's OAuth
-    toast.info("Login com Google será implementado em breve!");
-    setIsLoading(false);
+    try {
+      await signInWithGoogle();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
