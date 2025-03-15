@@ -13,6 +13,7 @@ interface AuthContextType {
   signUp: (email: string, password: string, name: string) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -67,8 +68,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       });
       if (error) throw error;
-      toast.success('Cadastro realizado com sucesso!');
-      navigate('/dashboard');
+      toast.success('Cadastro realizado com sucesso! Verifique seu email para confirmação.');
+      // Não redirecionamos mais para o dashboard, aguardamos confirmação de email
     } catch (error: any) {
       toast.error(error.message || 'Erro ao criar conta');
       throw error;
@@ -102,8 +103,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const resetPassword = async (email: string) => {
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) throw error;
+      toast.success('Email de recuperação enviado! Verifique sua caixa de entrada.');
+    } catch (error: any) {
+      toast.error(error.message || 'Erro ao enviar email de recuperação');
+      throw error;
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ session, user, loading, signIn, signUp, signInWithGoogle, signOut }}>
+    <AuthContext.Provider value={{ 
+      session, 
+      user, 
+      loading, 
+      signIn, 
+      signUp, 
+      signInWithGoogle, 
+      signOut,
+      resetPassword 
+    }}>
       {children}
     </AuthContext.Provider>
   );
