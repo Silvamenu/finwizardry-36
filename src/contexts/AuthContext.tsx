@@ -46,12 +46,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
+      // Special case for the specified user
+      if (email === 'loginparasites02@gmail.com' && password === '123456') {
+        const { data, error } = await supabase.auth.signInWithPassword({ 
+          email, 
+          password 
+        });
+        
+        if (error) throw error;
+        
+        if (data?.user) {
+          toast.success('Login realizado com sucesso!');
+          navigate('/dashboard');
+          return;
+        }
+      }
+      
+      // Regular flow for other users
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
       
-      // Navigate in AuthCallback component after redirect
-      navigate('/auth-callback');
       toast.success('Autenticando...');
+      navigate('/auth-callback');
     } catch (error: any) {
       toast.error(error.message || 'Erro ao fazer login');
       throw error;
