@@ -29,10 +29,8 @@ export const supabase = createClient<Database>(
       persistSession: true,
       detectSessionInUrl: true,
       storage: typeof window !== 'undefined' ? window.localStorage : undefined,
-      // Store redirect URL in options.cookieOptions instead
-      cookieOptions: {
-        redirectTo: `${getBaseUrl()}/auth-callback`
-      }
     }
   }
 );
+
+// Add redirectTo configuration to auth.signIn() calls instead of here

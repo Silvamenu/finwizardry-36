@@ -68,9 +68,10 @@ export function useCategories() {
         user_id: user.id
       };
 
+      // Use array syntax for insert
       const { data, error } = await supabase
         .from('categories')
-        .insert(newCategory)
+        .insert([newCategory] as any)
         .select();
 
       if (error) throw error;
@@ -104,7 +105,7 @@ export function useCategories() {
 
       const { error } = await supabase
         .from('categories')
-        .update(updateData)
+        .update(updateData as any)
         .eq('id', id as any);
 
       if (error) throw error;

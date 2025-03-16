@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -75,9 +76,10 @@ export function useTransactions() {
         user_id: user.id
       };
 
+      // Use array syntax for insert
       const { data, error } = await supabase
         .from('transactions')
-        .insert(newTransaction)
+        .insert([newTransaction] as any)
         .select();
 
       if (error) throw error;
@@ -117,7 +119,7 @@ export function useTransactions() {
 
       const { error } = await supabase
         .from('transactions')
-        .update(updateData)
+        .update(updateData as any)
         .eq('id', id as any);
 
       if (error) throw error;
