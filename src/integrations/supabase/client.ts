@@ -24,11 +24,13 @@ export const supabase = createClient<Database>(
   SUPABASE_PUBLISHABLE_KEY,
   {
     auth: {
-      flowType: 'implicit',
+      flowType: 'pkce',
       autoRefreshToken: true,
       persistSession: true,
       detectSessionInUrl: true,
-      storage: typeof window !== 'undefined' ? window.localStorage : undefined
+      storage: typeof window !== 'undefined' ? window.localStorage : undefined,
+      // Explicitly set the redirect URL
+      redirectTo: `${getBaseUrl()}/auth-callback`
     }
   }
 );

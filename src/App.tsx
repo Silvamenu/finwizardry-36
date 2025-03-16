@@ -17,6 +17,8 @@ import Assistente from "./pages/dashboard/Assistente";
 import Configuracoes from "./pages/dashboard/Configuracoes";
 import Perfil from "./pages/dashboard/Perfil";
 import Login from "./pages/Login";
+import AuthCallback from "./pages/AuthCallback";
+import { LoadingScreen } from "./components/ui/loading-screen";
 
 const queryClient = new QueryClient();
 
@@ -25,7 +27,7 @@ const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const { user, loading } = useAuth();
   
   if (loading) {
-    return <div className="flex h-screen items-center justify-center">Carregando...</div>;
+    return <LoadingScreen />;
   }
   
   if (!user) {
@@ -40,6 +42,7 @@ const AppRoutes = () => {
     <Routes>
       <Route path="/" element={<Index />} />
       <Route path="/login" element={<Login />} />
+      <Route path="/auth-callback" element={<AuthCallback />} />
       <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       <Route path="/dashboard/orcamento" element={<ProtectedRoute><Orcamento /></ProtectedRoute>} />
       <Route path="/dashboard/investimentos" element={<ProtectedRoute><Investimentos /></ProtectedRoute>} />

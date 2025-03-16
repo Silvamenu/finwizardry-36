@@ -48,8 +48,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
-      navigate('/dashboard');
-      toast.success('Login realizado com sucesso!');
+      
+      // Navigate in AuthCallback component after redirect
+      navigate('/auth-callback');
+      toast.success('Autenticando...');
     } catch (error: any) {
       toast.error(error.message || 'Erro ao fazer login');
       throw error;
@@ -81,7 +83,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/dashboard`,
+          redirectTo: `${window.location.origin}/auth-callback`,
         }
       });
       if (error) throw error;
