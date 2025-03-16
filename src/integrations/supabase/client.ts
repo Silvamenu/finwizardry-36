@@ -29,8 +29,10 @@ export const supabase = createClient<Database>(
       persistSession: true,
       detectSessionInUrl: true,
       storage: typeof window !== 'undefined' ? window.localStorage : undefined,
-      // Explicitly set the redirect URL
-      redirectTo: `${getBaseUrl()}/auth-callback`
+      // Store redirect URL in options.cookieOptions instead
+      cookieOptions: {
+        redirectTo: `${getBaseUrl()}/auth-callback`
+      }
     }
   }
 );

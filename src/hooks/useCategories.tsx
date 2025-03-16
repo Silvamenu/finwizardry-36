@@ -40,8 +40,8 @@ export function useCategories() {
 
       if (error) throw error;
 
-      // Use type assertion to ensure the data is treated as Category[]
-      setCategories(data as Category[] || []);
+      // Use type assertion with as unknown first to avoid direct type conversion errors
+      setCategories((data as unknown as Category[]) || []);
     } catch (err: any) {
       console.error('Erro ao buscar categorias:', err);
       setError(err.message);
@@ -70,14 +70,14 @@ export function useCategories() {
 
       const { data, error } = await supabase
         .from('categories')
-        .insert([newCategory])
+        .insert(newCategory)
         .select();
 
       if (error) throw error;
       
       toast.success('Categoria criada com sucesso!');
       await fetchCategories();
-      return data[0] as Category;
+      return (data[0] as unknown as Category);
     } catch (err: any) {
       console.error('Erro ao adicionar categoria:', err);
       toast.error('Erro ao criar categoria');
@@ -105,7 +105,7 @@ export function useCategories() {
       const { error } = await supabase
         .from('categories')
         .update(updateData)
-        .eq('id', id);
+        .eq('id', id as any);
 
       if (error) throw error;
       
@@ -126,7 +126,7 @@ export function useCategories() {
       const { error } = await supabase
         .from('categories')
         .delete()
-        .eq('id', id);
+        .eq('id', id as any);
 
       if (error) throw error;
       

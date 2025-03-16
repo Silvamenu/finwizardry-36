@@ -26,7 +26,7 @@ export function useProfile() {
     const { data, error } = await supabase
       .from('profiles')
       .select('*')
-      .eq('id', user.id)
+      .eq('id', user.id as any)
       .single();
 
     if (error) {
@@ -34,7 +34,7 @@ export function useProfile() {
       throw error;
     }
 
-    return data as Profile;
+    return data as unknown as Profile;
   };
 
   const updateProfile = async (profileData: ProfileUpdateData): Promise<Profile> => {
@@ -53,7 +53,7 @@ export function useProfile() {
     const { data, error } = await supabase
       .from('profiles')
       .update(updateData)
-      .eq('id', user.id)
+      .eq('id', user.id as any)
       .select()
       .single();
 
@@ -62,7 +62,7 @@ export function useProfile() {
       throw error;
     }
 
-    return data as Profile;
+    return data as unknown as Profile;
   };
 
   const uploadAvatar = async (file: File): Promise<string> => {
@@ -72,7 +72,6 @@ export function useProfile() {
     const fileName = `${user.id}-${Math.random()}.${fileExt}`;
     const filePath = `avatars/${fileName}`;
 
-    // Check if storage exists, if not create it
     const { data: buckets } = await supabase.storage.listBuckets();
     if (!buckets?.find(bucket => bucket.name === 'avatars')) {
       await supabase.storage.createBucket('avatars', {

@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -45,8 +44,8 @@ export function useTransactions() {
 
       if (error) throw error;
 
-      // Use type assertion to ensure data is treated as Transaction[]
-      setTransactions(data as Transaction[] || []);
+      // Use type assertion with as unknown first to avoid direct type conversion errors
+      setTransactions((data as unknown as Transaction[]) || []);
     } catch (err: any) {
       console.error('Erro ao buscar transações:', err);
       setError(err.message);
@@ -78,14 +77,14 @@ export function useTransactions() {
 
       const { data, error } = await supabase
         .from('transactions')
-        .insert([newTransaction])
+        .insert(newTransaction)
         .select();
 
       if (error) throw error;
       
       toast.success('Transação criada com sucesso!');
       await fetchTransactions();
-      return data[0] as Transaction;
+      return (data[0] as unknown as Transaction);
     } catch (err: any) {
       console.error('Erro ao adicionar transação:', err);
       toast.error('Erro ao criar transação');
@@ -119,7 +118,7 @@ export function useTransactions() {
       const { error } = await supabase
         .from('transactions')
         .update(updateData)
-        .eq('id', id);
+        .eq('id', id as any);
 
       if (error) throw error;
       
@@ -140,7 +139,7 @@ export function useTransactions() {
       const { error } = await supabase
         .from('transactions')
         .delete()
-        .eq('id', id);
+        .eq('id', id as any);
 
       if (error) throw error;
       
