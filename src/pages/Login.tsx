@@ -14,6 +14,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useAuth } from "@/contexts/AuthContext";
 import { Loader2, Eye, EyeOff, Mail } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 // Regex para validação de email mais rigorosa
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -350,24 +351,28 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col items-center justify-center p-4">
+      <div className="absolute top-4 right-4">
+        <ThemeToggle />
+      </div>
+      
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold gradient-text mb-2">MoMoney</h1>
-          <p className="text-gray-600">Gerencie suas finanças de forma inteligente</p>
+          <p className="text-gray-600 dark:text-gray-400">Gerencie suas finanças de forma inteligente</p>
         </div>
 
-        <Card className="w-full animate-fade-in">
+        <Card className="w-full animate-fade-in dark:bg-gray-800 dark:border-gray-700">
           <CardHeader>
-            <CardTitle className="text-2xl text-center">Bem-vindo(a) de volta</CardTitle>
-            <CardDescription className="text-center">
+            <CardTitle className="text-2xl text-center dark:text-white">Bem-vindo(a) de volta</CardTitle>
+            <CardDescription className="text-center dark:text-gray-400">
               Faça login ou crie uma conta para continuar
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Button 
               variant="outline" 
-              className="w-full mb-6 flex items-center justify-center gap-2"
+              className="w-full mb-6 flex items-center justify-center gap-2 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-700"
               onClick={handleGoogleLogin}
               disabled={isLoading}
             >
@@ -395,10 +400,10 @@ const Login = () => {
 
             <div className="relative mb-6">
               <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-gray-300" />
+                <span className="w-full border-t border-gray-300 dark:border-gray-700" />
               </div>
               <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-white px-2 text-gray-500">ou continue com</span>
+                <span className="bg-white dark:bg-gray-800 px-2 text-gray-500 dark:text-gray-400">ou continue com</span>
               </div>
             </div>
 
@@ -416,7 +421,7 @@ const Login = () => {
             </Tabs>
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
-            <div className="text-center text-sm text-gray-500 mt-2">
+            <div className="text-center text-sm text-gray-500 dark:text-gray-400 mt-2">
               Ao continuar, você concorda com nossos{" "}
               <a href="#" className="text-momoney-600 hover:underline">
                 Termos de Serviço
@@ -431,7 +436,11 @@ const Login = () => {
         </Card>
 
         <div className="mt-6 text-center">
-          <Button variant="link" onClick={() => navigate("/")}>
+          <Button 
+            variant="link" 
+            onClick={() => navigate("/")}
+            className="dark:text-gray-300"
+          >
             Voltar para página inicial
           </Button>
         </div>
