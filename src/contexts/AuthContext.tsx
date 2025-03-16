@@ -66,7 +66,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         options: {
           data: {
             name,
-          }
+          },
+          emailRedirectTo: window.location.origin + '/auth-callback'
         }
       });
       if (error) throw error;
@@ -83,7 +84,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth-callback`,
+          redirectTo: window.location.origin + '/auth-callback',
         }
       });
       if (error) throw error;
@@ -108,7 +109,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const resetPassword = async (email: string) => {
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/reset-password`,
+        redirectTo: window.location.origin + '/auth-callback',
       });
       if (error) throw error;
       toast.success('Email de recuperação enviado! Verifique sua caixa de entrada.');
