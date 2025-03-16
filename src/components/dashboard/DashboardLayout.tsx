@@ -3,7 +3,7 @@ import React, { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import { User } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/contexts/AuthContext";
 import { Sidebar } from "@/components/ui/sidebar";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
@@ -19,11 +19,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 }) => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const isMobile = useMobile();
+  const isMobile = useIsMobile();
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex">
-      <Sidebar activePage={activePage} />
+      {/* Pass activePage through data attribute instead */}
+      <Sidebar data-active-page={activePage}>
+        {/* Sidebar content would go here */}
+      </Sidebar>
       
       <div className="flex-1 min-w-0 flex flex-col">
         <header className="bg-white dark:bg-gray-800 shadow-sm z-10 flex justify-between items-center p-4">
