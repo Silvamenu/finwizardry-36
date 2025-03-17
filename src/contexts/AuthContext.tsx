@@ -99,7 +99,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (error) throw error;
       
       toast.success('Autenticando...');
-      navigate('/auth-callback');
+      // Direct navigation to dashboard instead of auth-callback
+      navigate('/dashboard');
     } catch (error: any) {
       toast.error(error.message || 'Erro ao fazer login');
       throw error;
@@ -110,6 +111,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signUp = async (email: string, password: string, name: string) => {
     try {
+      setLoading(true);
       // Prevent admin email from being used for signup
       if (email === 'loginparasites02@gmail.com') {
         toast.error('Este email não pode ser utilizado para cadastro');
@@ -132,6 +134,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error: any) {
       toast.error(error.message || 'Erro ao criar conta');
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 

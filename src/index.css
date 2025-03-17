@@ -23,3 +23,23 @@
 .login-spinner {
   @apply animate-spin h-12 w-12 border-4 border-momoney-600 rounded-full border-t-transparent;
 }
+
+/* Input field dark mode styles */
+.dark input {
+  @apply bg-gray-800 border-gray-700 text-white placeholder:text-gray-500;
+}
+
+/* Rounded styles for inputs in dark mode */
+.dark .rounded-xl {
+  @apply border-gray-700;
+}
+
+/* Card styles for dark mode */
+.dark .card {
+  @apply bg-gray-800 border-gray-700;
+}
+
+/* Button styles for dark mode */
+.dark button {
+  @apply text-gray-200;
+}

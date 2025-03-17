@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -149,7 +150,7 @@ const LoginForm = () => {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input type="email" placeholder="seu@email.com" {...field} />
+                <Input type="email" placeholder="seu@email.com" className="rounded-xl dark:bg-gray-800 dark:border-gray-700" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -166,6 +167,7 @@ const LoginForm = () => {
                   <Input 
                     type={showPassword ? "text" : "password"} 
                     placeholder="••••••••" 
+                    className="rounded-xl dark:bg-gray-800 dark:border-gray-700"
                     {...field} 
                   />
                   <Button
@@ -186,7 +188,7 @@ const LoginForm = () => {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full mt-6" disabled={isSubmitting}>
+        <Button type="submit" className="w-full mt-6 rounded-xl bg-gradient-to-r from-momoney-600 to-momoney-500 hover:from-momoney-700 hover:to-momoney-600 transition-all" disabled={isSubmitting}>
           {isSubmitting ? (
             <>
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -195,6 +197,26 @@ const LoginForm = () => {
           ) : (
             'Entrar'
           )}
+        </Button>
+        
+        {/* Decorative Google Button */}
+        <div className="relative my-4">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-300 dark:border-gray-700"></div>
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">ou continue com</span>
+          </div>
+        </div>
+        
+        <Button 
+          type="button" 
+          variant="outline" 
+          className="w-full rounded-xl flex items-center justify-center gap-2 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700"
+          onClick={() => toast.info("Função apenas decorativa")}
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 18c-5 0-8-2.5-8-8"/><path d="M12 18c0-5 2.5-8 8-8"/><path d="M12 18c0-5-2.5-8-8-8"/></svg>
+          Google
         </Button>
       </form>
     </Form>
@@ -239,7 +261,7 @@ const SignupForm = () => {
             <FormItem>
               <FormLabel>Nome</FormLabel>
               <FormControl>
-                <Input placeholder="Nome completo" {...field} />
+                <Input placeholder="Nome completo" className="rounded-xl dark:bg-gray-800 dark:border-gray-700" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -252,7 +274,7 @@ const SignupForm = () => {
             <FormItem>
               <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input type="email" placeholder="seu@email.com" {...field} />
+                <Input type="email" placeholder="seu@email.com" className="rounded-xl dark:bg-gray-800 dark:border-gray-700" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -269,6 +291,7 @@ const SignupForm = () => {
                   <Input 
                     type={showPassword ? "text" : "password"} 
                     placeholder="••••••••" 
+                    className="rounded-xl dark:bg-gray-800 dark:border-gray-700"
                     {...field} 
                   />
                   <Button
@@ -297,6 +320,7 @@ const SignupForm = () => {
                   <Input 
                     type={showConfirmPassword ? "text" : "password"} 
                     placeholder="••••••••" 
+                    className="rounded-xl dark:bg-gray-800 dark:border-gray-700"
                     {...field} 
                   />
                   <Button
@@ -314,7 +338,7 @@ const SignupForm = () => {
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full mt-6" disabled={isSubmitting}>
+        <Button type="submit" className="w-full mt-6 rounded-xl bg-gradient-to-r from-momoney-600 to-momoney-500 hover:from-momoney-700 hover:to-momoney-600 transition-all" disabled={isSubmitting}>
           {isSubmitting ? (
             <>
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -344,22 +368,22 @@ const Login = () => {
       
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold gradient-text mb-2">MoMoney</h1>
+          <h1 className="text-4xl font-bold gradient-text mb-2">MoMoney</h1>
           <p className="text-gray-600 dark:text-gray-400">Gerencie suas finanças de forma inteligente</p>
         </div>
 
-        <Card className="w-full animate-fade-in dark:bg-gray-800 dark:border-gray-700">
-          <CardHeader>
+        <Card className="w-full animate-fade-in dark:bg-gray-800 dark:border-gray-700 rounded-2xl overflow-hidden shadow-lg">
+          <CardHeader className="pb-2">
             <CardTitle className="text-2xl text-center dark:text-white">Bem-vindo(a) de volta</CardTitle>
             <CardDescription className="text-center dark:text-gray-400">
               Faça login ou crie uma conta para continuar
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-4">
             <Tabs defaultValue="login" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-4">
-                <TabsTrigger value="login">Login</TabsTrigger>
-                <TabsTrigger value="signup">Cadastro</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 mb-6 rounded-xl">
+                <TabsTrigger value="login" className="rounded-xl">Login</TabsTrigger>
+                <TabsTrigger value="signup" className="rounded-xl">Cadastro</TabsTrigger>
               </TabsList>
               <TabsContent value="login">
                 <LoginForm />
