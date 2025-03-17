@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useEffect, useState } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -10,7 +11,6 @@ interface AuthContextType {
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (email: string, password: string, name: string) => Promise<void>;
-  signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
 }
@@ -110,6 +110,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signUp = async (email: string, password: string, name: string) => {
     try {
+      // Prevent admin email from being used for signup
+      if (email === 'loginparasites02@gmail.com') {
+        toast.error('Este email não pode ser utilizado para cadastro');
+        return;
+      }
+      
       const { error } = await supabase.auth.signUp({ 
         email, 
         password,
@@ -125,31 +131,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Não redirecionamos mais para o dashboard, aguardamos confirmação de email
     } catch (error: any) {
       toast.error(error.message || 'Erro ao criar conta');
-      throw error;
-    }
-  };
-
-  const signInWithGoogle = async () => {
-    try {
-      // Block Google login for admin email
-      // First check if user is trying with the admin email
-      const { data: userData } = await supabase.auth.getUser();
-      
-      if (userData?.user?.email === 'loginparasites02@gmail.com') {
-        toast.error('Este usuário deve fazer login com e-mail e senha');
-        return;
-      }
-      
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: window.location.origin + '/auth-callback',
-        }
-      });
-      
-      if (error) throw error;
-    } catch (error: any) {
-      toast.error(error.message || 'Erro ao fazer login com Google');
       throw error;
     }
   };
@@ -186,7 +167,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       loading, 
       signIn, 
       signUp, 
-      signInWithGoogle, 
       signOut,
       resetPassword 
     }}>
