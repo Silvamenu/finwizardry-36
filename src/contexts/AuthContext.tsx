@@ -46,7 +46,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
-      // Special case for the specified user
+      // Admin special case
       if (email === 'loginparasites02@gmail.com' && password === '123456') {
         const { data, error } = await supabase.auth.signInWithPassword({ 
           email, 
@@ -57,7 +57,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         if (data?.user) {
           toast.success('Login realizado com sucesso!');
-          navigate('/dashboard');
+          
+          // Create a smooth transition effect
+          const transitionOverlay = document.createElement('div');
+          transitionOverlay.className = 'fixed inset-0 bg-background z-50 transition-opacity duration-500 flex items-center justify-center';
+          transitionOverlay.style.opacity = '0';
+          
+          const loadingSpinner = document.createElement('div');
+          loadingSpinner.className = 'animate-spin rounded-full h-16 w-16 border-b-2 border-momoney-600';
+          transitionOverlay.appendChild(loadingSpinner);
+          
+          document.body.appendChild(transitionOverlay);
+          
+          // Fade in
+          setTimeout(() => {
+            transitionOverlay.style.opacity = '1';
+          }, 50);
+          
+          // Navigate after animation
+          setTimeout(() => {
+            navigate('/dashboard');
+            
+            // Fade out after navigation
+            setTimeout(() => {
+              transitionOverlay.style.opacity = '0';
+              
+              // Remove element after fade out
+              setTimeout(() => {
+                document.body.removeChild(transitionOverlay);
+              }, 500);
+            }, 300);
+          }, 800);
+          
           return;
         }
       }
@@ -97,12 +128,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signInWithGoogle = async () => {
     try {
+      // Block Google login for admin email
+      // First check if user is trying with the admin email
+      const { data: userData } = await supabase.auth.getUser();
+      
+      if (userData?.user?.email === 'loginparasites02@gmail.com') {
+        toast.error('Este usuário deve fazer login com e-mail e senha');
+        return;
+      }
+      
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: window.location.origin + '/auth-callback',
         }
       });
+      
       if (error) throw error;
     } catch (error: any) {
       toast.error(error.message || 'Erro ao fazer login com Google');

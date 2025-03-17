@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,10 +8,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { TransactionForm } from "@/components/transactions/TransactionForm";
 import { CategoryForm } from "@/components/transactions/CategoryForm";
+import { ImportCSV } from "@/components/transactions/ImportCSV";
 import { 
   ArrowDownUp, 
   Calendar, 
-  Download, 
+  Download,
+  Upload,
   Filter, 
   Plus, 
   Search, 
@@ -37,6 +38,7 @@ import {
 } from "@/hooks/useTransactions";
 import { useCategories, CategoryFormData } from "@/hooks/useCategories";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { toast } from "sonner";
 
 const Transacoes = () => {
   useEffect(() => {
@@ -64,6 +66,7 @@ const Transacoes = () => {
   // Modais
   const [transactionFormOpen, setTransactionFormOpen] = useState(false);
   const [categoryFormOpen, setCategoryFormOpen] = useState(false);
+  const [importCsvOpen, setImportCsvOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<TransactionType | null>(null);
 
   // Filtragem de transações
@@ -124,6 +127,51 @@ const Transacoes = () => {
 
   const handleExport = () => {
     exportTransactions('csv');
+  };
+
+  const handleImportTransactions = async (transactions: TransactionFormData[]) => {
+    try {
+      let successCount = 0;
+      let errorCount = 0;
+      
+      // Show progress toast
+      toast("Importando transações...", { 
+        duration: transactions.length * 200,
+      });
+      
+      // Process transactions in batches to avoid UI freezing
+      const batchSize = 10;
+      for (let i = 0; i < transactions.length; i += batchSize) {
+        const batch = transactions.slice(i, i + batchSize);
+        
+        // Process batch in parallel
+        const results = await Promise.all(
+          batch.map(async (transaction) => {
+            try {
+              await addTransaction(transaction);
+              return true;
+            } catch (error) {
+              console.error("Error adding transaction:", error);
+              return false;
+            }
+          })
+        );
+        
+        // Count successes and failures
+        successCount += results.filter(Boolean).length;
+        errorCount += results.filter(result => !result).length;
+      }
+      
+      // Show results
+      if (errorCount === 0) {
+        toast.success(`${successCount} transações importadas com sucesso!`);
+      } else {
+        toast.info(`${successCount} transações importadas com sucesso, ${errorCount} com erros.`);
+      }
+    } catch (error) {
+      console.error("Error in batch import:", error);
+      toast.error("Erro ao importar transações");
+    }
   };
 
   // Ícones para categorias
@@ -192,6 +240,10 @@ const Transacoes = () => {
             <Button variant="outline" onClick={handleExport}>
               <Download className="h-4 w-4 mr-2" />
               Exportar
+            </Button>
+            <Button variant="outline" onClick={() => setImportCsvOpen(true)}>
+              <Upload className="h-4 w-4 mr-2" />
+              Importar CSV
             </Button>
             <Button variant="outline" onClick={() => setCategoryFormOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
@@ -350,30 +402,253 @@ const Transacoes = () => {
                 )}
               </TabsContent>
               
-              {/* Outras abas compartilham o mesmo conteúdo com filtros diferentes */}
               <TabsContent value="income">
-                {/* O conteúdo é filtrado pela variável currentTab */}
-                {/* Mesma estrutura da aba "all" */}
+                {loadingTransactions ? (
+                  <div className="flex justify-center py-10">
+                    <div className="flex flex-col items-center">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-500"></div>
+                      <span className="mt-2 text-gray-500">Carregando transações...</span>
+                    </div>
+                  </div>
+                ) : sortedTransactions.length === 0 ? (
+                  <Alert>
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>
+                      Nenhuma transação encontrada. Clique em "Nova Transação" para adicionar.
+                    </AlertDescription>
+                  </Alert>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Data</TableHead>
+                          <TableHead>Descrição</TableHead>
+                          <TableHead>Categoria</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>Pagamento</TableHead>
+                          <TableHead className="text-right">Valor</TableHead>
+                          <TableHead className="text-right">Ações</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {sortedTransactions.filter(transaction => transaction.type === "income").map((transaction) => {
+                          const IconComponent = getCategoryIcon(transaction.type, getCategoryName(transaction.category_id));
+                          return (
+                            <TableRow key={transaction.id}>
+                              <TableCell className="font-medium">
+                                {format(parseISO(transaction.date), "dd MMM yyyy", { locale: ptBR })}
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex items-center gap-2">
+                                  <div className={`p-1.5 rounded-full ${transaction.type === 'income' ? 'bg-green-100' : 'bg-red-100'}`}>
+                                    <IconComponent className={`h-3.5 w-3.5 ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}`} />
+                                  </div>
+                                  {transaction.description}
+                                </div>
+                              </TableCell>
+                              <TableCell>{getCategoryName(transaction.category_id)}</TableCell>
+                              <TableCell>{getStatusBadge(transaction.status)}</TableCell>
+                              <TableCell>{getPaymentMethodName(transaction.payment_method)}</TableCell>
+                              <TableCell className={`text-right font-medium ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
+                                {formatCurrency(transaction.amount)}
+                              </TableCell>
+                              <TableCell className="text-right">
+                                <div className="flex justify-end gap-2">
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => handleEditTransaction(transaction)}
+                                  >
+                                    <Pencil className="h-4 w-4" />
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => handleDeleteTransaction(transaction.id)}
+                                    className="text-red-500 hover:text-red-700"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
               </TabsContent>
+              
               <TabsContent value="expense">
-                {/* Mesma estrutura da aba "all" */}
+                {loadingTransactions ? (
+                  <div className="flex justify-center py-10">
+                    <div className="flex flex-col items-center">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-500"></div>
+                      <span className="mt-2 text-gray-500">Carregando transações...</span>
+                    </div>
+                  </div>
+                ) : sortedTransactions.length === 0 ? (
+                  <Alert>
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>
+                      Nenhuma transação encontrada. Clique em "Nova Transação" para adicionar.
+                    </AlertDescription>
+                  </Alert>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Data</TableHead>
+                          <TableHead>Descrição</TableHead>
+                          <TableHead>Categoria</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>Pagamento</TableHead>
+                          <TableHead className="text-right">Valor</TableHead>
+                          <TableHead className="text-right">Ações</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {sortedTransactions.filter(transaction => transaction.type === "expense").map((transaction) => {
+                          const IconComponent = getCategoryIcon(transaction.type, getCategoryName(transaction.category_id));
+                          return (
+                            <TableRow key={transaction.id}>
+                              <TableCell className="font-medium">
+                                {format(parseISO(transaction.date), "dd MMM yyyy", { locale: ptBR })}
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex items-center gap-2">
+                                  <div className={`p-1.5 rounded-full ${transaction.type === 'income' ? 'bg-green-100' : 'bg-red-100'}`}>
+                                    <IconComponent className={`h-3.5 w-3.5 ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}`} />
+                                  </div>
+                                  {transaction.description}
+                                </div>
+                              </TableCell>
+                              <TableCell>{getCategoryName(transaction.category_id)}</TableCell>
+                              <TableCell>{getStatusBadge(transaction.status)}</TableCell>
+                              <TableCell>{getPaymentMethodName(transaction.payment_method)}</TableCell>
+                              <TableCell className={`text-right font-medium ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
+                                {formatCurrency(transaction.amount)}
+                              </TableCell>
+                              <TableCell className="text-right">
+                                <div className="flex justify-end gap-2">
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => handleEditTransaction(transaction)}
+                                  >
+                                    <Pencil className="h-4 w-4" />
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => handleDeleteTransaction(transaction.id)}
+                                    className="text-red-500 hover:text-red-700"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
               </TabsContent>
+              
               <TabsContent value="scheduled">
-                {/* Mesma estrutura da aba "all" */}
+                {loadingTransactions ? (
+                  <div className="flex justify-center py-10">
+                    <div className="flex flex-col items-center">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-500"></div>
+                      <span className="mt-2 text-gray-500">Carregando transações...</span>
+                    </div>
+                  </div>
+                ) : sortedTransactions.length === 0 ? (
+                  <Alert>
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>
+                      Nenhuma transação encontrada. Clique em "Nova Transação" para adicionar.
+                    </AlertDescription>
+                  </Alert>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Data</TableHead>
+                          <TableHead>Descrição</TableHead>
+                          <TableHead>Categoria</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>Pagamento</TableHead>
+                          <TableHead className="text-right">Valor</TableHead>
+                          <TableHead className="text-right">Ações</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {sortedTransactions.filter(transaction => transaction.status === "scheduled").map((transaction) => {
+                          const IconComponent = getCategoryIcon(transaction.type, getCategoryName(transaction.category_id));
+                          return (
+                            <TableRow key={transaction.id}>
+                              <TableCell className="font-medium">
+                                {format(parseISO(transaction.date), "dd MMM yyyy", { locale: ptBR })}
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex items-center gap-2">
+                                  <div className={`p-1.5 rounded-full ${transaction.type === 'income' ? 'bg-green-100' : 'bg-red-100'}`}>
+                                    <IconComponent className={`h-3.5 w-3.5 ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}`} />
+                                  </div>
+                                  {transaction.description}
+                                </div>
+                              </TableCell>
+                              <TableCell>{getCategoryName(transaction.category_id)}</TableCell>
+                              <TableCell>{getStatusBadge(transaction.status)}</TableCell>
+                              <TableCell>{getPaymentMethodName(transaction.payment_method)}</TableCell>
+                              <TableCell className={`text-right font-medium ${transaction.type === 'income' ? 'text-green-600' : 'text-red-600'}`}>
+                                {formatCurrency(transaction.amount)}
+                              </TableCell>
+                              <TableCell className="text-right">
+                                <div className="flex justify-end gap-2">
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => handleEditTransaction(transaction)}
+                                  >
+                                    <Pencil className="h-4 w-4" />
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => handleDeleteTransaction(transaction.id)}
+                                    className="text-red-500 hover:text-red-700"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
               </TabsContent>
             </Tabs>
           </CardContent>
         </Card>
       </div>
 
-      {/* Formulário de transação */}
       <TransactionForm
         open={transactionFormOpen}
         onOpenChange={setTransactionFormOpen}
         onSubmit={handleAddTransaction}
       />
 
-      {/* Formulário de edição de transação */}
       {editingTransaction && (
         <TransactionForm
           open={!!editingTransaction}
@@ -394,11 +669,16 @@ const Transacoes = () => {
         />
       )}
 
-      {/* Formulário de categoria */}
       <CategoryForm
         open={categoryFormOpen}
         onOpenChange={setCategoryFormOpen}
         onSubmit={handleAddCategory}
+      />
+
+      <ImportCSV
+        open={importCsvOpen}
+        onOpenChange={setImportCsvOpen}
+        onImport={handleImportTransactions}
       />
     </DashboardLayout>
   );

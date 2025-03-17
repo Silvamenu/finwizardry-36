@@ -3,171 +3,23 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    --background: 210 50% 98%;
-    --foreground: 220 20% 16%;
-
-    --card: 0 0% 100%;
-    --card-foreground: 220 20% 16%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 20% 16%;
-
-    --primary: 207 100% 55%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 214 32% 91%;
-    --secondary-foreground: 220 20% 16%;
-
-    --muted: 214 20% 93%;
-    --muted-foreground: 220 20% 40%;
-
-    --accent: 207 90% 95%;
-    --accent-foreground: 220 20% 16%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 207 100% 55%;
-
-    --radius: 0.75rem;
-
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
-
-    --card: 222 47% 11%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222 47% 11%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222 47% 11%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-
-    --sidebar-background: 224 71% 4%;
-    --sidebar-foreground: 213 31% 91%;
-    --sidebar-primary: 210 40% 98%;
-    --sidebar-primary-foreground: 222 47% 11%;
-    --sidebar-accent: 216 34% 17%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 216 34% 17%;
-    --sidebar-ring: 212.7 26.8% 83.9%;
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
-  }
-}
-
-/* Glass effect styles */
-.glass-effect {
-  @apply backdrop-blur-md bg-white/70 dark:bg-black/30 border border-white/20 shadow-lg;
-}
-
-.glass-card {
-  @apply rounded-2xl bg-white/80 dark:bg-black/40 backdrop-blur-md border border-white/20 shadow-lg;
-}
-
-.neo-button {
-  @apply relative transition-all duration-300 overflow-hidden;
-}
-
-.neo-button::before {
-  content: "";
-  @apply absolute inset-0 bg-momoney-500/10 opacity-0 transition-opacity duration-300;
-}
-
-.neo-button:hover::before {
-  @apply opacity-100;
-}
-
-/* Custom animations */
-.reveal-delay-1 {
-  animation-delay: 0.1s;
-}
-
-.reveal-delay-2 {
-  animation-delay: 0.2s;
-}
-
-.reveal-delay-3 {
-  animation-delay: 0.3s;
-}
-
-.reveal-delay-4 {
-  animation-delay: 0.4s;
-}
-
-.reveal-delay-5 {
-  animation-delay: 0.5s;
-}
-
-/* Custom scroll behavior */
-html {
-  scroll-behavior: smooth;
-}
-
-/* Transitions */
-.page-transition-enter {
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-.page-transition-enter-active {
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity 400ms, transform 400ms;
-}
-
-.page-transition-exit {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.page-transition-exit-active {
-  opacity: 0;
-  transform: translateY(-20px);
-  transition: opacity 400ms, transform 400ms;
-}
-
-/* Gradient text */
 .gradient-text {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-momoney-600 to-momoney-400;
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-momoney-600 to-momoney-300;
+}
+
+/* Animation for login transition */
+.login-transition {
+  @apply fixed inset-0 bg-background z-50;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.login-transition.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.login-spinner {
+  @apply animate-spin h-12 w-12 border-4 border-momoney-600 rounded-full border-t-transparent;
 }
