@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useEffect, useState } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -46,6 +45,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
+      setLoading(true);
+      
       // Admin special case
       if (email === 'loginparasites02@gmail.com' && password === '123456') {
         const { data, error } = await supabase.auth.signInWithPassword({ 
@@ -102,6 +103,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (error: any) {
       toast.error(error.message || 'Erro ao fazer login');
       throw error;
+    } finally {
+      setLoading(false);
     }
   };
 
