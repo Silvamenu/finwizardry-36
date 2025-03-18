@@ -12,17 +12,17 @@ const AuthCallback = () => {
     // Process the auth callback
     const handleAuthCallback = async () => {
       try {
-        // Detectar qual tipo de ação de autenticação está acontecendo
+        // Detect which type of authentication action is happening
         const url = new URL(window.location.href);
         const isPasswordReset = url.hash.includes('type=recovery') || url.search.includes('type=recovery');
         const isEmailConfirmation = url.hash.includes('type=signup') || url.search.includes('type=signup');
         
-        // Processar explicitamente a URL hash/fragment ou query parameters
+        // Process URL hash/fragment or query parameters
         if (window.location.hash || window.location.search) {
           await supabase.auth.getSession();
         }
         
-        // Obter a sessão após processar
+        // Get session after processing
         const { data, error } = await supabase.auth.getSession();
         
         if (error) {
@@ -30,9 +30,9 @@ const AuthCallback = () => {
         }
 
         if (isPasswordReset) {
-          // Redirecionar para página de definição de nova senha
+          // Redirect to password reset page
           toast.success("Link de recuperação verificado! Defina sua nova senha.");
-          navigate("/reset-password"); // Você precisará criar esta rota
+          navigate("/reset-password");
           return;
         }
 
@@ -41,22 +41,17 @@ const AuthCallback = () => {
         }
 
         if (data?.session) {
-          // Se temos uma sessão ativa, vamos para o dashboard
-          setTimeout(() => {
-            navigate("/dashboard");
-          }, 1500);
+          // If we have an active session, go to dashboard immediately
+          toast.success("Autenticação realizada com sucesso!");
+          navigate("/dashboard");
         } else {
-          // Sem sessão, vamos para o login
-          setTimeout(() => {
-            navigate("/login");
-          }, 1500);
+          // No session, go to login
+          navigate("/login");
         }
       } catch (error: any) {
         console.error("Auth callback error:", error);
         toast.error(error.message || "Erro durante autenticação");
-        setTimeout(() => {
-          navigate("/login");
-        }, 1500);
+        navigate("/login");
       }
     };
 

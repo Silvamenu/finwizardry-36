@@ -61,18 +61,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           
           // Create a smooth transition effect
           const transitionOverlay = document.createElement('div');
-          transitionOverlay.className = 'fixed inset-0 bg-background z-50 transition-opacity duration-500 flex items-center justify-center';
-          transitionOverlay.style.opacity = '0';
+          transitionOverlay.className = 'login-transition';
           
           const loadingSpinner = document.createElement('div');
-          loadingSpinner.className = 'animate-spin rounded-full h-16 w-16 border-b-2 border-momoney-600';
-          transitionOverlay.appendChild(loadingSpinner);
+          loadingSpinner.className = 'login-spinner';
           
+          const centerContainer = document.createElement('div');
+          centerContainer.className = 'flex items-center justify-center h-full';
+          centerContainer.appendChild(loadingSpinner);
+          
+          transitionOverlay.appendChild(centerContainer);
           document.body.appendChild(transitionOverlay);
           
           // Fade in
           setTimeout(() => {
-            transitionOverlay.style.opacity = '1';
+            transitionOverlay.classList.add('active');
           }, 50);
           
           // Navigate after animation
@@ -81,7 +84,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             
             // Fade out after navigation
             setTimeout(() => {
-              transitionOverlay.style.opacity = '0';
+              transitionOverlay.classList.remove('active');
               
               // Remove element after fade out
               setTimeout(() => {
@@ -98,9 +101,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
       
-      toast.success('Autenticando...');
-      // Direct navigation to dashboard instead of auth-callback
-      navigate('/dashboard');
+      toast.success('Login realizado com sucesso!');
+      
+      // Create a smooth transition effect for regular users too
+      const transitionOverlay = document.createElement('div');
+      transitionOverlay.className = 'login-transition';
+      
+      const loadingSpinner = document.createElement('div');
+      loadingSpinner.className = 'login-spinner';
+      
+      const centerContainer = document.createElement('div');
+      centerContainer.className = 'flex items-center justify-center h-full';
+      centerContainer.appendChild(loadingSpinner);
+      
+      transitionOverlay.appendChild(centerContainer);
+      document.body.appendChild(transitionOverlay);
+      
+      // Fade in
+      setTimeout(() => {
+        transitionOverlay.classList.add('active');
+      }, 50);
+      
+      // Navigate to dashboard directly
+      setTimeout(() => {
+        navigate('/dashboard');
+        
+        // Fade out after navigation
+        setTimeout(() => {
+          transitionOverlay.classList.remove('active');
+          
+          // Remove element after fade out
+          setTimeout(() => {
+            document.body.removeChild(transitionOverlay);
+          }, 500);
+        }, 300);
+      }, 800);
     } catch (error: any) {
       toast.error(error.message || 'Erro ao fazer login');
       throw error;
