@@ -80,7 +80,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           
           // Navigate after animation
           setTimeout(() => {
-            navigate('/dashboard');
+            // Ensure we navigate to the dashboard
+            window.location.href = '/#/dashboard';
             
             // Fade out after navigation
             setTimeout(() => {
@@ -98,7 +99,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       
       // Regular flow for other users
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const { error, data } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
       
       toast.success('Login realizado com sucesso!');
@@ -124,7 +125,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       // Navigate to dashboard directly
       setTimeout(() => {
-        navigate('/dashboard');
+        // Use window.location.href to ensure a full navigation to dashboard
+        window.location.href = '/#/dashboard';
         
         // Fade out after navigation
         setTimeout(() => {

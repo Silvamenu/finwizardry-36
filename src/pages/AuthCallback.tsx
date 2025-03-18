@@ -41,9 +41,42 @@ const AuthCallback = () => {
         }
 
         if (data?.session) {
-          // If we have an active session, go to dashboard immediately
+          // If we have an active session, create a smooth transition to dashboard
           toast.success("Autenticação realizada com sucesso!");
-          navigate("/dashboard");
+          
+          // Create transition overlay for smooth navigation
+          const transitionOverlay = document.createElement('div');
+          transitionOverlay.className = 'login-transition';
+          
+          const loadingSpinner = document.createElement('div');
+          loadingSpinner.className = 'login-spinner';
+          
+          const centerContainer = document.createElement('div');
+          centerContainer.className = 'flex items-center justify-center h-full';
+          centerContainer.appendChild(loadingSpinner);
+          
+          transitionOverlay.appendChild(centerContainer);
+          document.body.appendChild(transitionOverlay);
+          
+          // Fade in
+          setTimeout(() => {
+            transitionOverlay.classList.add('active');
+          }, 50);
+          
+          // Navigate after animation
+          setTimeout(() => {
+            navigate("/dashboard");
+            
+            // Fade out after navigation
+            setTimeout(() => {
+              transitionOverlay.classList.remove('active');
+              
+              // Remove element after fade out
+              setTimeout(() => {
+                document.body.removeChild(transitionOverlay);
+              }, 500);
+            }, 300);
+          }, 800);
         } else {
           // No session, go to login
           navigate("/login");

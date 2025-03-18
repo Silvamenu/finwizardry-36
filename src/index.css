@@ -9,7 +9,7 @@
 
 /* Animation for login transition */
 .login-transition {
-  @apply fixed inset-0 bg-background z-50;
+  @apply fixed inset-0 bg-background z-[9999];
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.5s ease-in-out;

@@ -37,9 +37,9 @@ const LoginForm = () => {
     setIsSubmitting(true);
     try {
       await signIn(values.email, values.password);
+      // Note: the actual navigation is handled in the signIn function in AuthContext
     } catch (error) {
       console.error(error);
-    } finally {
       setIsSubmitting(false);
     }
   };
