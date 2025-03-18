@@ -1,9 +1,12 @@
+
 import { useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from "@/components/ui/chart";
 import { PieChart, Pie, ResponsiveContainer, Cell, Tooltip, Legend } from "recharts";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ArrowUpRight, Download, Filter, FileBarChart, Calendar } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 
 // Simulated category spending data
 const generateCategoryData = () => {
@@ -70,23 +73,51 @@ const generateMerchantData = () => {
     value: Math.round(merchant.value + (Math.random() - 0.5) * 100) // Add some randomness
   }));
 };
+
+// Custom tooltip component for PieChart
+const CustomTooltip = ({ active, payload }: any) => {
+  if (active && payload && payload.length) {
+    return (
+      <div className="bg-white p-3 rounded-lg shadow-md border border-gray-100">
+        <div className="flex items-center gap-2 mb-1">
+          <div className="w-3 h-3 rounded-full" style={{ backgroundColor: payload[0].payload.color }}></div>
+          <span className="font-medium">{payload[0].payload.name}</span>
+        </div>
+        <div className="flex flex-col">
+          <span className="font-bold">{formatCurrency(payload[0].value)}</span>
+          <span className="text-xs text-gray-500">{payload[0].payload.percentage}% do total</span>
+        </div>
+      </div>
+    );
+  }
+  return null;
+};
+
+// Helper function to format currency
+const formatCurrency = (value: number) => {
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
+  }).format(value);
+};
+
 const SpendingAnalysis = () => {
   const [tabView, setTabView] = useState<'categories' | 'merchants'>('categories');
   const data = tabView === 'categories' ? generateCategoryData() : generateMerchantData();
 
   // Calculate total
   const total = data.reduce((sum, item) => sum + item.value, 0);
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(value);
-  };
+  
+  // Add percentage to each item
+  const dataWithPercentage = data.map(item => ({
+    ...item,
+    percentage: parseFloat(((item.value / total) * 100).toFixed(1))
+  }));
 
   // Create chart config for the categories
-  const chartConfig = data.reduce((config, item) => {
+  const chartConfig = dataWithPercentage.reduce((config, item) => {
     config[item.name] = {
       label: item.name,
       color: item.color
@@ -96,55 +127,127 @@ const SpendingAnalysis = () => {
     label: string;
     color: string;
   }>);
-  return <Card className="h-full animate-fade-in reveal-delay-1">
+
+  return (
+    <Card className="h-full animate-fade-in reveal-delay-1 rounded-xl border-blue-50 transition-all duration-300 hover:shadow-md">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-lg font-medium">Análise de Gastos</CardTitle>
-        <Tabs defaultValue="categories" className="w-[300px]">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="categories" onClick={() => setTabView('categories')}>
-              Categorias
-            </TabsTrigger>
-            <TabsTrigger value="merchants" onClick={() => setTabView('merchants')}>
-              Estabelecimentos
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <CardTitle className="text-lg font-medium flex items-center gap-2">
+          <FileBarChart className="h-5 w-5 text-blue-500" />
+          Análise de Gastos
+        </CardTitle>
+        <div className="flex items-center gap-2">
+          <Tabs defaultValue="categories" className="w-[300px]">
+            <TabsList className="grid w-full grid-cols-2 rounded-lg">
+              <TabsTrigger 
+                value="categories" 
+                onClick={() => setTabView('categories')}
+                className="rounded-l-lg data-[state=active]:bg-blue-500"
+              >
+                Categorias
+              </TabsTrigger>
+              <TabsTrigger 
+                value="merchants" 
+                onClick={() => setTabView('merchants')}
+                className="rounded-r-lg data-[state=active]:bg-blue-500"
+              >
+                Estabelecimentos
+              </TabsTrigger>
+            </TabsList>
+          </Tabs>
+          
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" size="icon" className="h-8 w-8">
+                <Calendar className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem>Mês atual</DropdownMenuItem>
+              <DropdownMenuItem>Mês anterior</DropdownMenuItem>
+              <DropdownMenuItem>Últimos 3 meses</DropdownMenuItem>
+              <DropdownMenuItem>Este ano</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="w-full md:w-1/2 h-72 mx-0 my-0 px-0 py-[24px] rounded-none">
+          <div className="w-full md:w-1/2 h-72 mx-0 my-0 px-0 py-[24px] rounded-none relative group">
             <ChartContainer config={chartConfig}>
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
-                  <Pie data={data} cx="50%" cy="50%" labelLine={false} outerRadius={80} innerRadius={40} fill="#8884d8" dataKey="value" nameKey="name" paddingAngle={2} label={({
-                  name,
-                  percent
-                }) => `${name} ${(percent * 100).toFixed(0)}%`}>
-                    {data.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
+                  <defs>
+                    {dataWithPercentage.map((entry, index) => (
+                      <filter key={`shadow-${index}`} id={`shadow-${index}`} x="-20%" y="-20%" width="140%" height="140%">
+                        <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor={entry.color} floodOpacity="0.3" />
+                      </filter>
+                    ))}
+                  </defs>
+                  <Pie 
+                    data={dataWithPercentage} 
+                    cx="50%" 
+                    cy="50%" 
+                    labelLine={false} 
+                    outerRadius={100} 
+                    innerRadius={60} 
+                    fill="#8884d8" 
+                    dataKey="value" 
+                    nameKey="name" 
+                    paddingAngle={2}
+                    animationBegin={0}
+                    animationDuration={1500}
+                    label={({
+                      name,
+                      percent
+                    }) => `${(percent * 100).toFixed(0)}%`}
+                  >
+                    {dataWithPercentage.map((entry, index) => (
+                      <Cell 
+                        key={`cell-${index}`} 
+                        fill={entry.color} 
+                        stroke="#fff" 
+                        strokeWidth={2}
+                        filter={`url(#shadow-${index})`}
+                        className="transition-all duration-300 hover:opacity-80"
+                      />
+                    ))}
                   </Pie>
-                  <Tooltip formatter={value => [formatCurrency(value as number), 'Valor']} />
+                  <Tooltip content={<CustomTooltip />} />
                 </PieChart>
               </ResponsiveContainer>
             </ChartContainer>
+            
+            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <Button variant="ghost" size="icon" className="h-8 w-8">
+                <Download className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
           
           <div className="w-full md:w-1/2">
-            <h3 className="text-lg font-medium mb-4">Detalhes</h3>
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-medium">Detalhes</h3>
+              <Button variant="outline" size="sm" className="h-8 gap-1 rounded-lg">
+                <Filter className="h-3.5 w-3.5" />
+                <span className="text-xs">Filtrar</span>
+              </Button>
+            </div>
             <div className="space-y-3">
-              {data.map((item, index) => <div key={index} className="flex items-center justify-between">
+              {dataWithPercentage.map((item, index) => (
+                <div key={index} className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
                   <div className="flex items-center">
-                    <div className="w-3 h-3 rounded-full mr-2" style={{
-                  backgroundColor: item.color
-                }} />
+                    <div className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: item.color }} />
                     <span>{item.name}</span>
                   </div>
                   <div className="flex flex-col items-end">
                     <span className="font-medium">{formatCurrency(item.value)}</span>
-                    <span className="text-xs text-gray-500">
-                      {(item.value / total * 100).toFixed(1)}%
-                    </span>
+                    <div className="flex items-center text-xs text-gray-500">
+                      <span>{item.percentage}%</span>
+                      <ArrowUpRight className="h-3 w-3 ml-0.5 text-green-500" />
+                    </div>
                   </div>
-                </div>)}
+                </div>
+              ))}
               <div className="pt-3 mt-3 border-t border-gray-200">
                 <div className="flex items-center justify-between font-bold">
                   <span>Total</span>
@@ -155,6 +258,8 @@ const SpendingAnalysis = () => {
           </div>
         </div>
       </CardContent>
-    </Card>;
+    </Card>
+  );
 };
+
 export default SpendingAnalysis;

@@ -1,12 +1,15 @@
 
 import { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
-import { Menu, X, LogIn } from 'lucide-react';
+import { Menu, X, LogIn, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuth } from '@/contexts/AuthContext';
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -36,15 +39,22 @@ const Navbar = () => {
     { title: "Contato", href: "#contact" },
   ];
 
+  const avatarUrl = user?.user_metadata?.avatar_url;
+  const userName = user?.user_metadata?.name || user?.email?.split('@')[0] || 'Usuário';
+  const userInitials = userName.split(' ').map(n => n[0]).join('').toUpperCase();
+
   return (
     <header 
       className={cn(
         "fixed top-0 w-full z-50 transition-all duration-300",
-        isScrolled ? "py-2 bg-white/80 backdrop-blur-md shadow-sm" : "py-4 bg-transparent"
+        isScrolled ? "py-2 bg-white/90 backdrop-blur-md shadow-sm" : "py-4 bg-transparent"
       )}
     >
       <div className="container mx-auto px-4 flex justify-between items-center">
         <a href="#" className="flex items-center space-x-2">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-r from-momoney-600 to-momoney-300 flex items-center justify-center">
+            <span className="text-white font-bold text-lg">M</span>
+          </div>
           <span className="text-2xl font-bold gradient-text">MoMoney</span>
         </a>
 
@@ -54,41 +64,68 @@ const Navbar = () => {
             <a 
               key={index} 
               href={item.href}
-              className="text-gray-700 hover:text-momoney-600 transition-colors duration-300 py-2"
+              className="text-gray-700 hover:text-momoney-600 transition-colors duration-300 py-2 relative group"
             >
               {item.title}
+              <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-momoney-500 transition-all duration-300 group-hover:w-full"></span>
             </a>
           ))}
-          <Button 
-            variant="outline"
-            className="border-momoney-500 text-momoney-600 hover:bg-momoney-50"
-            onClick={() => navigate('/login')}
-          >
-            <LogIn className="mr-2 h-4 w-4" />
-            Entrar
-          </Button>
-          <Button 
-            className="bg-momoney-500 hover:bg-momoney-600 neo-button"
-            onClick={() => navigate('/login')}
-          >
-            Começar Agora
-          </Button>
+          
+          {user ? (
+            <div className="flex items-center space-x-4">
+              <Button 
+                className="bg-momoney-500 hover:bg-momoney-600 rounded-xl shadow-md transform transition-all duration-300 hover:scale-105"
+                onClick={() => navigate('/dashboard')}
+              >
+                Dashboard
+              </Button>
+              <Avatar className="cursor-pointer hover:ring-2 hover:ring-momoney-300 transition-all duration-300" onClick={() => navigate('/dashboard/perfil')}>
+                <AvatarImage src={avatarUrl} alt={userName} />
+                <AvatarFallback className="bg-momoney-100 text-momoney-700">{userInitials}</AvatarFallback>
+              </Avatar>
+            </div>
+          ) : (
+            <>
+              <Button 
+                variant="outline"
+                className="border-momoney-500 text-momoney-600 hover:bg-momoney-50 rounded-xl"
+                onClick={() => navigate('/login')}
+              >
+                <LogIn className="mr-2 h-4 w-4" />
+                Entrar
+              </Button>
+              <Button 
+                className="bg-momoney-500 hover:bg-momoney-600 neo-button rounded-xl shadow-md transform transition-all duration-300 hover:scale-105"
+                onClick={() => navigate('/login')}
+              >
+                Começar Agora
+              </Button>
+            </>
+          )}
         </nav>
 
         {/* Mobile Menu Button */}
-        <button 
-          className="md:hidden text-gray-700 focus:outline-none"
-          onClick={toggleMenu}
-          aria-label={isMenuOpen ? "Fechar menu" : "Abrir menu"}
-        >
-          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
+        <div className="md:hidden flex items-center space-x-4">
+          {user && (
+            <Avatar className="cursor-pointer" onClick={() => navigate('/dashboard/perfil')}>
+              <AvatarImage src={avatarUrl} alt={userName} />
+              <AvatarFallback className="bg-momoney-100 text-momoney-700">{userInitials}</AvatarFallback>
+            </Avatar>
+          )}
+          <button 
+            className="text-gray-700 focus:outline-none"
+            onClick={toggleMenu}
+            aria-label={isMenuOpen ? "Fechar menu" : "Abrir menu"}
+          >
+            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Navigation */}
       <div 
         className={cn(
-          "md:hidden fixed inset-0 bg-white z-40 transition-transform duration-300 ease-in-out transform",
+          "md:hidden fixed inset-0 bg-white/95 backdrop-blur-sm z-40 transition-transform duration-300 ease-in-out transform",
           isMenuOpen ? "translate-x-0" : "translate-x-full"
         )}
       >
@@ -104,26 +141,40 @@ const Navbar = () => {
             </a>
           ))}
           <div className="mt-8 space-y-4">
-            <Button 
-              variant="outline"
-              className="w-full border-momoney-500 text-momoney-600 hover:bg-momoney-50"
-              onClick={() => {
-                navigate('/login');
-                setIsMenuOpen(false);
-              }}
-            >
-              <LogIn className="mr-2 h-4 w-4" />
-              Entrar
-            </Button>
-            <Button 
-              className="w-full bg-momoney-500 hover:bg-momoney-600 neo-button"
-              onClick={() => {
-                navigate('/login');
-                setIsMenuOpen(false);
-              }}
-            >
-              Começar Agora
-            </Button>
+            {user ? (
+              <Button 
+                className="w-full bg-momoney-500 hover:bg-momoney-600 neo-button rounded-xl"
+                onClick={() => {
+                  navigate('/dashboard');
+                  setIsMenuOpen(false);
+                }}
+              >
+                Dashboard
+              </Button>
+            ) : (
+              <>
+                <Button 
+                  variant="outline"
+                  className="w-full border-momoney-500 text-momoney-600 hover:bg-momoney-50 rounded-xl"
+                  onClick={() => {
+                    navigate('/login');
+                    setIsMenuOpen(false);
+                  }}
+                >
+                  <LogIn className="mr-2 h-4 w-4" />
+                  Entrar
+                </Button>
+                <Button 
+                  className="w-full bg-momoney-500 hover:bg-momoney-600 neo-button rounded-xl"
+                  onClick={() => {
+                    navigate('/login');
+                    setIsMenuOpen(false);
+                  }}
+                >
+                  Começar Agora
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </div>

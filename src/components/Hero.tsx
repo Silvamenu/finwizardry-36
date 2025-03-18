@@ -27,19 +27,19 @@ const Hero = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 pt-4 animate-fade-in reveal-delay-3">
-              <Button className="bg-momoney-500 hover:bg-momoney-600 neo-button text-white text-lg py-6 px-8" asChild>
+              <Button className="bg-momoney-500 hover:bg-momoney-600 neo-button text-white text-lg py-6 px-8 rounded-xl shadow-lg transform transition-all duration-300 hover:scale-105" asChild>
                 <Link to="/dashboard">
                   Começar Agora <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
-              <Button variant="outline" className="border-momoney-300 hover:bg-momoney-50 text-momoney-700 text-lg py-6 px-8">
+              <Button variant="outline" className="border-momoney-300 hover:bg-momoney-50 text-momoney-700 text-lg py-6 px-8 rounded-xl transform transition-all duration-300 hover:scale-105">
                 Saiba Mais
               </Button>
             </div>
           </div>
           
           <div className="relative lg:h-[500px] grid place-items-center">
-            <div className="glass-card p-8 w-full max-w-md animate-fade-in reveal-delay-2">
+            <div className="glass-card p-8 w-full max-w-md animate-fade-in reveal-delay-2 rounded-2xl shadow-xl backdrop-blur-sm bg-white/80 border border-gray-100">
               <div className="flex justify-between mb-6">
                 <h2 className="text-xl font-bold text-gray-800">Meu Dashboard</h2>
                 <span className="text-momoney-600 font-semibold">R$ 15.840,00</span>
@@ -57,7 +57,7 @@ const Hero = () => {
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-momoney-50 p-4 rounded-xl">
+                  <div className="bg-momoney-50 p-4 rounded-xl shadow-sm transition-all duration-300 hover:shadow-md hover:bg-momoney-100">
                     <div className="flex items-center space-x-3">
                       <div className="p-2 bg-momoney-100 rounded-lg">
                         <TrendingUp className="h-5 w-5 text-momoney-600" />
@@ -68,7 +68,7 @@ const Hero = () => {
                       </div>
                     </div>
                   </div>
-                  <div className="bg-momoney-50 p-4 rounded-xl">
+                  <div className="bg-momoney-50 p-4 rounded-xl shadow-sm transition-all duration-300 hover:shadow-md hover:bg-momoney-100">
                     <div className="flex items-center space-x-3">
                       <div className="p-2 bg-momoney-100 rounded-lg">
                         <DollarSign className="h-5 w-5 text-momoney-600" />
@@ -81,7 +81,7 @@ const Hero = () => {
                   </div>
                 </div>
                 
-                <div className="bg-white p-4 rounded-xl border border-gray-100 animate-fade-in reveal-delay-3">
+                <div className="bg-white p-4 rounded-xl border border-gray-100 animate-fade-in reveal-delay-3 shadow-sm transition-all duration-300 hover:shadow-md">
                   <div className="flex space-x-3 items-center mb-2">
                     <p className="font-medium">Análise de Gastos</p>
                   </div>
@@ -91,7 +91,7 @@ const Hero = () => {
                 </div>
                 
                 <div className="flex justify-center animate-fade-in reveal-delay-4">
-                  <Button variant="outline" className="w-full border-momoney-200 text-momoney-700" asChild>
+                  <Button variant="outline" className="w-full border-momoney-200 text-momoney-700 rounded-xl transform transition-all duration-300 hover:scale-105" asChild>
                     <Link to="/dashboard">
                       Ver Relatório Completo
                     </Link>
@@ -100,7 +100,7 @@ const Hero = () => {
               </div>
             </div>
             
-            <div className="absolute -right-10 top-20 glass-card p-4 shadow-lg animate-fade-in reveal-delay-4 animate-float" style={{animationDelay: '1s'}}>
+            <div className="absolute -right-10 top-20 glass-card p-4 shadow-lg animate-fade-in reveal-delay-4 animate-float rounded-xl backdrop-blur-sm bg-white/80 border border-gray-100" style={{animationDelay: '1s'}}>
               <div className="flex items-center space-x-3">
                 <AnimatedIcon 
                   icon={BarChart3} 
