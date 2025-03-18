@@ -10,7 +10,8 @@ import {
   Target, 
   BrainCircuit, 
   Settings, 
-  LogOut 
+  LogOut,
+  MessageSquare
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -47,6 +48,11 @@ export function Sidebar({ className, ...props }: SidebarProps) {
       name: "Metas", 
       path: "/dashboard/metas", 
       icon: Target
+    },
+    { 
+      name: "Mensagens", 
+      path: "/dashboard/mensagens", 
+      icon: MessageSquare 
     },
     { 
       name: "Assistente IA", 

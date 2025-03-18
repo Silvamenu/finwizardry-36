@@ -1,12 +1,14 @@
 
-import React, { ReactNode } from "react";
+import React, { ReactNode, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { User } from "lucide-react";
+import { X, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/contexts/AuthContext";
 import { Sidebar } from "@/components/ui/sidebar";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { AvatarDropdown } from "@/components/ui/avatar-dropdown";
+import { Button } from "@/components/ui/button";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -17,54 +19,53 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   children,
   activePage = "",
 }) => {
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex">
-      {/* Pass activePage through data attribute instead */}
-      <Sidebar data-active-page={activePage}>
-        {/* Sidebar content would go here */}
-      </Sidebar>
+      {/* Mobile sidebar backdrop */}
+      {isMobile && sidebarOpen && (
+        <div 
+          className="fixed inset-0 z-20 bg-black/50"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+      
+      {/* Sidebar */}
+      <div 
+        className={cn(
+          "fixed md:static inset-y-0 left-0 z-30 transition-transform transform-gpu duration-300 ease-in-out",
+          isMobile && !sidebarOpen ? "-translate-x-full" : "translate-x-0"
+        )}
+      >
+        <Sidebar data-active-page={activePage} />
+      </div>
       
       <div className="flex-1 min-w-0 flex flex-col">
         <header className="bg-white dark:bg-gray-800 shadow-sm z-10 flex justify-between items-center p-4">
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
-            {activePage}
-          </h1>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="mr-2 md:hidden"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+            >
+              {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
+            <h1 className="text-xl md:text-2xl font-bold text-gray-800 dark:text-white">
+              {activePage}
+            </h1>
+          </div>
+          <div className="flex items-center space-x-3">
             <ThemeToggle />
-            <div className="flex items-center">
-              <div
-                onClick={() => navigate("/dashboard/perfil")}
-                className={cn(
-                  "flex items-center space-x-2 cursor-pointer px-3 py-2 rounded-md",
-                  "hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
-                )}
-              >
-                {user?.user_metadata?.avatar_url ? (
-                  <img
-                    src={user.user_metadata.avatar_url}
-                    alt="Avatar"
-                    className="w-8 h-8 rounded-full"
-                  />
-                ) : (
-                  <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center">
-                    <User className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-                  </div>
-                )}
-                {!isMobile && (
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    {user?.user_metadata?.name || user?.email}
-                  </span>
-                )}
-              </div>
-            </div>
+            <AvatarDropdown />
           </div>
         </header>
         
-        <main className="flex-1 overflow-y-auto p-6">
+        <main className="flex-1 overflow-y-auto p-4 md:p-6">
           {children}
         </main>
       </div>

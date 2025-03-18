@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,6 +16,7 @@ import Metas from "./pages/dashboard/Metas";
 import Assistente from "./pages/dashboard/Assistente";
 import Configuracoes from "./pages/dashboard/Configuracoes";
 import Perfil from "./pages/dashboard/Perfil";
+import Mensagens from "./pages/dashboard/Mensagens";
 import Login from "./pages/Login";
 import AuthCallback from "./pages/AuthCallback";
 import ResetPassword from "./pages/ResetPassword";
@@ -52,6 +54,7 @@ const AppRoutes = () => {
       <Route path="/dashboard/assistente" element={<ProtectedRoute><Assistente /></ProtectedRoute>} />
       <Route path="/dashboard/configuracoes" element={<ProtectedRoute><Configuracoes /></ProtectedRoute>} />
       <Route path="/dashboard/perfil" element={<ProtectedRoute><Perfil /></ProtectedRoute>} />
+      <Route path="/dashboard/mensagens" element={<ProtectedRoute><Mensagens /></ProtectedRoute>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

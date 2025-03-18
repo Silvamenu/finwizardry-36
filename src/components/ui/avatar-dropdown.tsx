@@ -13,7 +13,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { useProfile } from "@/hooks/useProfile";
 import { Link } from "react-router-dom";
-import { User, LogOut, Settings } from "lucide-react";
+import { User, LogOut, Settings, MessageSquare } from "lucide-react";
 
 export function AvatarDropdown() {
   const { signOut } = useAuth();
@@ -58,6 +58,12 @@ export function AvatarDropdown() {
             <Link to="/dashboard/perfil" className="flex w-full cursor-pointer">
               <User className="mr-2 h-4 w-4" />
               <span>Perfil</span>
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link to="/dashboard/mensagens" className="flex w-full cursor-pointer">
+              <MessageSquare className="mr-2 h-4 w-4" />
+              <span>Mensagens</span>
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
