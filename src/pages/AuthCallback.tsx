@@ -65,7 +65,7 @@ const AuthCallback = () => {
           
           // Navigate after animation
           setTimeout(() => {
-            navigate("/dashboard");
+            window.location.href = '/#/dashboard';
             
             // Fade out after navigation
             setTimeout(() => {
