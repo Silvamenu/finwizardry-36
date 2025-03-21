@@ -24,6 +24,15 @@
   @apply animate-spin h-12 w-12 border-4 border-momoney-600 rounded-full border-t-transparent;
 }
 
+/* Button styles */
+.btn-clean {
+  @apply bg-momoney-600 text-white hover:bg-momoney-500 shadow-sm transition-all;
+}
+
+.btn-clean-outline {
+  @apply border border-momoney-400 text-momoney-600 bg-transparent hover:bg-momoney-50 transition-all;
+}
+
 /* Dark mode specific styles */
 .dark {
   --chart-grid-color: rgba(40, 60, 80, 0.15); 
@@ -49,6 +58,15 @@
 /* Button styles for dark mode */
 .dark button.btn {
   @apply text-gray-200;
+}
+
+/* Dark mode button variants */
+.dark button[class*="bg-momoney-600"] {
+  @apply bg-momoney-500 hover:bg-momoney-400;
+}
+
+.dark button[class*="border-momoney-400"] {
+  @apply border-momoney-500 text-momoney-300 hover:bg-momoney-900/20;
 }
 
 /* Chart background for dark mode */
@@ -181,6 +199,16 @@
   @apply bg-gray-800/80;
 }
 
+/* Progress bar colors for dark mode */
+.dark .progress-value {
+  @apply bg-momoney-500;
+}
+
+/* Dialog content dark mode */
+.dark .dialog-content {
+  @apply bg-gray-800 border-gray-700;
+}
+
 /* Animation keyframes */
 @keyframes floating {
   0% {
@@ -249,4 +277,18 @@
 /* Chart tooltips */
 .chart-tooltip {
   @apply bg-white p-3 rounded-lg shadow-md border border-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-white;
+}
+
+/* Dialog styling */
+.dark .dialog-overlay {
+  @apply bg-black/80;
+}
+
+/* Fix for TransactionForm dialog in dark mode */
+.dark [role="dialog"] {
+  @apply text-gray-100;
+}
+
+.dark [role="dialog"] .bg-background {
+  @apply bg-gray-800 border-gray-700;
 }

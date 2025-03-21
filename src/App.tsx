@@ -6,7 +6,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { useAuth } from "./contexts/AuthContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useThemeEffect } from "./hooks/useThemeEffect";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
@@ -22,6 +23,12 @@ import Login from "./pages/Login";
 import AuthCallback from "./pages/AuthCallback";
 import ResetPassword from "./pages/ResetPassword";
 import { LoadingScreen } from "./components/ui/loading-screen";
+
+// Theme component to apply theme based on user preferences
+const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
+  useThemeEffect();
+  return <>{children}</>;
+};
 
 // Protected route component
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
@@ -60,7 +67,7 @@ const AppRoutes = () => {
 };
 
 const App = () => {
-  // Create a new QueryClient instance inside the component
+  // Create a new QueryClient instance inside the component using useState
   const [queryClient] = useState(() => new QueryClient());
 
   return (
@@ -70,7 +77,9 @@ const App = () => {
         <Sonner />
         <HashRouter>
           <AuthProvider>
-            <AppRoutes />
+            <ThemeProvider>
+              <AppRoutes />
+            </ThemeProvider>
           </AuthProvider>
         </HashRouter>
       </TooltipProvider>

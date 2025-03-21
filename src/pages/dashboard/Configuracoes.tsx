@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -18,40 +18,46 @@ import {
   Eye, 
   Globe, 
   PaintBucket, 
-  Languages, 
   Wallet, 
-  Clock,
   Save
 } from "lucide-react";
+import { useUserPreferences } from "@/hooks/useUserPreferences";
 
 const Configuracoes = () => {
   useEffect(() => {
     document.title = "MoMoney | Configurações";
   }, []);
 
-  const [theme, setTheme] = useState("system");
-  const [language, setLanguage] = useState("pt-BR");
-  const [currency, setCurrency] = useState("BRL");
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-  const [emailNotifications, setEmailNotifications] = useState(true);
-  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
-  const [showBalance, setShowBalance] = useState(true);
-  const [dateFormat, setDateFormat] = useState("dd/MM/yyyy");
+  const { 
+    preferences, 
+    setPreferences, 
+    savePreferences, 
+    loading, 
+    saving 
+  } = useUserPreferences();
 
-  const handleSavePreferences = () => {
-    toast.success("Preferências salvas com sucesso!");
+  const handlePreferenceChange = (key: string, value: any) => {
+    setPreferences({
+      ...preferences,
+      [key]: value
+    });
+  };
+
+  const handleSavePreferences = async () => {
+    await savePreferences(preferences);
   };
 
   const handleResetSettings = () => {
     // Reset to defaults
-    setTheme("system");
-    setLanguage("pt-BR");
-    setCurrency("BRL");
-    setNotificationsEnabled(true);
-    setEmailNotifications(true);
-    setTwoFactorEnabled(false);
-    setShowBalance(true);
-    setDateFormat("dd/MM/yyyy");
+    setPreferences({
+      theme: "system",
+      language: "pt-BR",
+      currency: "BRL",
+      show_balance: true,
+      date_format: "dd/MM/yyyy",
+      notifications_enabled: true,
+      email_notifications: true,
+    });
     
     toast.info("Configurações redefinidas para o padrão");
   };
@@ -59,6 +65,16 @@ const Configuracoes = () => {
   const handleExportData = () => {
     toast.success("Seus dados serão exportados e enviados para seu email");
   };
+
+  if (loading) {
+    return (
+      <DashboardLayout activePage="Configurações">
+        <div className="flex items-center justify-center h-full">
+          <div className="login-spinner" />
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout activePage="Configurações">
@@ -94,8 +110,8 @@ const Configuracoes = () => {
                   <div className="space-y-2">
                     <Label>Tema</Label>
                     <RadioGroup 
-                      value={theme} 
-                      onValueChange={setTheme}
+                      value={preferences.theme} 
+                      onValueChange={(value) => handlePreferenceChange('theme', value)}
                       className="flex flex-col space-y-1"
                     >
                       <div className="flex items-center space-x-2">
@@ -123,8 +139,8 @@ const Configuracoes = () => {
                         </div>
                       </div>
                       <Switch 
-                        checked={showBalance} 
-                        onCheckedChange={setShowBalance} 
+                        checked={preferences.show_balance} 
+                        onCheckedChange={(value) => handlePreferenceChange('show_balance', value)} 
                       />
                     </div>
                   </div>
@@ -142,7 +158,10 @@ const Configuracoes = () => {
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
                     <Label>Idioma</Label>
-                    <Select value={language} onValueChange={setLanguage}>
+                    <Select 
+                      value={preferences.language} 
+                      onValueChange={(value) => handlePreferenceChange('language', value)}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Selecionar idioma" />
                       </SelectTrigger>
@@ -156,7 +175,10 @@ const Configuracoes = () => {
                   
                   <div className="space-y-2">
                     <Label>Moeda</Label>
-                    <Select value={currency} onValueChange={setCurrency}>
+                    <Select 
+                      value={preferences.currency} 
+                      onValueChange={(value) => handlePreferenceChange('currency', value)}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Selecionar moeda" />
                       </SelectTrigger>
@@ -170,7 +192,10 @@ const Configuracoes = () => {
                   
                   <div className="space-y-2">
                     <Label>Formato de data</Label>
-                    <Select value={dateFormat} onValueChange={setDateFormat}>
+                    <Select 
+                      value={preferences.date_format} 
+                      onValueChange={(value) => handlePreferenceChange('date_format', value)}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Formato de data" />
                       </SelectTrigger>
@@ -216,7 +241,7 @@ const Configuracoes = () => {
                     <div className="space-y-2">
                       <Label>Exportar dados</Label>
                       <Button 
-                        variant="outline" 
+                        variant="clean" 
                         className="w-full"
                         onClick={handleExportData}
                       >
@@ -239,11 +264,13 @@ const Configuracoes = () => {
                 Restaurar padrões
               </Button>
               <Button 
+                variant="clean"
                 onClick={handleSavePreferences}
                 className="gap-2"
+                disabled={saving}
               >
                 <Save className="h-4 w-4" />
-                Salvar preferências
+                {saving ? 'Salvando...' : 'Salvar preferências'}
               </Button>
             </div>
           </TabsContent>
@@ -268,27 +295,10 @@ const Configuracoes = () => {
                       </div>
                     </div>
                     <Switch 
-                      checked={twoFactorEnabled} 
-                      onCheckedChange={setTwoFactorEnabled} 
+                      checked={false} 
+                      onCheckedChange={() => toast.info('Funcionalidade em desenvolvimento')} 
                     />
                   </div>
-                  
-                  {twoFactorEnabled && (
-                    <div className="border rounded-lg p-4 space-y-4">
-                      <h4 className="text-sm font-medium">Configurar autenticação de dois fatores</h4>
-                      <p className="text-sm text-gray-500">
-                        Para configurar a autenticação de dois fatores, você precisa escanear o código QR abaixo com um aplicativo autenticador como Google Authenticator ou Authy.
-                      </p>
-                      <div className="bg-gray-100 dark:bg-gray-800 h-40 w-40 mx-auto flex items-center justify-center">
-                        <p className="text-xs text-gray-500">Código QR (simulação)</p>
-                      </div>
-                      <div className="space-y-2">
-                        <Label>Código de verificação</Label>
-                        <Input placeholder="Digite o código do aplicativo autenticador" maxLength={6} />
-                        <Button size="sm" className="w-full">Verificar e ativar</Button>
-                      </div>
-                    </div>
-                  )}
                 </div>
                 
                 <div className="space-y-4">
@@ -305,7 +315,7 @@ const Configuracoes = () => {
                     <Label>Confirmar nova senha</Label>
                     <Input type="password" placeholder="Confirme sua nova senha" />
                   </div>
-                  <Button>Alterar senha</Button>
+                  <Button variant="clean">Alterar senha</Button>
                 </div>
                 
                 <div className="space-y-4">
@@ -317,15 +327,6 @@ const Configuracoes = () => {
                         <p className="text-xs text-gray-500">Ativo agora • São Paulo, Brasil</p>
                       </div>
                       <Badge>Atual</Badge>
-                    </div>
-                  </div>
-                  <div className="border rounded-lg p-4 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium">App Mobile - Android</p>
-                        <p className="text-xs text-gray-500">Ativo há 2 horas • São Paulo, Brasil</p>
-                      </div>
-                      <Button variant="outline" size="sm">Encerrar</Button>
                     </div>
                   </div>
                 </div>
@@ -350,8 +351,8 @@ const Configuracoes = () => {
                     <p className="text-xs text-gray-500">Receba notificações no aplicativo</p>
                   </div>
                   <Switch 
-                    checked={notificationsEnabled} 
-                    onCheckedChange={setNotificationsEnabled} 
+                    checked={preferences.notifications_enabled} 
+                    onCheckedChange={(value) => handlePreferenceChange('notifications_enabled', value)} 
                   />
                 </div>
                 
@@ -361,8 +362,8 @@ const Configuracoes = () => {
                     <p className="text-xs text-gray-500">Receba notificações por email</p>
                   </div>
                   <Switch 
-                    checked={emailNotifications} 
-                    onCheckedChange={setEmailNotifications} 
+                    checked={preferences.email_notifications} 
+                    onCheckedChange={(value) => handlePreferenceChange('email_notifications', value)} 
                   />
                 </div>
                 
@@ -412,8 +413,12 @@ const Configuracoes = () => {
                   </div>
                 </div>
                 
-                <Button onClick={() => toast.success("Preferências de notificação salvas!")}>
-                  Salvar preferências
+                <Button 
+                  variant="clean"
+                  onClick={handleSavePreferences} 
+                  disabled={saving}
+                >
+                  {saving ? 'Salvando...' : 'Salvar preferências'}
                 </Button>
               </CardContent>
             </Card>

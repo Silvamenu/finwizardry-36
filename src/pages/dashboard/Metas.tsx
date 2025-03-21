@@ -116,7 +116,7 @@ const GoalCard = ({ goal }: { goal: Goal }) => {
       </CardContent>
       <CardFooter className="pt-2 flex gap-2">
         <Button variant="outline" size="sm" className="flex-1">Editar</Button>
-        <Button size="sm" className="flex-1">Adicionar</Button>
+        <Button variant="clean" size="sm" className="flex-1">Adicionar</Button>
       </CardFooter>
     </Card>
   );
@@ -157,7 +157,7 @@ const Metas = () => {
             <h1 className="text-3xl font-bold mb-2">Suas Metas Financeiras</h1>
             <p className="text-gray-500">Acompanhe o progresso das suas metas e realize seus sonhos</p>
           </div>
-          <Button className="animate-fade-in">
+          <Button className="animate-fade-in" variant="clean">
             <PlusCircle className="h-4 w-4 mr-2" />
             Nova Meta
           </Button>
@@ -198,10 +198,10 @@ const Metas = () => {
           ))}
           
           {/* Add Goal Card */}
-          <Card className="flex flex-col items-center justify-center p-8 border-dashed border-2 bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer">
+          <Card className="flex flex-col items-center justify-center p-8 border-dashed border-2 bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer">
             <PlusCircle className="h-10 w-10 text-gray-400 mb-4" />
-            <h3 className="text-lg font-medium text-gray-600">Adicionar Nova Meta</h3>
-            <p className="text-sm text-gray-500 text-center mt-2">
+            <h3 className="text-lg font-medium text-gray-600 dark:text-gray-300">Adicionar Nova Meta</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400 text-center mt-2">
               Defina seus objetivos financeiros e acompanhe seu progresso
             </p>
           </Card>
