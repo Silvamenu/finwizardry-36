@@ -342,7 +342,7 @@ export function ImportCSV({
     setError(null);
   };
   return <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl rounded-3xl bg-[#000a0e]/0">
+      <DialogContent className="max-w-3xl bg-[#000a0e]/0 rounded-3xl">
         <DialogHeader>
           <DialogTitle>Importar Transações de CSV</DialogTitle>
           <DialogDescription>
