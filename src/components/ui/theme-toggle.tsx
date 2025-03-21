@@ -43,7 +43,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
       className={cn(
         "flex w-16 h-8 p-1 rounded-full cursor-pointer transition-all duration-300",
         isDark 
-          ? "bg-zinc-800 border border-zinc-700" 
+          ? "bg-gray-800 border border-gray-700" 
           : "bg-white border border-zinc-200",
         className
       )}
@@ -57,18 +57,18 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
           className={cn(
             "flex justify-center items-center w-6 h-6 rounded-full transition-transform duration-300",
             isDark 
-              ? "transform translate-x-0 bg-zinc-700" 
+              ? "transform translate-x-0 bg-gray-700" 
               : "transform translate-x-8 bg-gray-200"
           )}
         >
           {isDark ? (
             <Moon 
-              className="w-4 h-4 text-white" 
+              className="w-4 h-4 text-momoney-300" 
               strokeWidth={1.5}
             />
           ) : (
             <Sun 
-              className="w-4 h-4 text-gray-700" 
+              className="w-4 h-4 text-amber-500" 
               strokeWidth={1.5}
             />
           )}
@@ -83,7 +83,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
         >
           {isDark ? (
             <Sun 
-              className="w-4 h-4 text-gray-400" 
+              className="w-4 h-4 text-amber-300 opacity-50" 
               strokeWidth={1.5}
             />
           ) : (

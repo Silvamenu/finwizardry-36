@@ -24,9 +24,15 @@
   @apply animate-spin h-12 w-12 border-4 border-momoney-600 rounded-full border-t-transparent;
 }
 
+/* Dark mode specific styles */
+.dark {
+  --chart-grid-color: rgba(255, 255, 255, 0.1);
+  --chart-text-color: rgba(255, 255, 255, 0.7);
+}
+
 /* Input field dark mode styles */
 .dark input {
-  @apply bg-gray-800 border-gray-700 text-white placeholder:text-gray-500;
+  @apply bg-gray-800 border-gray-700 text-white placeholder:text-gray-400;
 }
 
 /* Rounded styles for inputs in dark mode */
@@ -40,8 +46,31 @@
 }
 
 /* Button styles for dark mode */
-.dark button {
+.dark button.btn {
   @apply text-gray-200;
+}
+
+/* Chart background for dark mode */
+.dark .recharts-surface {
+  @apply !bg-transparent;
+}
+
+.dark .recharts-cartesian-grid-horizontal line,
+.dark .recharts-cartesian-grid-vertical line {
+  @apply !stroke-gray-700;
+}
+
+.dark .recharts-tooltip-wrapper .recharts-default-tooltip {
+  @apply !bg-gray-800 !border-gray-700 !text-white;
+}
+
+.dark .recharts-text {
+  @apply !fill-gray-400;
+}
+
+/* Dark mode card */
+.dark-card {
+  @apply dark:bg-gray-800 dark:border-gray-700 dark:text-white transition-colors duration-200;
 }
 
 /* Advanced animations */
@@ -85,11 +114,13 @@
 /* Glass card styling */
 .glass-card {
   @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-lg rounded-2xl;
+  @apply dark:bg-gray-900/80 dark:border-gray-800/50;
 }
 
 /* Neo-brutalism button */
 .neo-button {
   @apply relative shadow-[5px_5px_0px_0px_rgba(0,0,0,0.2)] transition-all hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,0.2)];
+  @apply dark:shadow-[5px_5px_0px_0px_rgba(255,255,255,0.1)];
 }
 
 /* Add custom scrollbar */
@@ -103,15 +134,15 @@
 }
 
 .scrollbar-thin::-webkit-scrollbar-track {
-  background: transparent;
+  @apply bg-transparent dark:bg-transparent;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  @apply bg-gray-300 rounded-full;
+  @apply bg-gray-300 dark:bg-gray-600 rounded-full;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-400;
+  @apply bg-gray-400 dark:bg-gray-500;
 }
 
 /* Animation keyframes */
@@ -162,7 +193,7 @@
 }
 
 .hover-underline::after {
-  @apply content-[''] absolute left-0 bottom-0 w-0 h-0.5 bg-momoney-500 transition-all duration-300;
+  @apply content-[''] absolute left-0 bottom-0 w-0 h-0.5 bg-momoney-500 dark:bg-momoney-400 transition-all duration-300;
 }
 
 .hover-underline:hover::after {
@@ -181,5 +212,5 @@
 
 /* Chart tooltips */
 .chart-tooltip {
-  @apply bg-white p-3 rounded-lg shadow-md border border-gray-100;
+  @apply bg-white p-3 rounded-lg shadow-md border border-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-white;
 }

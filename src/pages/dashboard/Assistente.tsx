@@ -6,10 +6,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Bot, Send, Info, User, Sparkles, ArrowUp, HelpCircle, Clock, ThumbsUp, ThumbsDown, Volume2, VolumeX } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Bot, Send, Info, User, Sparkles, ArrowUp, HelpCircle, Clock, ThumbsUp, ThumbsDown, Volume2, VolumeX, Brain, FileText, Cpu } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Separator } from "@/components/ui/separator";
 
 interface Message {
   id: string;
@@ -23,6 +25,7 @@ interface Assistant {
   name: string;
   description: string;
   icon: React.ReactNode;
+  gradient: string;
 }
 
 const assistants: Assistant[] = [
@@ -30,19 +33,43 @@ const assistants: Assistant[] = [
     id: "financial-advisor",
     name: "Consultor Financeiro",
     description: "Tire dúvidas sobre investimentos, planejamento financeiro e economia",
-    icon: <Sparkles className="h-6 w-6 text-purple-500" />
+    icon: <Sparkles className="h-6 w-6 text-purple-500" />,
+    gradient: "from-purple-500/20 to-purple-600/20"
   },
   {
     id: "budget-assistant",
     name: "Assistente de Orçamento",
     description: "Ajuda com orçamento pessoal, controle de gastos e dicas de economia",
-    icon: <ArrowUp className="h-6 w-6 text-green-500" />
+    icon: <ArrowUp className="h-6 w-6 text-green-500" />,
+    gradient: "from-green-500/20 to-green-600/20"
   },
   {
     id: "help-center",
     name: "Central de Ajuda",
     description: "Tire dúvidas sobre como usar o MoMoney e suas funcionalidades",
-    icon: <HelpCircle className="h-6 w-6 text-blue-500" />
+    icon: <HelpCircle className="h-6 w-6 text-blue-500" />,
+    gradient: "from-blue-500/20 to-blue-600/20"
+  },
+  {
+    id: "economic-analyst",
+    name: "Analista Econômico",
+    description: "Análise de tendências econômicas e impactos no mercado financeiro",
+    icon: <Brain className="h-6 w-6 text-red-500" />,
+    gradient: "from-red-500/20 to-red-600/20"
+  },
+  {
+    id: "document-assistant",
+    name: "Assistente Documental",
+    description: "Ajuda com documentos financeiros, contratos e questões legais",
+    icon: <FileText className="h-6 w-6 text-amber-500" />,
+    gradient: "from-amber-500/20 to-amber-600/20"
+  },
+  {
+    id: "ai-analyst",
+    name: "Analista IA",
+    description: "Análise aprofundada dos seus dados financeiros com inteligência artificial",
+    icon: <Cpu className="h-6 w-6 text-cyan-500" />,
+    gradient: "from-cyan-500/20 to-cyan-600/20"
   }
 ];
 
@@ -62,6 +89,21 @@ const predefinedResponses: Record<string, string[]> = {
     "Para adicionar uma nova transação, vá até a página 'Transações' e clique no botão '+Nova Transação' no canto superior direito da tela.",
     "Você pode personalizar suas metas financeiras na seção 'Metas'. Lá você pode definir objetivos, prazos e acompanhar seu progresso.",
     "Para exportar seus relatórios financeiros, acesse a página que deseja exportar e procure pelo botão 'Exportar' geralmente localizado na parte superior da página."
+  ],
+  "economic-analyst": [
+    "A recente decisão do Banco Central de manter a taxa Selic em 10.5% sugere uma postura cautelosa diante da inflação. Para seu portfólio, isso favorece investimentos em títulos pós-fixados e empresas com baixo endividamento.",
+    "O aumento do dólar em 3.2% este mês pode indicar uma oportunidade para diversificar com ETFs internacionais, mas mantenha exposição limitada a 15-20% do seu patrimônio para gerenciar a volatilidade cambial.",
+    "Com a recente aprovação da reforma tributária, setores como varejo e serviços tendem a se beneficiar no médio prazo. Considere aumentar sua exposição a estes setores nas próximas alocações."
+  ],
+  "document-assistant": [
+    "Analisei seu contrato de financiamento imobiliário e identifiquei que você pode solicitar a portabilidade para outro banco, potencialmente economizando R$ 32.500 ao longo do contrato com taxas mais competitivas.",
+    "Para sua declaração de Imposto de Renda, considere incluir os gastos com saúde que totalizaram R$ 7.800 no último ano. Isso pode aumentar sua restituição em aproximadamente R$ 1.950.",
+    "Verifiquei que seu seguro de vida tem cobertura limitada para doenças graves. Recomendo revisar e possivelmente complementar com um seguro específico, especialmente considerando seu histórico familiar."
+  ],
+  "ai-analyst": [
+    "Minha análise preditiva indica que mantendo seu padrão atual de investimentos, você atingirá sua meta de aposentadoria 3 anos antes do previsto. Considere aumentar sua contribuição mensal em R$ 300 para adiantar em mais 2 anos.",
+    "Detectei um padrão sazonal em seus gastos com lazer, com picos em janeiro e julho. Planejando antecipadamente para estes períodos, você poderia economizar cerca de 22% através de reservas antecipadas e promoções fora de temporada.",
+    "Baseado no seu histórico financeiro e objetivos, meu algoritmo calcula que sua alocação ideal seria: 45% em renda fixa, 30% em ações, 15% em fundos imobiliários e 10% em reserva de oportunidade. Isso otimizaria seu retorno ajustado ao risco."
   ]
 };
 
@@ -80,6 +122,21 @@ const suggestedQuestions: Record<string, string[]> = {
     "Como adicionar uma nova transação?",
     "Como criar metas financeiras?",
     "Como exportar meus relatórios?"
+  ],
+  "economic-analyst": [
+    "Como a taxa Selic afeta meus investimentos?",
+    "Quais setores da economia estão mais promissores?",
+    "Como proteger meu patrimônio da inflação?"
+  ],
+  "document-assistant": [
+    "Como otimizar minha declaração de IR?",
+    "Quais documentos devo guardar e por quanto tempo?",
+    "Como negociar melhores condições em contratos?"
+  ],
+  "ai-analyst": [
+    "Qual minha projeção financeira para os próximos 5 anos?",
+    "Como otimizar minha alocação de ativos?",
+    "Quais padrões de gasto posso melhorar?"
   ]
 };
 
@@ -89,6 +146,7 @@ interface ConversationHistory {
   title: string;
   date: Date;
   assistantId: string;
+  preview: string;
 }
 
 const sampleHistories: ConversationHistory[] = [
@@ -96,19 +154,36 @@ const sampleHistories: ConversationHistory[] = [
     id: "hist-1",
     title: "Planejamento para aposentadoria",
     date: new Date(2023, 5, 15),
-    assistantId: "financial-advisor"
+    assistantId: "financial-advisor",
+    preview: "Discussão sobre estratégias para planejamento de aposentadoria e FIRE"
   },
   {
     id: "hist-2",
     title: "Revisão de gastos mensais",
     date: new Date(2023, 6, 22),
-    assistantId: "budget-assistant"
+    assistantId: "budget-assistant",
+    preview: "Análise detalhada de gastos recorrentes e oportunidades de economia"
   },
   {
     id: "hist-3",
     title: "Como configurar categorias",
     date: new Date(2023, 7, 3),
-    assistantId: "help-center"
+    assistantId: "help-center",
+    preview: "Tutorial sobre configuração de categorias personalizadas"
+  },
+  {
+    id: "hist-4",
+    title: "Impacto da taxa de juros",
+    date: new Date(2023, 8, 12),
+    assistantId: "economic-analyst",
+    preview: "Análise do impacto das variações na taxa de juros em diferentes investimentos"
+  },
+  {
+    id: "hist-5",
+    title: "Revisão de contrato imobiliário",
+    date: new Date(2023, 9, 18),
+    assistantId: "document-assistant",
+    preview: "Análise das cláusulas contratuais e recomendações de negociação"
   }
 ];
 
@@ -124,6 +199,7 @@ const Assistente = () => {
   const [activeTab, setActiveTab] = useState<string>("chat");
   const [conversations, setConversations] = useState<ConversationHistory[]>(sampleHistories);
   const [audioEnabled, setAudioEnabled] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Efeito para rolar para a última mensagem
@@ -266,15 +342,24 @@ const Assistente = () => {
       { description: !audioEnabled ? "As respostas serão lidas em voz alta." : "As respostas não serão mais lidas." }
     );
   };
+
+  // Filtragem de conversas baseada no termo de pesquisa
+  const filteredConversations = conversations.filter(convo => 
+    convo.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    convo.preview.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   
   return (
     <DashboardLayout activePage="Assistente IA">
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-[calc(100vh-12rem)]">
         {/* Assistants Sidebar */}
         <div className="lg:col-span-1">
-          <Card className="h-full flex flex-col">
+          <Card className="h-full flex flex-col dark-card">
             <CardHeader>
-              <CardTitle>Assistente IA</CardTitle>
+              <CardTitle className="flex items-center">
+                <Bot className="mr-2 h-5 w-5 text-momoney-500" />
+                Assistente IA
+              </CardTitle>
               <CardDescription>Seu parceiro financeiro inteligente</CardDescription>
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mt-2">
                 <TabsList className="w-full grid grid-cols-2">
@@ -284,64 +369,92 @@ const Assistente = () => {
               </Tabs>
             </CardHeader>
             
-            <CardContent className="flex-1 overflow-y-auto">
+            <CardContent className="flex-1 overflow-y-auto scrollbar-thin">
               <TabsContent value="chat" className="space-y-4 mt-0">
-                {assistants.map((assistant) => (
-                  <Button
-                    key={assistant.id}
-                    variant={activeAssistant.id === assistant.id ? "default" : "outline"}
-                    className={cn(
-                      "w-full justify-start h-auto py-3",
-                      activeAssistant.id === assistant.id ? "bg-momoney-500" : ""
-                    )}
-                    onClick={() => setActiveAssistant(assistant)}
-                  >
-                    <div className="mr-2">
-                      {assistant.icon}
-                    </div>
-                    <div className="text-left">
-                      <p className="font-medium">{assistant.name}</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1 mt-1">
-                        {assistant.description}
-                      </p>
-                    </div>
-                  </Button>
-                ))}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3">
+                  {assistants.map((assistant) => (
+                    <Button
+                      key={assistant.id}
+                      variant={activeAssistant.id === assistant.id ? "default" : "outline"}
+                      className={cn(
+                        "w-full justify-start h-auto py-3 transition-all duration-300",
+                        activeAssistant.id === assistant.id 
+                          ? "bg-gradient-to-r from-momoney-600 to-momoney-500 text-white" 
+                          : `bg-gradient-to-r ${assistant.gradient} hover:bg-gradient-to-r hover:from-momoney-500/10 hover:to-momoney-400/10`
+                      )}
+                      onClick={() => setActiveAssistant(assistant)}
+                    >
+                      <div className="mr-2">
+                        {assistant.icon}
+                      </div>
+                      <div className="text-left">
+                        <p className="font-medium">{assistant.name}</p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1 mt-1">
+                          {assistant.description}
+                        </p>
+                      </div>
+                    </Button>
+                  ))}
+                </div>
               </TabsContent>
               
               <TabsContent value="history" className="space-y-3 mt-0">
                 <Button 
                   variant="outline" 
-                  className="w-full justify-start mb-4"
+                  className="w-full justify-start mb-4 bg-gradient-to-r from-momoney-500/10 to-momoney-400/10 hover:from-momoney-500/20 hover:to-momoney-400/20"
                   onClick={createNewConversation}
                 >
                   <Bot className="h-4 w-4 mr-2 text-momoney-500" />
                   Nova Conversa
                 </Button>
+
+                <div className="relative mb-4">
+                  <Input
+                    type="text"
+                    placeholder="Pesquisar conversas..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full pl-8"
+                  />
+                  <div className="absolute left-2.5 top-2.5">
+                    <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                  </div>
+                </div>
                 
-                {conversations.map((convo) => (
-                  <Button
-                    key={convo.id}
-                    variant="ghost"
-                    className="w-full justify-start h-auto py-2 px-3 hover:bg-gray-100"
-                    onClick={() => loadConversation(convo.id)}
-                  >
-                    <div className="w-full flex flex-col items-start">
-                      <div className="flex items-center w-full">
-                        <span className="font-medium line-clamp-1 text-sm">{convo.title}</span>
-                        <Clock className="h-3 w-3 ml-auto text-gray-400" />
+                {filteredConversations.length > 0 ? (
+                  filteredConversations.map((convo) => (
+                    <Button
+                      key={convo.id}
+                      variant="ghost"
+                      className="w-full justify-start h-auto py-2 px-3 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors rounded-lg"
+                      onClick={() => loadConversation(convo.id)}
+                    >
+                      <div className="w-full flex flex-col items-start">
+                        <div className="flex items-center w-full">
+                          <span className="font-medium line-clamp-1 text-sm">{convo.title}</span>
+                          <Clock className="h-3 w-3 ml-auto text-gray-400" />
+                        </div>
+                        <p className="text-xs text-gray-500 line-clamp-1 text-left mt-1">{convo.preview}</p>
+                        <div className="flex items-center w-full mt-1">
+                          <span className="text-xs text-gray-500">
+                            {convo.date.toLocaleDateString()}
+                          </span>
+                          <Badge variant="outline" className="ml-auto text-xs bg-transparent">
+                            {assistants.find(a => a.id === convo.assistantId)?.name.split(' ')[0]}
+                          </Badge>
+                        </div>
                       </div>
-                      <div className="flex items-center w-full mt-1">
-                        <span className="text-xs text-gray-500">
-                          {convo.date.toLocaleDateString()}
-                        </span>
-                        <span className="ml-auto text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
-                          {assistants.find(a => a.id === convo.assistantId)?.name.split(' ')[0]}
-                        </span>
-                      </div>
-                    </div>
-                  </Button>
-                ))}
+                    </Button>
+                  ))
+                ) : (
+                  <div className="text-center py-4">
+                    <p className="text-gray-500 dark:text-gray-400 text-sm">
+                      Nenhuma conversa encontrada
+                    </p>
+                  </div>
+                )}
               </TabsContent>
             </CardContent>
             
@@ -379,7 +492,7 @@ const Assistente = () => {
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>Informações sobre nosso assistente IA</p>
+                      <p>Nossa IA utiliza modelos avançados para analisar seus dados financeiros e fornecer recomendações personalizadas.</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -390,10 +503,10 @@ const Assistente = () => {
 
         {/* Chat Area */}
         <div className="lg:col-span-3 flex flex-col">
-          <Card className="flex-1 flex flex-col h-full overflow-hidden relative">
+          <Card className="flex-1 flex flex-col h-full overflow-hidden relative dark-card">
             <CardHeader className="pb-3 border-b flex-shrink-0">
               <div className="flex items-center">
-                <div className="mr-2">
+                <div className={`mr-2 p-2 rounded-full bg-gradient-to-r ${activeAssistant.gradient}`}>
                   {activeAssistant.icon}
                 </div>
                 <div>
@@ -404,12 +517,12 @@ const Assistente = () => {
             </CardHeader>
             
             {/* Messages Container */}
-            <CardContent className="flex-1 overflow-y-auto p-4 space-y-4">
+            <CardContent className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin">
               {messages.map((message) => (
                 <div
                   key={message.id}
                   className={cn(
-                    "flex",
+                    "flex animate-fade-in",
                     message.role === "user" ? "justify-end" : "justify-start"
                   )}
                 >
@@ -417,20 +530,20 @@ const Assistente = () => {
                     className={cn(
                       "max-w-[80%] rounded-lg p-4",
                       message.role === "user"
-                        ? "bg-momoney-500 text-white"
-                        : "bg-gray-100 text-gray-900"
+                        ? "bg-gradient-to-r from-momoney-600 to-momoney-500 text-white"
+                        : "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white"
                     )}
                   >
                     <div className="flex items-center mb-2">
                       {message.role === "assistant" ? (
                         <Avatar className="h-6 w-6 mr-2">
-                          <AvatarFallback>
+                          <AvatarFallback className="bg-momoney-100 text-momoney-700 dark:bg-momoney-900 dark:text-momoney-300">
                             <Bot className="h-4 w-4" />
                           </AvatarFallback>
                         </Avatar>
                       ) : (
                         <Avatar className="h-6 w-6 mr-2">
-                          <AvatarFallback>
+                          <AvatarFallback className="bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300">
                             <User className="h-4 w-4" />
                           </AvatarFallback>
                         </Avatar>
@@ -453,7 +566,7 @@ const Assistente = () => {
                         <Button 
                           variant="ghost" 
                           size="sm" 
-                          className="h-6 px-2"
+                          className="h-6 px-2 hover:bg-white/10"
                           onClick={() => handleFeedback(true)}
                         >
                           <ThumbsUp className="h-3 w-3" />
@@ -461,7 +574,7 @@ const Assistente = () => {
                         <Button 
                           variant="ghost" 
                           size="sm" 
-                          className="h-6 px-2"
+                          className="h-6 px-2 hover:bg-white/10"
                           onClick={() => handleFeedback(false)}
                         >
                           <ThumbsDown className="h-3 w-3" />
@@ -473,12 +586,12 @@ const Assistente = () => {
               ))}
               
               {isTyping && (
-                <div className="flex justify-start">
-                  <div className="bg-gray-100 text-gray-900 rounded-lg p-4 max-w-[80%]">
+                <div className="flex justify-start animate-fade-in">
+                  <div className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg p-4 max-w-[80%]">
                     <div className="flex space-x-2">
-                      <div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
-                      <div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
-                      <div className="h-2 w-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "600ms" }}></div>
+                      <div className="h-2 w-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
+                      <div className="h-2 w-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
+                      <div className="h-2 w-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "600ms" }}></div>
                     </div>
                   </div>
                 </div>
@@ -490,14 +603,14 @@ const Assistente = () => {
             {/* Suggested Questions */}
             {messages.length <= 2 && (
               <div className="px-4 pb-4">
-                <p className="text-sm text-gray-500 mb-2">Perguntas sugeridas:</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Perguntas sugeridas:</p>
                 <div className="flex flex-wrap gap-2">
                   {suggestedQuestions[activeAssistant.id].map((question, index) => (
                     <Button
                       key={index}
                       variant="outline"
                       size="sm"
-                      className="text-xs"
+                      className="text-xs bg-gradient-to-r from-white/50 to-white/30 hover:from-white/70 hover:to-white/50 dark:from-gray-700/50 dark:to-gray-800/30 dark:hover:from-gray-700/70 dark:hover:to-gray-800/50 border border-gray-200 dark:border-gray-700 transition-all"
                       onClick={() => handleSuggestedQuestion(question)}
                     >
                       {question}
@@ -508,7 +621,7 @@ const Assistente = () => {
             )}
             
             {/* Input Area */}
-            <CardFooter className="border-t pt-4 flex-shrink-0">
+            <CardFooter className="border-t pt-4 pb-4 flex-shrink-0">
               <form
                 className="flex w-full items-center space-x-2"
                 onSubmit={(e) => {
@@ -525,11 +638,11 @@ const Assistente = () => {
                 />
                 <Button 
                   type="submit" 
-                  size="icon" 
-                  className="bg-momoney-500 hover:bg-momoney-600"
+                  className="bg-gradient-to-r from-momoney-600 to-momoney-500 hover:from-momoney-700 hover:to-momoney-600 text-white"
                   disabled={!input.trim() || isTyping}
                 >
-                  <Send className="h-4 w-4" />
+                  <Send className="h-4 w-4 mr-2" />
+                  Enviar
                 </Button>
               </form>
             </CardFooter>

@@ -23,6 +23,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { ArrowUp, ArrowDown, Info } from "lucide-react";
 import AnimatedIcon from "@/components/AnimatedIcon";
+import { cn } from "@/lib/utils";
 
 // Simulated data for the chart
 const generateMonthlyData = () => {
@@ -77,7 +78,7 @@ const FinancialOverview = () => {
       label: "Despesa",
       theme: {
         light: "#fb7185",
-        dark: "#e11d48",
+        dark: "#f43f5e",
       },
     },
     saldo: {
@@ -99,7 +100,7 @@ const FinancialOverview = () => {
   };
 
   return (
-    <Card className="h-full animate-fade-in">
+    <Card className="h-full animate-fade-in dark-card">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-lg font-medium">Visão Geral Financeira</CardTitle>
         <div className="flex space-x-2">
@@ -107,6 +108,9 @@ const FinancialOverview = () => {
             variant={timeRange === 'weekly' ? "default" : "outline"} 
             size="sm"
             onClick={() => setTimeRange('weekly')}
+            className={cn(
+              timeRange === 'weekly' && "bg-gradient-to-r from-momoney-600 to-momoney-500"
+            )}
           >
             Semanal
           </Button>
@@ -114,6 +118,9 @@ const FinancialOverview = () => {
             variant={timeRange === 'monthly' ? "default" : "outline"} 
             size="sm"
             onClick={() => setTimeRange('monthly')}
+            className={cn(
+              timeRange === 'monthly' && "bg-gradient-to-r from-momoney-600 to-momoney-500"
+            )}
           >
             Mensal
           </Button>
@@ -121,44 +128,44 @@ const FinancialOverview = () => {
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="p-4 bg-blue-50 rounded-lg">
+          <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 transition-colors duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500">Receita</p>
-                <p className="text-xl font-bold text-blue-500">{formatCurrency(totals.receita)}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Receita</p>
+                <p className="text-xl font-bold text-blue-500 dark:text-blue-400">{formatCurrency(totals.receita)}</p>
               </div>
               <AnimatedIcon 
                 icon={ArrowUp} 
-                className="p-2 bg-blue-100 text-blue-500 rounded-lg w-10 h-10" 
+                className="p-2 bg-blue-100 dark:bg-blue-800/50 text-blue-500 dark:text-blue-300 rounded-lg w-10 h-10" 
                 animation="float"
               />
             </div>
           </div>
           
-          <div className="p-4 bg-red-50 rounded-lg">
+          <div className="p-4 rounded-lg bg-red-50 dark:bg-red-900/20 transition-colors duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500">Despesa</p>
-                <p className="text-xl font-bold text-red-500">{formatCurrency(totals.despesa)}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Despesa</p>
+                <p className="text-xl font-bold text-red-500 dark:text-red-400">{formatCurrency(totals.despesa)}</p>
               </div>
               <AnimatedIcon 
                 icon={ArrowDown} 
-                className="p-2 bg-red-100 text-red-500 rounded-lg w-10 h-10" 
+                className="p-2 bg-red-100 dark:bg-red-800/50 text-red-500 dark:text-red-300 rounded-lg w-10 h-10" 
                 animation="float"
                 delay="0.2s"
               />
             </div>
           </div>
           
-          <div className="p-4 bg-green-50 rounded-lg">
+          <div className="p-4 rounded-lg bg-green-50 dark:bg-green-900/20 transition-colors duration-300">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-500">Saldo</p>
-                <p className="text-xl font-bold text-green-500">{formatCurrency(totals.saldo)}</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">Saldo</p>
+                <p className="text-xl font-bold text-green-500 dark:text-green-400">{formatCurrency(totals.saldo)}</p>
               </div>
               <AnimatedIcon 
                 icon={Info} 
-                className="p-2 bg-green-100 text-green-500 rounded-lg w-10 h-10" 
+                className="p-2 bg-green-100 dark:bg-green-800/50 text-green-500 dark:text-green-300 rounded-lg w-10 h-10" 
                 animation="float"
                 delay="0.4s"
               />
@@ -172,36 +179,40 @@ const FinancialOverview = () => {
               <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorReceita" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#38bdf8" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#38bdf8" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="colorDespesa" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#fb7185" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#fb7185" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#f43f5e" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#f43f5e" stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="colorSaldo" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#4ade80" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#4ade80" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#22c55e" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#22c55e" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                <CartesianGrid 
+                  strokeDasharray="3 3" 
+                  vertical={false} 
+                  stroke="var(--chart-grid-color, rgba(0, 0, 0, 0.1))"
+                />
                 <XAxis 
                   dataKey="name" 
-                  tick={{ fontSize: 12 }} 
-                  tickLine={false} 
-                  axisLine={false} 
+                  tick={{ fontSize: 12, fill: "var(--chart-text-color, rgba(0, 0, 0, 0.7))" }} 
+                  tickLine={{ stroke: "var(--chart-grid-color, rgba(0, 0, 0, 0.1))" }} 
+                  axisLine={{ stroke: "var(--chart-grid-color, rgba(0, 0, 0, 0.1))" }} 
                 />
                 <YAxis 
-                  tick={{ fontSize: 12 }} 
-                  tickLine={false} 
-                  axisLine={false}
+                  tick={{ fontSize: 12, fill: "var(--chart-text-color, rgba(0, 0, 0, 0.7))" }} 
+                  tickLine={{ stroke: "var(--chart-grid-color, rgba(0, 0, 0, 0.1))" }} 
+                  axisLine={{ stroke: "var(--chart-grid-color, rgba(0, 0, 0, 0.1))" }}
                   tickFormatter={(value) => `R$${value / 1000}k`}
                 />
                 <Tooltip 
                   content={({ active, payload }) => {
                     if (active && payload && payload.length) {
                       return (
-                        <div className="bg-white p-3 border rounded-lg shadow-lg">
+                        <div className="chart-tooltip">
                           <p className="font-medium mb-1">{payload[0].payload.name}</p>
                           {payload.map((entry, index) => (
                             <div key={index} className="flex items-center justify-between mb-1">
@@ -210,13 +221,13 @@ const FinancialOverview = () => {
                                   className="w-2 h-2 rounded-full mr-1" 
                                   style={{
                                     backgroundColor: entry.name === 'receita' 
-                                      ? '#38bdf8' 
+                                      ? '#0ea5e9' 
                                       : entry.name === 'despesa' 
-                                        ? '#fb7185' 
-                                        : '#4ade80'
+                                        ? '#f43f5e' 
+                                        : '#22c55e'
                                   }}
                                 />
-                                <span className="text-sm text-gray-600">{entry.name === 'receita' ? 'Receita' : entry.name === 'despesa' ? 'Despesa' : 'Saldo'}</span>
+                                <span className="text-sm">{entry.name === 'receita' ? 'Receita' : entry.name === 'despesa' ? 'Despesa' : 'Saldo'}</span>
                               </span>
                               <span className="font-medium text-sm">{formatCurrency(entry.value as number)}</span>
                             </div>
@@ -231,7 +242,7 @@ const FinancialOverview = () => {
                   type="monotone" 
                   dataKey="receita" 
                   name="receita"
-                  stroke="#38bdf8" 
+                  stroke="#0ea5e9" 
                   fillOpacity={1} 
                   fill="url(#colorReceita)" 
                 />
@@ -239,7 +250,7 @@ const FinancialOverview = () => {
                   type="monotone" 
                   dataKey="despesa" 
                   name="despesa"
-                  stroke="#fb7185" 
+                  stroke="#f43f5e" 
                   fillOpacity={1} 
                   fill="url(#colorDespesa)" 
                 />
@@ -247,7 +258,7 @@ const FinancialOverview = () => {
                   type="monotone" 
                   dataKey="saldo" 
                   name="saldo"
-                  stroke="#4ade80" 
+                  stroke="#22c55e" 
                   fillOpacity={1} 
                   fill="url(#colorSaldo)" 
                 />
