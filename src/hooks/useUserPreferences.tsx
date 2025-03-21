@@ -42,6 +42,7 @@ export function useUserPreferences() {
 
       try {
         setLoading(true);
+        // We need to use the correct TypeScript approach here for the new table
         const { data, error } = await supabase
           .from('user_preferences')
           .select('*')
@@ -54,7 +55,7 @@ export function useUserPreferences() {
         }
 
         if (data) {
-          setPreferences(data);
+          setPreferences(data as UserPreferences);
         } else {
           // If no preferences exist yet, create default ones
           await savePreferences(defaultPreferences);
