@@ -361,101 +361,103 @@ const Assistente = () => {
                 Assistente IA
               </CardTitle>
               <CardDescription>Seu parceiro financeiro inteligente</CardDescription>
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full mt-2">
-                <TabsList className="w-full grid grid-cols-2">
-                  <TabsTrigger value="chat">Assistentes</TabsTrigger>
-                  <TabsTrigger value="history">Histórico</TabsTrigger>
-                </TabsList>
-              </Tabs>
+              <div className="w-full mt-2">
+                <Tabs value={activeTab} onValueChange={setActiveTab}>
+                  <TabsList className="w-full grid grid-cols-2">
+                    <TabsTrigger value="chat">Assistentes</TabsTrigger>
+                    <TabsTrigger value="history">Histórico</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="chat" className="space-y-4 mt-0">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3">
+                      {assistants.map((assistant) => (
+                        <Button
+                          key={assistant.id}
+                          variant={activeAssistant.id === assistant.id ? "default" : "outline"}
+                          className={cn(
+                            "w-full justify-start h-auto py-3 transition-all duration-300",
+                            activeAssistant.id === assistant.id 
+                              ? "bg-gradient-to-r from-momoney-600 to-momoney-500 text-white" 
+                              : `bg-gradient-to-r ${assistant.gradient} hover:bg-gradient-to-r hover:from-momoney-500/10 hover:to-momoney-400/10`
+                          )}
+                          onClick={() => setActiveAssistant(assistant)}
+                        >
+                          <div className="mr-2">
+                            {assistant.icon}
+                          </div>
+                          <div className="text-left">
+                            <p className="font-medium">{assistant.name}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1 mt-1">
+                              {assistant.description}
+                            </p>
+                          </div>
+                        </Button>
+                      ))}
+                    </div>
+                  </TabsContent>
+                  <TabsContent value="history" className="space-y-3 mt-0">
+                    <Button 
+                      variant="outline" 
+                      className="w-full justify-start mb-4 bg-gradient-to-r from-momoney-500/10 to-momoney-400/10 hover:from-momoney-500/20 hover:to-momoney-400/20"
+                      onClick={createNewConversation}
+                    >
+                      <Bot className="h-4 w-4 mr-2 text-momoney-500" />
+                      Nova Conversa
+                    </Button>
+
+                    <div className="relative mb-4">
+                      <Input
+                        type="text"
+                        placeholder="Pesquisar conversas..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full pl-8"
+                      />
+                      <div className="absolute left-2.5 top-2.5">
+                        <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                      </div>
+                    </div>
+                    
+                    {filteredConversations.length > 0 ? (
+                      filteredConversations.map((convo) => (
+                        <Button
+                          key={convo.id}
+                          variant="ghost"
+                          className="w-full justify-start h-auto py-2 px-3 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors rounded-lg"
+                          onClick={() => loadConversation(convo.id)}
+                        >
+                          <div className="w-full flex flex-col items-start">
+                            <div className="flex items-center w-full">
+                              <span className="font-medium line-clamp-1 text-sm">{convo.title}</span>
+                              <Clock className="h-3 w-3 ml-auto text-gray-400" />
+                            </div>
+                            <p className="text-xs text-gray-500 line-clamp-1 text-left mt-1">{convo.preview}</p>
+                            <div className="flex items-center w-full mt-1">
+                              <span className="text-xs text-gray-500">
+                                {convo.date.toLocaleDateString()}
+                              </span>
+                              <Badge variant="outline" className="ml-auto text-xs bg-transparent">
+                                {assistants.find(a => a.id === convo.assistantId)?.name.split(' ')[0]}
+                              </Badge>
+                            </div>
+                          </div>
+                        </Button>
+                      ))
+                    ) : (
+                      <div className="text-center py-4">
+                        <p className="text-gray-500 dark:text-gray-400 text-sm">
+                          Nenhuma conversa encontrada
+                        </p>
+                      </div>
+                    )}
+                  </TabsContent>
+                </Tabs>
+              </div>
             </CardHeader>
             
             <CardContent className="flex-1 overflow-y-auto scrollbar-thin">
-              <TabsContent value="chat" className="space-y-4 mt-0">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3">
-                  {assistants.map((assistant) => (
-                    <Button
-                      key={assistant.id}
-                      variant={activeAssistant.id === assistant.id ? "default" : "outline"}
-                      className={cn(
-                        "w-full justify-start h-auto py-3 transition-all duration-300",
-                        activeAssistant.id === assistant.id 
-                          ? "bg-gradient-to-r from-momoney-600 to-momoney-500 text-white" 
-                          : `bg-gradient-to-r ${assistant.gradient} hover:bg-gradient-to-r hover:from-momoney-500/10 hover:to-momoney-400/10`
-                      )}
-                      onClick={() => setActiveAssistant(assistant)}
-                    >
-                      <div className="mr-2">
-                        {assistant.icon}
-                      </div>
-                      <div className="text-left">
-                        <p className="font-medium">{assistant.name}</p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1 mt-1">
-                          {assistant.description}
-                        </p>
-                      </div>
-                    </Button>
-                  ))}
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="history" className="space-y-3 mt-0">
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start mb-4 bg-gradient-to-r from-momoney-500/10 to-momoney-400/10 hover:from-momoney-500/20 hover:to-momoney-400/20"
-                  onClick={createNewConversation}
-                >
-                  <Bot className="h-4 w-4 mr-2 text-momoney-500" />
-                  Nova Conversa
-                </Button>
-
-                <div className="relative mb-4">
-                  <Input
-                    type="text"
-                    placeholder="Pesquisar conversas..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-8"
-                  />
-                  <div className="absolute left-2.5 top-2.5">
-                    <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                  </div>
-                </div>
-                
-                {filteredConversations.length > 0 ? (
-                  filteredConversations.map((convo) => (
-                    <Button
-                      key={convo.id}
-                      variant="ghost"
-                      className="w-full justify-start h-auto py-2 px-3 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors rounded-lg"
-                      onClick={() => loadConversation(convo.id)}
-                    >
-                      <div className="w-full flex flex-col items-start">
-                        <div className="flex items-center w-full">
-                          <span className="font-medium line-clamp-1 text-sm">{convo.title}</span>
-                          <Clock className="h-3 w-3 ml-auto text-gray-400" />
-                        </div>
-                        <p className="text-xs text-gray-500 line-clamp-1 text-left mt-1">{convo.preview}</p>
-                        <div className="flex items-center w-full mt-1">
-                          <span className="text-xs text-gray-500">
-                            {convo.date.toLocaleDateString()}
-                          </span>
-                          <Badge variant="outline" className="ml-auto text-xs bg-transparent">
-                            {assistants.find(a => a.id === convo.assistantId)?.name.split(' ')[0]}
-                          </Badge>
-                        </div>
-                      </div>
-                    </Button>
-                  ))
-                ) : (
-                  <div className="text-center py-4">
-                    <p className="text-gray-500 dark:text-gray-400 text-sm">
-                      Nenhuma conversa encontrada
-                    </p>
-                  </div>
-                )}
-              </TabsContent>
+              {/* Content is now handled by the TabsContent above */}
             </CardContent>
             
             <CardFooter className="flex justify-center border-t pt-4">

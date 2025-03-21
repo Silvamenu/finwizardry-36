@@ -137,18 +137,16 @@ const SpendingAnalysis = () => {
           Análise de Gastos
         </CardTitle>
         <div className="flex items-center gap-2">
-          <Tabs defaultValue="categories" className="w-[300px]">
+          <Tabs defaultValue="categories" className="w-[300px]" onValueChange={(value) => setTabView(value as 'categories' | 'merchants')}>
             <TabsList className="grid w-full grid-cols-2 rounded-lg dark:bg-gray-700">
               <TabsTrigger 
                 value="categories" 
-                onClick={() => setTabView('categories')}
                 className="rounded-l-lg data-[state=active]:bg-blue-500 dark:data-[state=active]:bg-blue-600 dark:text-gray-300 dark:data-[state=active]:text-white"
               >
                 Categorias
               </TabsTrigger>
               <TabsTrigger 
                 value="merchants" 
-                onClick={() => setTabView('merchants')}
                 className="rounded-r-lg data-[state=active]:bg-blue-500 dark:data-[state=active]:bg-blue-600 dark:text-gray-300 dark:data-[state=active]:text-white"
               >
                 Estabelecimentos
