@@ -42,14 +42,13 @@ export function useUserPreferences() {
 
       try {
         setLoading(true);
-        // We need to use the correct TypeScript approach here for the new table
         const { data, error } = await supabase
           .from('user_preferences')
           .select('*')
           .eq('user_id', user.id)
-          .single();
+          .maybeSingle();
 
-        if (error && error.code !== 'PGRST116') {
+        if (error) {
           console.error('Error loading preferences:', error);
           toast.error('Erro ao carregar suas preferências');
         }
@@ -82,9 +81,9 @@ export function useUserPreferences() {
         .from('user_preferences')
         .select('id')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
-      if (checkError && checkError.code !== 'PGRST116') {
+      if (checkError) {
         throw checkError;
       }
 
