@@ -33,9 +33,9 @@ const BudgetCategory = ({
         </Button>
       </div>
       <Progress value={percentage} className="h-2" />
-      <div className="flex justify-between text-sm text-gray-500">
+      <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
         <span>R$ {spent.toFixed(2)} de R$ {limit.toFixed(2)}</span>
-        <span className={remaining >= 0 ? "text-green-600" : "text-red-600"}>
+        <span className={remaining >= 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}>
           {remaining >= 0 
             ? `R$ ${remaining.toFixed(2)} disponível` 
             : `R$ ${Math.abs(remaining).toFixed(2)} acima do limite`}
@@ -73,7 +73,7 @@ const Orcamento = () => {
         <div className="flex flex-col md:flex-row gap-6 md:items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold mb-2">Orçamento Mensal</h1>
-            <p className="text-gray-500">Gerencie suas despesas e receitas de forma eficiente</p>
+            <p className="text-gray-500 dark:text-gray-400">Gerencie suas despesas e receitas de forma eficiente</p>
           </div>
           <div className="flex gap-3">
             <Button>
@@ -84,17 +84,17 @@ const Orcamento = () => {
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
-          <Card className="md:col-span-2 animate-fade-in">
+          <Card className="md:col-span-2 animate-fade-in dark-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-xl">Orçamento de Junho</CardTitle>
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="despesas">
                 <TabsList className="mb-6">
-                  <TabsTrigger value="despesas">Despesas</TabsTrigger>
-                  <TabsTrigger value="receitas">Receitas</TabsTrigger>
+                  <TabsTrigger value="despesas" className="tabs-trigger">Despesas</TabsTrigger>
+                  <TabsTrigger value="receitas" className="tabs-trigger">Receitas</TabsTrigger>
                 </TabsList>
-                <TabsContent value="despesas" className="space-y-6">
+                <TabsContent value="despesas" className="space-y-6 tabs-content">
                   {expenses.map((category, index) => (
                     <BudgetCategory 
                       key={index}
@@ -105,9 +105,9 @@ const Orcamento = () => {
                     />
                   ))}
                 </TabsContent>
-                <TabsContent value="receitas" className="space-y-6">
+                <TabsContent value="receitas" className="space-y-6 tabs-content">
                   {income.map((item, index) => (
-                    <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                    <div key={index} className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
                       <div className="flex items-center gap-3">
                         <div className={`w-10 h-10 rounded-full ${item.color} flex items-center justify-center`}>
                           <DollarSign className="h-5 w-5 text-white" />
@@ -124,47 +124,47 @@ const Orcamento = () => {
             </CardContent>
           </Card>
 
-          <Card className="animate-fade-in">
+          <Card className="animate-fade-in dark-card">
             <CardHeader className="pb-3">
               <CardTitle className="text-xl">Resumo</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
-                <div className="bg-green-50 p-4 rounded-lg">
+                <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
                       <TrendingUp className="h-4 w-4 text-white" />
                     </div>
                     <span className="font-medium">Total de Receitas</span>
                   </div>
-                  <div className="text-2xl font-bold text-green-600">
+                  <div className="text-2xl font-bold text-green-600 dark:text-green-400">
                     R$ {income.reduce((acc, curr) => acc + curr.amount, 0).toFixed(2)}
                   </div>
                 </div>
 
-                <div className="bg-red-50 p-4 rounded-lg">
+                <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="w-8 h-8 rounded-full bg-red-500 flex items-center justify-center">
                       <TrendingDown className="h-4 w-4 text-white" />
                     </div>
                     <span className="font-medium">Total de Despesas</span>
                   </div>
-                  <div className="text-2xl font-bold text-red-600">
+                  <div className="text-2xl font-bold text-red-600 dark:text-red-400">
                     R$ {expenses.reduce((acc, curr) => acc + curr.spent, 0).toFixed(2)}
                   </div>
                 </div>
 
-                <div className="border-t pt-4">
+                <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
                   <div className="flex justify-between items-center mb-2">
                     <span className="font-medium">Saldo do Mês</span>
-                    <span className="text-xl font-bold text-green-600">
+                    <span className="text-xl font-bold text-green-600 dark:text-green-400">
                       R$ {(
                         income.reduce((acc, curr) => acc + curr.amount, 0) - 
                         expenses.reduce((acc, curr) => acc + curr.spent, 0)
                       ).toFixed(2)}
                     </span>
                   </div>
-                  <div className="text-sm text-gray-500">
+                  <div className="text-sm text-gray-500 dark:text-gray-400">
                     Economia de {Math.round((
                       (income.reduce((acc, curr) => acc + curr.amount, 0) - 
                       expenses.reduce((acc, curr) => acc + curr.spent, 0)) /

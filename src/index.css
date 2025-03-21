@@ -26,8 +26,9 @@
 
 /* Dark mode specific styles */
 .dark {
-  --chart-grid-color: rgba(255, 255, 255, 0.1);
+  --chart-grid-color: rgba(40, 60, 80, 0.15); 
   --chart-text-color: rgba(255, 255, 255, 0.7);
+  color-scheme: dark;
 }
 
 /* Input field dark mode styles */
@@ -143,6 +144,15 @@
 
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
   @apply bg-gray-400 dark:bg-gray-500;
+}
+
+/* Dark mode Tabs style */
+.dark .tabs-content {
+  @apply bg-gray-800 text-gray-100;
+}
+
+.dark .tabs-trigger {
+  @apply bg-gray-700 text-gray-300 data-[state=active]:bg-gray-600 data-[state=active]:text-white;
 }
 
 /* Animation keyframes */

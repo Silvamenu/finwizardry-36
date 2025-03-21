@@ -80,7 +80,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         "flex-1 min-w-0 flex flex-col transition-all duration-300",
         isCollapsed && !isMobile ? "md:ml-20" : "md:ml-0"
       )}>
-        <header className="bg-white dark:bg-gray-800 shadow-sm z-10 flex justify-between items-center p-4 transition-colors duration-300">
+        <header className="bg-white dark:bg-gray-800 shadow-sm z-10 flex justify-between items-center p-4 transition-colors duration-300 border-b border-gray-100 dark:border-gray-700">
           <div className="flex items-center">
             {isMobile ? (
               <Button
@@ -107,7 +107,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           </div>
           <div className="flex items-center space-x-3">
             <ThemeToggle />
-            <Separator orientation="vertical" className="h-8 mx-1 hidden sm:block" />
+            <Separator orientation="vertical" className="h-8 mx-1 hidden sm:block dark:bg-gray-700" />
             <AvatarDropdown />
           </div>
         </header>

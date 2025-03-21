@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowUpRight, Download, Filter, FileBarChart, Calendar } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 
 // Simulated category spending data
 const generateCategoryData = () => {
@@ -78,14 +79,14 @@ const generateMerchantData = () => {
 const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white p-3 rounded-lg shadow-md border border-gray-100">
+      <div className="chart-tooltip bg-white dark:bg-gray-800 p-3 rounded-lg shadow-md border border-gray-100 dark:border-gray-700">
         <div className="flex items-center gap-2 mb-1">
           <div className="w-3 h-3 rounded-full" style={{ backgroundColor: payload[0].payload.color }}></div>
           <span className="font-medium">{payload[0].payload.name}</span>
         </div>
         <div className="flex flex-col">
           <span className="font-bold">{formatCurrency(payload[0].value)}</span>
-          <span className="text-xs text-gray-500">{payload[0].payload.percentage}% do total</span>
+          <span className="text-xs text-gray-500 dark:text-gray-400">{payload[0].payload.percentage}% do total</span>
         </div>
       </div>
     );
@@ -129,7 +130,7 @@ const SpendingAnalysis = () => {
   }>);
 
   return (
-    <Card className="h-full animate-fade-in reveal-delay-1 rounded-xl border-blue-50 transition-all duration-300 hover:shadow-md">
+    <Card className="h-full animate-fade-in reveal-delay-1 rounded-xl border-blue-50 dark:border-gray-700 transition-all duration-300 hover:shadow-md dark:bg-gray-800">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-lg font-medium flex items-center gap-2">
           <FileBarChart className="h-5 w-5 text-blue-500" />
@@ -137,35 +138,37 @@ const SpendingAnalysis = () => {
         </CardTitle>
         <div className="flex items-center gap-2">
           <Tabs defaultValue="categories" className="w-[300px]">
-            <TabsList className="grid w-full grid-cols-2 rounded-lg">
+            <TabsList className="grid w-full grid-cols-2 rounded-lg dark:bg-gray-700">
               <TabsTrigger 
                 value="categories" 
                 onClick={() => setTabView('categories')}
-                className="rounded-l-lg data-[state=active]:bg-blue-500"
+                className="rounded-l-lg data-[state=active]:bg-blue-500 dark:data-[state=active]:bg-blue-600 dark:text-gray-300 dark:data-[state=active]:text-white"
               >
                 Categorias
               </TabsTrigger>
               <TabsTrigger 
                 value="merchants" 
                 onClick={() => setTabView('merchants')}
-                className="rounded-r-lg data-[state=active]:bg-blue-500"
+                className="rounded-r-lg data-[state=active]:bg-blue-500 dark:data-[state=active]:bg-blue-600 dark:text-gray-300 dark:data-[state=active]:text-white"
               >
                 Estabelecimentos
               </TabsTrigger>
             </TabsList>
+            <TabsContent value="categories"></TabsContent>
+            <TabsContent value="merchants"></TabsContent>
           </Tabs>
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon" className="h-8 w-8">
+              <Button variant="outline" size="icon" className="h-8 w-8 dark:bg-gray-700 dark:border-gray-600">
                 <Calendar className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem>Mês atual</DropdownMenuItem>
-              <DropdownMenuItem>Mês anterior</DropdownMenuItem>
-              <DropdownMenuItem>Últimos 3 meses</DropdownMenuItem>
-              <DropdownMenuItem>Este ano</DropdownMenuItem>
+            <DropdownMenuContent align="end" className="dark:bg-gray-800 dark:border-gray-700">
+              <DropdownMenuItem className="dark:text-gray-300 dark:focus:bg-gray-700">Mês atual</DropdownMenuItem>
+              <DropdownMenuItem className="dark:text-gray-300 dark:focus:bg-gray-700">Mês anterior</DropdownMenuItem>
+              <DropdownMenuItem className="dark:text-gray-300 dark:focus:bg-gray-700">Últimos 3 meses</DropdownMenuItem>
+              <DropdownMenuItem className="dark:text-gray-300 dark:focus:bg-gray-700">Este ano</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -218,7 +221,7 @@ const SpendingAnalysis = () => {
             </ChartContainer>
             
             <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Button variant="ghost" size="icon" className="h-8 w-8 dark:text-gray-300">
                 <Download className="h-4 w-4" />
               </Button>
             </div>
@@ -227,28 +230,28 @@ const SpendingAnalysis = () => {
           <div className="w-full md:w-1/2">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-medium">Detalhes</h3>
-              <Button variant="outline" size="sm" className="h-8 gap-1 rounded-lg">
+              <Button variant="outline" size="sm" className="h-8 gap-1 rounded-lg dark:bg-gray-700 dark:border-gray-600">
                 <Filter className="h-3.5 w-3.5" />
                 <span className="text-xs">Filtrar</span>
               </Button>
             </div>
             <div className="space-y-3">
               {dataWithPercentage.map((item, index) => (
-                <div key={index} className="flex items-center justify-between p-2 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
+                <div key={index} className="flex items-center justify-between p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer">
                   <div className="flex items-center">
                     <div className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: item.color }} />
                     <span>{item.name}</span>
                   </div>
                   <div className="flex flex-col items-end">
                     <span className="font-medium">{formatCurrency(item.value)}</span>
-                    <div className="flex items-center text-xs text-gray-500">
+                    <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
                       <span>{item.percentage}%</span>
                       <ArrowUpRight className="h-3 w-3 ml-0.5 text-green-500" />
                     </div>
                   </div>
                 </div>
               ))}
-              <div className="pt-3 mt-3 border-t border-gray-200">
+              <div className="pt-3 mt-3 border-t border-gray-200 dark:border-gray-700">
                 <div className="flex items-center justify-between font-bold">
                   <span>Total</span>
                   <span>{formatCurrency(total)}</span>

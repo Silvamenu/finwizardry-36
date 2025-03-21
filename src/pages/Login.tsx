@@ -16,7 +16,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col items-center justify-center p-4">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col items-center justify-center p-4 transition-colors duration-300">
       <div className="absolute top-4 right-4">
         <ThemeToggle />
       </div>
@@ -36,9 +36,19 @@ const Login = () => {
           </CardHeader>
           <CardContent className="pt-4">
             <Tabs defaultValue="login" className="w-full">
-              <TabsList className="grid w-full grid-cols-2 mb-6 rounded-xl">
-                <TabsTrigger value="login" className="rounded-xl">Login</TabsTrigger>
-                <TabsTrigger value="signup" className="rounded-xl">Cadastro</TabsTrigger>
+              <TabsList className="grid w-full grid-cols-2 mb-6 rounded-xl dark:bg-gray-700">
+                <TabsTrigger 
+                  value="login" 
+                  className="rounded-xl dark:data-[state=active]:bg-blue-600 dark:text-gray-300 dark:data-[state=active]:text-white"
+                >
+                  Login
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="signup" 
+                  className="rounded-xl dark:data-[state=active]:bg-blue-600 dark:text-gray-300 dark:data-[state=active]:text-white"
+                >
+                  Cadastro
+                </TabsTrigger>
               </TabsList>
               <TabsContent value="login">
                 <LoginForm />
@@ -51,11 +61,11 @@ const Login = () => {
           <CardFooter className="flex flex-col space-y-4">
             <div className="text-center text-sm text-gray-500 dark:text-gray-400 mt-2">
               Ao continuar, você concorda com nossos{" "}
-              <a href="#" className="text-momoney-600 hover:underline">
+              <a href="#" className="text-momoney-600 hover:underline dark:text-momoney-400">
                 Termos de Serviço
               </a>{" "}
               e{" "}
-              <a href="#" className="text-momoney-600 hover:underline">
+              <a href="#" className="text-momoney-600 hover:underline dark:text-momoney-400">
                 Política de Privacidade
               </a>
               .
