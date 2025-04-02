@@ -31,11 +31,14 @@ export function useUserPreferences() {
   const [preferences, setPreferences] = useState<UserPreferences>(defaultPreferences);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [initialized, setInitialized] = useState(false);
 
   // Load preferences from Supabase
   useEffect(() => {
     async function loadPreferences() {
       if (!user) {
+        // If no user, use default preferences and mark as not loading
+        setPreferences(defaultPreferences);
         setLoading(false);
         return;
       }
@@ -50,21 +53,39 @@ export function useUserPreferences() {
 
         if (error) {
           console.error('Error loading preferences:', error);
-          toast.error('Erro ao carregar suas preferências');
+          // Don't show toast here, just use defaults
+          setPreferences(defaultPreferences);
           return;
         }
 
         if (data) {
           setPreferences(data as UserPreferences);
+          setInitialized(true);
         } else {
           // If no preferences exist yet, create default ones
-          await savePreferences({
-            ...defaultPreferences,
-            user_id: user.id
-          });
+          try {
+            const { error: insertError } = await supabase
+              .from('user_preferences')
+              .insert({
+                ...defaultPreferences,
+                user_id: user.id
+              });
+              
+            if (insertError) {
+              console.error('Error creating default preferences:', insertError);
+            } else {
+              setInitialized(true);
+            }
+          } catch (err) {
+            console.error('Failed to create default preferences:', err);
+          }
+          
+          // Use defaults regardless of success/failure of insert
+          setPreferences(defaultPreferences);
         }
       } catch (error) {
         console.error('Failed to load preferences:', error);
+        setPreferences(defaultPreferences);
       } finally {
         setLoading(false);
       }
@@ -74,55 +95,49 @@ export function useUserPreferences() {
   }, [user]);
 
   // Save preferences to Supabase
-  const savePreferences = async (newPreferences: UserPreferences) => {
-    if (!user) return;
+  const savePreferences = async (newPreferences: UserPreferences): Promise<boolean> => {
+    if (!user) return false;
 
     try {
       setSaving(true);
       
-      // Check if preferences already exist for this user
-      const { data: existingData, error: checkError } = await supabase
-        .from('user_preferences')
-        .select('id')
-        .eq('user_id', user.id)
-        .maybeSingle();
-
-      if (checkError) {
-        console.error('Error checking existing preferences:', checkError);
-        throw checkError;
-      }
-
-      let result;
       const prefsToSave = {
         ...newPreferences,
         user_id: user.id
       };
       
-      if (existingData?.id) {
+      if (initialized) {
         // Update existing preferences
-        result = await supabase
+        const { error } = await supabase
           .from('user_preferences')
           .update({
             ...prefsToSave,
             updated_at: new Date().toISOString()
           })
-          .eq('id', existingData.id);
+          .eq('user_id', user.id);
+          
+        if (error) {
+          throw error;
+        }
       } else {
         // Insert new preferences
-        result = await supabase
+        const { error } = await supabase
           .from('user_preferences')
           .insert(prefsToSave);
-      }
-
-      if (result.error) {
-        throw result.error;
+          
+        if (error) {
+          throw error;
+        }
+        setInitialized(true);
       }
 
       setPreferences(newPreferences);
       toast.success('Preferências salvas com sucesso');
-    } catch (error) {
+      return true;
+    } catch (error: any) {
       console.error('Error saving preferences:', error);
-      toast.error('Erro ao salvar suas preferências');
+      toast.error('Erro ao salvar suas preferências: ' + (error.message || 'Erro desconhecido'));
+      return false;
     } finally {
       setSaving(false);
     }
@@ -133,6 +148,7 @@ export function useUserPreferences() {
     setPreferences,
     savePreferences,
     loading,
-    saving
+    saving,
+    initialized
   };
 }

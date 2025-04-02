@@ -1,5 +1,4 @@
 
-import { useEffect } from "react"
 import { Moon, Sun } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useUserPreferences } from "@/hooks/useUserPreferences"
@@ -9,14 +8,16 @@ interface ThemeToggleProps {
 }
 
 export function ThemeToggle({ className }: ThemeToggleProps) {
-  const { preferences, setPreferences, savePreferences } = useUserPreferences();
+  const { preferences, setPreferences, savePreferences, saving } = useUserPreferences();
   
   const isDark = preferences.theme === 'dark';
   
   const toggleTheme = () => {
+    if (saving) return; // Prevent toggle while saving
+    
     const newTheme = isDark ? 'light' : 'dark';
     
-    // Update local state
+    // Update local state immediately for responsive UI
     setPreferences({
       ...preferences,
       theme: newTheme

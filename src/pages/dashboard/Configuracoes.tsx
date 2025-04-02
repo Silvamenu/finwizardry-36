@@ -20,7 +20,8 @@ import {
   PaintBucket, 
   Wallet, 
   Save,
-  Loader2
+  Loader2,
+  AlertTriangle
 } from "lucide-react";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
 
@@ -45,7 +46,11 @@ const Configuracoes = () => {
   };
 
   const handleSavePreferences = async () => {
-    await savePreferences(preferences);
+    const success = await savePreferences(preferences);
+    if (!success) {
+      // Show more detailed error (the toast is already shown in the hook)
+      console.error("Falha ao salvar preferências");
+    }
   };
 
   const handleResetSettings = () => {
