@@ -1,10 +1,49 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 .gradient-text {
   @apply bg-clip-text text-transparent bg-gradient-to-r from-momoney-600 to-momoney-300;
+}
+
+/* Force light mode for index page */
+.index-page .dark,
+.index-page-wrapper,
+html.index-page {
+  --chart-grid-color: rgba(229, 231, 235, 0.5) !important; 
+  --chart-text-color: rgba(0, 0, 0, 0.8) !important;
+  color-scheme: light !important;
+}
+
+/* Force white background and blue buttons for index page */
+.index-page-wrapper,
+.index-page-wrapper section {
+  @apply bg-white !important;
+}
+
+.index-page-wrapper .bg-gray-50,
+.index-page-wrapper .bg-momoney-50 {
+  @apply bg-white !important;
+}
+
+/* Keep blue buttons blue */
+.index-page-wrapper button,
+.index-page-wrapper .bg-momoney-500 {
+  @apply bg-momoney-500 !important;
+}
+
+.index-page-wrapper .text-gray-700 {
+  @apply text-gray-700 !important;
+}
+
+.index-page-wrapper .border-gray-100,
+.index-page-wrapper .border-gray-200 {
+  @apply border-gray-200 !important;
+}
+
+/* Override glass card for index page */
+.index-page-wrapper .glass-card {
+  @apply bg-white border border-gray-200 shadow-lg rounded-2xl !important;
 }
 
 /* Animation for login transition */

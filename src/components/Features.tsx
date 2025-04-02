@@ -50,7 +50,7 @@ const features = [
 
 const Features = () => {
   return (
-    <section id="features" className="py-20 relative overflow-hidden bg-gray-50">
+    <section id="features" className="py-20 relative overflow-hidden bg-white">
       {/* Gradient Blob Background */}
       <div className="absolute top-40 -left-40 w-96 h-96 bg-momoney-100 rounded-full blur-3xl opacity-30"></div>
       

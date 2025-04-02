@@ -28,13 +28,28 @@ const Index = () => {
 
     document.addEventListener('click', handleAnchorClick);
     
+    // Force light theme background for index page only
+    const html = document.documentElement;
+    const previousClass = html.classList.contains('dark') ? 'dark' : 'light';
+    
+    // Store previous theme class and remove dark class if present
+    html.classList.remove('dark');
+    html.classList.add('light');
+    html.classList.add('index-page');
+    
     return () => {
+      // Restore previous theme class when component unmounts
       document.removeEventListener('click', handleAnchorClick);
+      html.classList.remove('index-page');
+      html.classList.remove('light');
+      if (previousClass) {
+        html.classList.add(previousClass);
+      }
     };
   }, []);
   
   return (
-    <div className="min-h-screen bg-white overflow-hidden">
+    <div className="min-h-screen bg-white overflow-hidden index-page-wrapper">
       <Navbar />
       <main>
         <Hero />
