@@ -1,3 +1,4 @@
+
 import { createContext, useContext, useEffect, useState } from 'react';
 import { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -154,19 +155,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
       
-      const { error } = await supabase.auth.signUp({ 
+      // Update signup options to skip email confirmation
+      const { error, data } = await supabase.auth.signUp({ 
         email, 
         password,
         options: {
           data: {
             name,
           },
-          emailRedirectTo: window.location.origin + '/auth-callback'
         }
       });
+      
       if (error) throw error;
-      toast.success('Cadastro realizado com sucesso! Verifique seu email para confirmação.');
-      // Não redirecionamos mais para o dashboard, aguardamos confirmação de email
+      
+      if (data?.user) {
+        toast.success('Cadastro realizado com sucesso! Você já pode fazer login.');
+        navigate('/login');
+      } else {
+        toast.error('Erro ao criar conta');
+      }
     } catch (error: any) {
       toast.error(error.message || 'Erro ao criar conta');
       throw error;

@@ -15,7 +15,6 @@ const AuthCallback = () => {
         // Detect which type of authentication action is happening
         const url = new URL(window.location.href);
         const isPasswordReset = url.hash.includes('type=recovery') || url.search.includes('type=recovery');
-        const isEmailConfirmation = url.hash.includes('type=signup') || url.search.includes('type=signup');
         
         // Process URL hash/fragment or query parameters
         if (window.location.hash || window.location.search) {
@@ -34,10 +33,6 @@ const AuthCallback = () => {
           toast.success("Link de recuperação verificado! Defina sua nova senha.");
           navigate("/reset-password");
           return;
-        }
-
-        if (isEmailConfirmation) {
-          toast.success("Email confirmado com sucesso!");
         }
 
         if (data?.session) {
