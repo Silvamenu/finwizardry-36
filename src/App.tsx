@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { useAuth } from "./contexts/AuthContext";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useThemeEffect } from "./hooks/useThemeEffect";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
@@ -68,7 +68,14 @@ const AppRoutes = () => {
 
 const App = () => {
   // Create a new QueryClient instance inside the component using useState
-  const [queryClient] = useState(() => new QueryClient());
+  const [queryClient] = useState(() => new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: 1,
+        refetchOnWindowFocus: false,
+      },
+    },
+  }));
 
   return (
     <QueryClientProvider client={queryClient}>

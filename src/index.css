@@ -35,8 +35,8 @@
 
 /* Dark mode specific styles */
 .dark {
-  --chart-grid-color: rgba(40, 60, 80, 0.15); 
-  --chart-text-color: rgba(255, 255, 255, 0.7);
+  --chart-grid-color: rgba(40, 60, 80, 0.5); 
+  --chart-text-color: rgba(255, 255, 255, 1);
   color-scheme: dark;
 }
 
@@ -66,12 +66,12 @@
 }
 
 .dark button[class*="border-momoney-400"] {
-  @apply border-momoney-500 text-momoney-300 hover:bg-momoney-900/20;
+  @apply border-momoney-500 text-momoney-300 hover:bg-momoney-900/70;
 }
 
 /* Chart background for dark mode */
 .dark .recharts-surface {
-  @apply !bg-transparent;
+  @apply !bg-gray-800;
 }
 
 .dark .recharts-cartesian-grid-horizontal line,
@@ -84,12 +84,19 @@
 }
 
 .dark .recharts-text {
-  @apply !fill-gray-400;
+  @apply !fill-gray-300;
 }
 
 /* Dark mode card */
 .dark-card {
-  @apply dark:bg-gray-800 dark:border-gray-700 dark:text-white transition-colors duration-200;
+  @apply bg-white dark:bg-gray-800 border dark:border-gray-700 dark:text-white transition-colors duration-200;
+}
+
+/* Make sure dropdowns are not transparent */
+.SelectContent,
+[role="listbox"],
+[data-radix-popper-content-wrapper] {
+  @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg !backdrop-blur-none;
 }
 
 /* Advanced animations */
@@ -130,16 +137,16 @@
   animation-delay: 1s;
 }
 
-/* Glass card styling */
+/* Glass card styling - no transparency */
 .glass-card {
-  @apply bg-white/80 backdrop-blur-md border border-white/20 shadow-lg rounded-2xl;
-  @apply dark:bg-gray-900/80 dark:border-gray-800/50;
+  @apply bg-white border border-gray-200 shadow-lg rounded-2xl;
+  @apply dark:bg-gray-800 dark:border-gray-700;
 }
 
 /* Neo-brutalism button */
 .neo-button {
   @apply relative shadow-[5px_5px_0px_0px_rgba(0,0,0,0.2)] transition-all hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,0.2)];
-  @apply dark:shadow-[5px_5px_0px_0px_rgba(255,255,255,0.1)];
+  @apply dark:shadow-[5px_5px_0px_0px_rgba(50,50,50,1)];
 }
 
 /* Add custom scrollbar */
@@ -153,7 +160,7 @@
 }
 
 .scrollbar-thin::-webkit-scrollbar-track {
-  @apply bg-transparent dark:bg-transparent;
+  @apply bg-gray-100 dark:bg-gray-700;
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
@@ -194,9 +201,10 @@
   @apply text-white;
 }
 
-/* Fix dropdown menus in dark mode */
-.dark .bg-white\/80 {
-  @apply bg-gray-800/80;
+/* Fix dropdown menus in dark mode - removing transparency */
+.dark .bg-white\/80,
+.dark [data-radix-popper-content-wrapper] > div {
+  @apply bg-gray-800 !bg-opacity-100;
 }
 
 /* Progress bar colors for dark mode */
@@ -281,7 +289,7 @@
 
 /* Dialog styling */
 .dark .dialog-overlay {
-  @apply bg-black/80;
+  @apply bg-black;
 }
 
 /* Fix for TransactionForm dialog in dark mode */
@@ -291,4 +299,12 @@
 
 .dark [role="dialog"] .bg-background {
   @apply bg-gray-800 border-gray-700;
+}
+
+/* Guaranteeing no transparency in UI */
+.radix-dropdown-content,
+.radix-popover-content,
+.radix-menu-content,
+.radix-select-content {
+  @apply !backdrop-blur-none !bg-opacity-100;
 }

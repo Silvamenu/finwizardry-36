@@ -1,41 +1,32 @@
 
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 import { Moon, Sun } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useUserPreferences } from "@/hooks/useUserPreferences"
 
 interface ThemeToggleProps {
   className?: string
 }
 
 export function ThemeToggle({ className }: ThemeToggleProps) {
-  const [isDark, setIsDark] = useState(false)
+  const { preferences, setPreferences, savePreferences } = useUserPreferences();
   
-  // Initialize theme based on localStorage on component mount
-  useEffect(() => {
-    // Check if theme is saved in localStorage
-    const savedTheme = localStorage.getItem('theme')
-    
-    // If theme is saved, set it
-    if (savedTheme) {
-      setIsDark(savedTheme === 'dark')
-      document.documentElement.classList.toggle('dark', savedTheme === 'dark')
-    } else {
-      // Check for system preference if no saved theme
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-      setIsDark(prefersDark)
-      document.documentElement.classList.toggle('dark', prefersDark)
-    }
-  }, [])
+  const isDark = preferences.theme === 'dark';
   
   const toggleTheme = () => {
-    const newIsDark = !isDark
-    setIsDark(newIsDark)
+    const newTheme = isDark ? 'light' : 'dark';
     
-    // Save to localStorage
-    localStorage.setItem('theme', newIsDark ? 'dark' : 'light')
+    // Update local state
+    setPreferences({
+      ...preferences,
+      theme: newTheme
+    });
     
-    // Apply to document
-    document.documentElement.classList.toggle('dark', newIsDark)
+    // Save to database
+    savePreferences({
+      ...preferences,
+      theme: newTheme
+    });
   }
 
   return (
@@ -50,7 +41,7 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
       onClick={toggleTheme}
       role="button"
       tabIndex={0}
-      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+      aria-label={isDark ? "Mudar para modo claro" : "Mudar para modo escuro"}
     >
       <div className="flex justify-between items-center w-full">
         <div

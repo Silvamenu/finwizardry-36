@@ -51,13 +51,17 @@ export function useUserPreferences() {
         if (error) {
           console.error('Error loading preferences:', error);
           toast.error('Erro ao carregar suas preferências');
+          return;
         }
 
         if (data) {
           setPreferences(data as UserPreferences);
         } else {
           // If no preferences exist yet, create default ones
-          await savePreferences(defaultPreferences);
+          await savePreferences({
+            ...defaultPreferences,
+            user_id: user.id
+          });
         }
       } catch (error) {
         console.error('Failed to load preferences:', error);
@@ -84,28 +88,30 @@ export function useUserPreferences() {
         .maybeSingle();
 
       if (checkError) {
+        console.error('Error checking existing preferences:', checkError);
         throw checkError;
       }
 
       let result;
+      const prefsToSave = {
+        ...newPreferences,
+        user_id: user.id
+      };
       
-      if (existingData) {
+      if (existingData?.id) {
         // Update existing preferences
         result = await supabase
           .from('user_preferences')
           .update({
-            ...newPreferences,
+            ...prefsToSave,
             updated_at: new Date().toISOString()
           })
-          .eq('user_id', user.id);
+          .eq('id', existingData.id);
       } else {
         // Insert new preferences
         result = await supabase
           .from('user_preferences')
-          .insert({
-            ...newPreferences,
-            user_id: user.id
-          });
+          .insert(prefsToSave);
       }
 
       if (result.error) {

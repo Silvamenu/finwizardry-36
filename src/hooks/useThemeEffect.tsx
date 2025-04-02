@@ -14,13 +14,19 @@ export function useThemeEffect() {
     // Apply theme based on user preferences
     if (preferences.theme === 'dark') {
       root.classList.add('dark');
+      root.classList.remove('light');
     } else if (preferences.theme === 'light') {
+      root.classList.add('light');
       root.classList.remove('dark');
     } else {
       // System preference
-      if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      
+      if (prefersDark) {
         root.classList.add('dark');
+        root.classList.remove('light');
       } else {
+        root.classList.add('light');
         root.classList.remove('dark');
       }
       
@@ -29,7 +35,9 @@ export function useThemeEffect() {
       const handleChange = () => {
         if (mediaQuery.matches) {
           root.classList.add('dark');
+          root.classList.remove('light');
         } else {
+          root.classList.add('light');
           root.classList.remove('dark');
         }
       };

@@ -19,7 +19,8 @@ import {
   Globe, 
   PaintBucket, 
   Wallet, 
-  Save
+  Save,
+  Loader2
 } from "lucide-react";
 import { useUserPreferences } from "@/hooks/useUserPreferences";
 
@@ -50,6 +51,7 @@ const Configuracoes = () => {
   const handleResetSettings = () => {
     // Reset to defaults
     setPreferences({
+      ...preferences,
       theme: "system",
       language: "pt-BR",
       currency: "BRL",
@@ -70,7 +72,7 @@ const Configuracoes = () => {
     return (
       <DashboardLayout activePage="Configurações">
         <div className="flex items-center justify-center h-full">
-          <div className="login-spinner" />
+          <Loader2 className="h-10 w-10 animate-spin text-momoney-600" />
         </div>
       </DashboardLayout>
     );
@@ -80,16 +82,16 @@ const Configuracoes = () => {
     <DashboardLayout activePage="Configurações">
       <div className="grid gap-6">
         <Tabs defaultValue="preferences" className="w-full">
-          <TabsList className="mb-4">
-            <TabsTrigger value="preferences" className="flex items-center gap-2">
+          <TabsList className="mb-4 bg-white dark:bg-gray-800 border dark:border-gray-700">
+            <TabsTrigger value="preferences" className="flex items-center gap-2 data-[state=active]:bg-momoney-100 dark:data-[state=active]:bg-momoney-900">
               <Settings className="h-4 w-4" />
               <span>Preferências</span>
             </TabsTrigger>
-            <TabsTrigger value="security" className="flex items-center gap-2">
+            <TabsTrigger value="security" className="flex items-center gap-2 data-[state=active]:bg-momoney-100 dark:data-[state=active]:bg-momoney-900">
               <Shield className="h-4 w-4" />
               <span>Segurança</span>
             </TabsTrigger>
-            <TabsTrigger value="notifications" className="flex items-center gap-2">
+            <TabsTrigger value="notifications" className="flex items-center gap-2 data-[state=active]:bg-momoney-100 dark:data-[state=active]:bg-momoney-900">
               <Bell className="h-4 w-4" />
               <span>Notificações</span>
             </TabsTrigger>
@@ -98,7 +100,7 @@ const Configuracoes = () => {
           {/* Preferences Tab */}
           <TabsContent value="preferences">
             <div className="grid md:grid-cols-2 gap-6">
-              <Card className="animate-fade-in">
+              <Card className="animate-fade-in dark-card">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <PaintBucket className="h-5 w-5" />
@@ -111,7 +113,7 @@ const Configuracoes = () => {
                     <Label>Tema</Label>
                     <RadioGroup 
                       value={preferences.theme} 
-                      onValueChange={(value) => handlePreferenceChange('theme', value)}
+                      onValueChange={(value: 'light' | 'dark' | 'system') => handlePreferenceChange('theme', value)}
                       className="flex flex-col space-y-1"
                     >
                       <div className="flex items-center space-x-2">
@@ -147,7 +149,7 @@ const Configuracoes = () => {
                 </CardContent>
               </Card>
               
-              <Card className="animate-fade-in">
+              <Card className="animate-fade-in dark-card">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Globe className="h-5 w-5" />
@@ -162,10 +164,10 @@ const Configuracoes = () => {
                       value={preferences.language} 
                       onValueChange={(value) => handlePreferenceChange('language', value)}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="bg-white dark:bg-gray-800">
                         <SelectValue placeholder="Selecionar idioma" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-white dark:bg-gray-800">
                         <SelectItem value="pt-BR">Português (Brasil)</SelectItem>
                         <SelectItem value="en-US">English (US)</SelectItem>
                         <SelectItem value="es">Español</SelectItem>
@@ -179,10 +181,10 @@ const Configuracoes = () => {
                       value={preferences.currency} 
                       onValueChange={(value) => handlePreferenceChange('currency', value)}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="bg-white dark:bg-gray-800">
                         <SelectValue placeholder="Selecionar moeda" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-white dark:bg-gray-800">
                         <SelectItem value="BRL">Real (R$)</SelectItem>
                         <SelectItem value="USD">Dólar ($)</SelectItem>
                         <SelectItem value="EUR">Euro (€)</SelectItem>
@@ -196,10 +198,10 @@ const Configuracoes = () => {
                       value={preferences.date_format} 
                       onValueChange={(value) => handlePreferenceChange('date_format', value)}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger className="bg-white dark:bg-gray-800">
                         <SelectValue placeholder="Formato de data" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="bg-white dark:bg-gray-800">
                         <SelectItem value="dd/MM/yyyy">DD/MM/AAAA</SelectItem>
                         <SelectItem value="MM/dd/yyyy">MM/DD/AAAA</SelectItem>
                         <SelectItem value="yyyy-MM-dd">AAAA-MM-DD</SelectItem>
@@ -209,7 +211,7 @@ const Configuracoes = () => {
                 </CardContent>
               </Card>
               
-              <Card className="md:col-span-2 animate-fade-in">
+              <Card className="md:col-span-2 animate-fade-in dark-card">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Wallet className="h-5 w-5" />
@@ -222,10 +224,10 @@ const Configuracoes = () => {
                     <div className="space-y-2">
                       <Label>Dia de fechamento do mês</Label>
                       <Select defaultValue="1">
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-white dark:bg-gray-800">
                           <SelectValue placeholder="Dia de fechamento" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="bg-white dark:bg-gray-800">
                           {Array.from({ length: 28 }, (_, i) => (
                             <SelectItem key={i + 1} value={(i + 1).toString()}>
                               Dia {i + 1}
@@ -241,8 +243,8 @@ const Configuracoes = () => {
                     <div className="space-y-2">
                       <Label>Exportar dados</Label>
                       <Button 
-                        variant="clean" 
-                        className="w-full"
+                        variant="default" 
+                        className="w-full bg-momoney-600 hover:bg-momoney-700 text-white"
                         onClick={handleExportData}
                       >
                         Exportar todos os dados
@@ -260,16 +262,17 @@ const Configuracoes = () => {
               <Button 
                 variant="outline" 
                 onClick={handleResetSettings}
+                className="border-gray-200 dark:border-gray-700"
               >
                 Restaurar padrões
               </Button>
               <Button 
-                variant="clean"
+                variant="default"
                 onClick={handleSavePreferences}
-                className="gap-2"
+                className="gap-2 bg-momoney-600 hover:bg-momoney-700 text-white"
                 disabled={saving}
               >
-                <Save className="h-4 w-4" />
+                {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-1" />}
                 {saving ? 'Salvando...' : 'Salvar preferências'}
               </Button>
             </div>
