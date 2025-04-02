@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -27,9 +28,13 @@ html.index-page {
 }
 
 /* Keep blue buttons blue */
-.index-page-wrapper button,
-.index-page-wrapper .bg-momoney-500 {
+.index-page-wrapper button {
   @apply bg-momoney-500 !important;
+}
+
+/* Use the direct color value instead of @apply to avoid circular dependency */
+.index-page-wrapper .bg-momoney-500 {
+  background-color: #0ea5e9 !important;
 }
 
 .index-page-wrapper .text-gray-700 {
