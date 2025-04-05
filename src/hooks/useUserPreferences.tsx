@@ -17,7 +17,7 @@ export interface UserPreferences {
 }
 
 const defaultPreferences: UserPreferences = {
-  theme: 'system',
+  theme: 'light', // Changed from 'system' to 'light' as default
   language: 'pt-BR',
   currency: 'BRL',
   show_balance: true,
@@ -45,43 +45,43 @@ export function useUserPreferences() {
 
       try {
         setLoading(true);
+        // Fix the query to handle potential multiple rows by adding .single()
+        // instead of .maybeSingle() which was causing the error
         const { data, error } = await supabase
           .from('user_preferences')
           .select('*')
           .eq('user_id', user.id)
-          .maybeSingle();
+          .single();
 
         if (error) {
-          console.error('Error loading preferences:', error);
-          // Don't show toast here, just use defaults
-          setPreferences(defaultPreferences);
-          return;
-        }
-
-        if (data) {
+          // If error is not found, create default preferences
+          if (error.code === 'PGRST116' || error.message.includes('not found')) {
+            try {
+              const { error: insertError } = await supabase
+                .from('user_preferences')
+                .insert({
+                  ...defaultPreferences,
+                  user_id: user.id
+                });
+                
+              if (insertError) {
+                console.error('Error creating default preferences:', insertError);
+              } else {
+                setInitialized(true);
+              }
+            } catch (err) {
+              console.error('Failed to create default preferences:', err);
+            }
+            
+            // Use defaults regardless of success/failure of insert
+            setPreferences(defaultPreferences);
+          } else {
+            console.error('Error loading preferences:', error);
+            setPreferences(defaultPreferences);
+          }
+        } else if (data) {
           setPreferences(data as UserPreferences);
           setInitialized(true);
-        } else {
-          // If no preferences exist yet, create default ones
-          try {
-            const { error: insertError } = await supabase
-              .from('user_preferences')
-              .insert({
-                ...defaultPreferences,
-                user_id: user.id
-              });
-              
-            if (insertError) {
-              console.error('Error creating default preferences:', insertError);
-            } else {
-              setInitialized(true);
-            }
-          } catch (err) {
-            console.error('Failed to create default preferences:', err);
-          }
-          
-          // Use defaults regardless of success/failure of insert
-          setPreferences(defaultPreferences);
         }
       } catch (error) {
         console.error('Failed to load preferences:', error);

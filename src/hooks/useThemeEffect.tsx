@@ -11,39 +11,16 @@ export function useThemeEffect() {
     // Get the HTML element
     const root = window.document.documentElement;
     
-    // Apply theme based on user preferences
+    // Apply theme based on user preferences - removed system preference detection
+    // Now we only apply light or dark directly
     if (preferences.theme === 'dark') {
       root.classList.add('dark');
       root.classList.remove('light');
-    } else if (preferences.theme === 'light') {
+    } else {
+      // Default to light mode for any other value including 'light' and 'system'
       root.classList.add('light');
       root.classList.remove('dark');
-    } else {
-      // System preference
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      
-      if (prefersDark) {
-        root.classList.add('dark');
-        root.classList.remove('light');
-      } else {
-        root.classList.add('light');
-        root.classList.remove('dark');
-      }
-      
-      // Listen for changes in system preference
-      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-      const handleChange = () => {
-        if (mediaQuery.matches) {
-          root.classList.add('dark');
-          root.classList.remove('light');
-        } else {
-          root.classList.add('light');
-          root.classList.remove('dark');
-        }
-      };
-      
-      mediaQuery.addEventListener('change', handleChange);
-      return () => mediaQuery.removeEventListener('change', handleChange);
     }
+    
   }, [preferences.theme, loading]);
 }

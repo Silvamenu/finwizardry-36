@@ -2,6 +2,7 @@
 import { Moon, Sun } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useUserPreferences } from "@/hooks/useUserPreferences"
+import { toast } from "sonner"
 
 interface ThemeToggleProps {
   className?: string
@@ -13,7 +14,10 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
   const isDark = preferences.theme === 'dark';
   
   const toggleTheme = () => {
-    if (saving) return; // Prevent toggle while saving
+    if (saving) {
+      toast.info("Aguarde, alterando o tema...");
+      return; // Prevent toggle while saving
+    }
     
     const newTheme = isDark ? 'light' : 'dark';
     
@@ -27,6 +31,10 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
     savePreferences({
       ...preferences,
       theme: newTheme
+    }).then(success => {
+      if (success) {
+        toast.success(`Tema alterado para ${newTheme === 'dark' ? 'escuro' : 'claro'}`);
+      }
     });
   }
 

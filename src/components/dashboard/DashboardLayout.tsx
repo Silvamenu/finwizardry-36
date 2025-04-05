@@ -28,13 +28,29 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
 
-  // Verificar dark mode quando componente é montado
+  // Check dark mode when component is mounted
   useEffect(() => {
     const isDarkMode = document.documentElement.classList.contains('dark');
     setDarkMode(isDarkMode);
+    
+    // Create an observer to track theme changes
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.attributeName === 'class') {
+          const isDark = document.documentElement.classList.contains('dark');
+          setDarkMode(isDark);
+        }
+      });
+    });
+    
+    // Start observing
+    observer.observe(document.documentElement, { attributes: true });
+    
+    // Clean up
+    return () => observer.disconnect();
   }, []);
 
-  // Para telas menores, fechar automaticamente a sidebar
+  // For smaller screens, auto-close sidebar
   useEffect(() => {
     if (isMobile) {
       setSidebarOpen(false);
