@@ -4,7 +4,9 @@
 @tailwind utilities;
 
 .gradient-text {
-  @apply bg-clip-text text-transparent bg-gradient-to-r from-momoney-600 to-momoney-300;
+  background-clip: text;
+  text-decoration: transparent;
+  background-image: linear-gradient(to right, #0284c7, #7dd3fc);
 }
 
 /* Force light mode for index page */
@@ -51,7 +53,7 @@ html.index-page {
   background-color: white !important;
   border: 1px solid rgba(229, 231, 235, 1) !important;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
-  border-radius: 1rem !important;
+  border-radius: 1.5rem !important;
 }
 
 /* Animation for login transition */
@@ -109,11 +111,14 @@ html.index-page {
 
 /* Dark mode button variants */
 .dark button[class*="bg-momoney-600"] {
-  @apply bg-momoney-500 hover:bg-momoney-400;
+  background-color: #0ea5e9 !important;
+  @apply hover:bg-momoney-400;
 }
 
 .dark button[class*="border-momoney-400"] {
-  @apply border-momoney-500 text-momoney-300 hover:bg-momoney-900/70;
+  border-color: #0ea5e9 !important;
+  color: #7dd3fc !important;
+  @apply hover:bg-momoney-900/70;
 }
 
 /* Chart background for dark mode */
@@ -136,7 +141,7 @@ html.index-page {
 
 /* Dark mode card */
 .dark-card {
-  @apply bg-white dark:bg-gray-800 border dark:border-gray-700 dark:text-white transition-colors duration-200;
+  @apply bg-white dark:bg-gray-800 border dark:border-gray-700 dark:text-white transition-colors duration-300;
 }
 
 /* Make sure dropdowns are not transparent */
@@ -146,13 +151,13 @@ html.index-page {
   @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg !backdrop-blur-none;
 }
 
-/* Advanced animations */
+/* Enhanced animations */
 .animate-float {
-  animation: floating 3s ease-in-out infinite;
+  animation: floating 5s ease-in-out infinite;
 }
 
 .animate-pulse-soft {
-  animation: pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation: pulse-soft 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 .animate-scale {
@@ -184,10 +189,16 @@ html.index-page {
   animation-delay: 1s;
 }
 
-/* Glass card styling - no transparency */
+/* Glass card styling - enhanced */
 .glass-card {
-  @apply bg-white border border-gray-200 shadow-lg rounded-2xl;
-  @apply dark:bg-gray-800 dark:border-gray-700;
+  @apply bg-white/95 backdrop-blur-md border border-white/20 shadow-xl rounded-3xl;
+  @apply dark:bg-gray-800/95 dark:backdrop-blur-md dark:border-gray-700/30 dark:shadow-2xl;
+  transition: all 0.4s ease-in-out;
+}
+
+.glass-card:hover {
+  @apply shadow-2xl dark:shadow-2xl;
+  transform: translateY(-5px);
 }
 
 /* Neo-brutalism button */
@@ -202,8 +213,8 @@ html.index-page {
 }
 
 .scrollbar-thin::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
 }
 
 .scrollbar-thin::-webkit-scrollbar-track {
@@ -256,7 +267,7 @@ html.index-page {
 
 /* Progress bar colors for dark mode */
 .dark .progress-value {
-  @apply bg-momoney-500;
+  background-color: #0ea5e9 !important;
 }
 
 /* Dialog content dark mode */
@@ -264,25 +275,33 @@ html.index-page {
   @apply bg-gray-800 border-gray-700;
 }
 
-/* Animation keyframes */
+/* Animation keyframes - enhanced */
 @keyframes floating {
   0% {
-    transform: translateY(0px);
+    transform: translateY(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-8px) rotate(1deg);
   }
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-15px) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-8px) rotate(-1deg);
   }
   100% {
-    transform: translateY(0px);
+    transform: translateY(0px) rotate(0deg);
   }
 }
 
 @keyframes pulse-soft {
   0%, 100% {
     opacity: 1;
+    transform: scale(1);
   }
   50% {
     opacity: 0.8;
+    transform: scale(0.97);
   }
 }
 
@@ -298,7 +317,7 @@ html.index-page {
 @keyframes fade-in {
   0% {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(20px);
   }
   100% {
     opacity: 1;
@@ -306,37 +325,37 @@ html.index-page {
   }
 }
 
-/* Hover underline animation */
+/* Hover underline animation - enhanced */
 .hover-underline {
   @apply relative;
 }
 
 .hover-underline::after {
-  @apply content-[''] absolute left-0 bottom-0 w-0 h-0.5 bg-momoney-500 dark:bg-momoney-400 transition-all duration-300;
+  @apply content-[''] absolute left-0 bottom-0 w-0 h-0.5 bg-momoney-500 dark:bg-momoney-400 transition-all duration-500;
 }
 
 .hover-underline:hover::after {
   @apply w-full;
 }
 
-/* Button transitions */
+/* Button transitions - enhanced */
 .btn-transition {
-  @apply transition-all duration-300 transform hover:scale-105;
+  @apply transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 hover:shadow-lg;
 }
 
-/* Card hover effects */
+/* Card hover effects - enhanced */
 .card-hover-effect {
-  @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
+  @apply transition-all duration-500 hover:shadow-xl hover:-translate-y-2;
 }
 
 /* Chart tooltips */
 .chart-tooltip {
-  @apply bg-white p-3 rounded-lg shadow-md border border-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-white;
+  @apply bg-white p-3 rounded-2xl shadow-lg border border-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-white;
 }
 
 /* Dialog styling */
 .dark .dialog-overlay {
-  @apply bg-black;
+  @apply bg-black/80 backdrop-blur-sm;
 }
 
 /* Fix for TransactionForm dialog in dark mode */
@@ -353,5 +372,76 @@ html.index-page {
 .radix-popover-content,
 .radix-menu-content,
 .radix-select-content {
-  @apply !backdrop-blur-none !bg-opacity-100;
+  @apply !backdrop-blur-none !bg-opacity-100 rounded-xl;
+}
+
+/* New animations and styles for a more modern look */
+.scale-on-hover {
+  transition: transform 0.3s ease;
+}
+
+.scale-on-hover:hover {
+  transform: scale(1.05);
+}
+
+.bounce-in {
+  animation: bounce-in 1s ease forwards;
+}
+
+@keyframes bounce-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.slide-up {
+  animation: slide-up 0.5s ease forwards;
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Modernizing inputs */
+input, select, textarea {
+  @apply rounded-xl border-gray-200 transition-all duration-300 focus:ring-2 focus:ring-momoney-400 focus:border-transparent;
+  @apply dark:border-gray-700 dark:focus:ring-momoney-500;
+}
+
+/* More rounded elements */
+.rounded-modern {
+  @apply rounded-2xl md:rounded-3xl;
+}
+
+/* Subtle shadow effects */
+.shadow-soft {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+}
+
+.dark .shadow-soft {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+/* Smooth transitions for all elements */
+* {
+  transition-property: color, background-color, border-color, 
+                      text-decoration-color, fill, stroke, opacity, 
+                      box-shadow, transform, filter, backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
 }

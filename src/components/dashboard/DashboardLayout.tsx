@@ -69,7 +69,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex transition-colors duration-300">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex transition-colors duration-500">
       {/* Mobile sidebar backdrop */}
       {isMobile && sidebarOpen && (
         <div 
@@ -81,28 +81,28 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       {/* Sidebar */}
       <div 
         className={cn(
-          "fixed md:static inset-y-0 left-0 z-30 transition-all duration-300 ease-in-out",
+          "fixed md:static inset-y-0 left-0 z-30 transition-all duration-500 ease-in-out",
           isMobile && !sidebarOpen ? "-translate-x-full" : "translate-x-0",
           isCollapsed && !isMobile ? "md:w-20" : "md:w-64"
         )}
       >
         <Sidebar data-active-page={activePage} className={cn(
-          "h-full transition-all duration-300",
+          "h-full transition-all duration-500",
           isCollapsed && !isMobile ? "md:w-20" : "md:w-64"
         )} />
       </div>
       
       <div className={cn(
-        "flex-1 min-w-0 flex flex-col transition-all duration-300",
+        "flex-1 min-w-0 flex flex-col transition-all duration-500",
         isCollapsed && !isMobile ? "md:ml-20" : "md:ml-0"
       )}>
-        <header className="bg-white dark:bg-gray-800 shadow-sm z-10 flex justify-between items-center p-4 transition-colors duration-300 border-b border-gray-100 dark:border-gray-700">
+        <header className="bg-white dark:bg-gray-800 shadow-sm z-10 flex justify-between items-center p-4 transition-colors duration-500 border-b border-gray-100 dark:border-gray-700 rounded-b-xl">
           <div className="flex items-center">
             {isMobile ? (
               <Button
                 variant="ghost"
                 size="icon"
-                className="mr-2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white"
+                className="mr-2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white rounded-full"
                 onClick={() => setSidebarOpen(!sidebarOpen)}
               >
                 {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -111,13 +111,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               <Button
                 variant="ghost"
                 size="icon"
-                className="mr-2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white"
+                className="mr-2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white rounded-full"
                 onClick={toggleCollapse}
               >
                 {isCollapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
               </Button>
             )}
-            <h1 className="text-xl md:text-2xl font-bold text-gray-800 dark:text-white transition-colors duration-300">
+            <h1 className="text-xl md:text-2xl font-bold text-gray-800 dark:text-white transition-colors duration-500 animate-fade-in">
               {activePage}
             </h1>
           </div>
@@ -128,8 +128,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           </div>
         </header>
         
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
-          {children}
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50 dark:bg-gray-900 transition-colors duration-500">
+          <div className="animate-fade-in">
+            {children}
+          </div>
         </main>
       </div>
     </div>

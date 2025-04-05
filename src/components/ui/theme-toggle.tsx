@@ -41,10 +41,10 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
   return (
     <div
       className={cn(
-        "flex w-16 h-8 p-1 rounded-full cursor-pointer transition-all duration-300",
+        "flex w-16 h-8 p-1 rounded-full cursor-pointer transition-all duration-500",
         isDark 
-          ? "bg-gray-800 border border-gray-700" 
-          : "bg-white border border-zinc-200",
+          ? "bg-gray-800 border border-gray-700 shadow-inner shadow-gray-900/30" 
+          : "bg-white border border-zinc-200 shadow-inner shadow-gray-200/50",
         className
       )}
       onClick={toggleTheme}
@@ -55,27 +55,27 @@ export function ThemeToggle({ className }: ThemeToggleProps) {
       <div className="flex justify-between items-center w-full">
         <div
           className={cn(
-            "flex justify-center items-center w-6 h-6 rounded-full transition-transform duration-300",
+            "flex justify-center items-center w-6 h-6 rounded-full transition-all duration-500",
             isDark 
               ? "transform translate-x-0 bg-gray-700" 
-              : "transform translate-x-8 bg-gray-200"
+              : "transform translate-x-8 bg-gray-100"
           )}
         >
           {isDark ? (
             <Moon 
-              className="w-4 h-4 text-momoney-300" 
+              className="w-4 h-4 text-momoney-300 animate-pulse-soft" 
               strokeWidth={1.5}
             />
           ) : (
             <Sun 
-              className="w-4 h-4 text-amber-500" 
+              className="w-4 h-4 text-amber-500 animate-pulse-soft" 
               strokeWidth={1.5}
             />
           )}
         </div>
         <div
           className={cn(
-            "flex justify-center items-center w-6 h-6 rounded-full transition-transform duration-300",
+            "flex justify-center items-center w-6 h-6 rounded-full transition-all duration-500",
             isDark 
               ? "bg-transparent" 
               : "transform -translate-x-8"

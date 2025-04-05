@@ -90,17 +90,17 @@ export function Sidebar({ className, ...props }: SidebarProps) {
   return (
     <div
       className={cn(
-        "flex flex-col h-screen bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-300 ease-in-out",
+        "flex flex-col h-screen bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 transition-all duration-500 ease-in-out shadow-md",
         collapsed ? "w-20" : "w-64",
         className
       )}
       {...props}
     >
       <div className={cn(
-        "flex items-center gap-2 px-4 py-5 border-b border-gray-100 dark:border-gray-700",
+        "flex items-center gap-2 p-4 border-b border-gray-100 dark:border-gray-700",
         collapsed ? "justify-center" : "px-6"
       )}>
-        <div className="shrink-0 rounded-full bg-gradient-to-r from-blue-600 to-blue-400 p-1 w-10 h-10 flex items-center justify-center">
+        <div className="shrink-0 rounded-full bg-gradient-to-r from-blue-600 to-blue-400 p-1 w-10 h-10 flex items-center justify-center animate-pulse-soft">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white">
             <path d="M20.91 8.84 8.56 2.23a1.93 1.93 0 0 0-1.81 0L3.1 4.13a2.12 2.12 0 0 0-.05 3.69l12.22 6.93a2 2 0 0 0 1.94 0L21 12.51a2.12 2.12 0 0 0-.09-3.67Z"></path>
             <path d="m3.09 8.84 12.35-6.61a1.93 1.93 0 0 1 1.81 0l3.65 1.9a2.12 2.12 0 0 1 .1 3.69L8.73 14.75a2 2 0 0 1-1.94 0L3 12.51a2.12 2.12 0 0 1 .09-3.67Z"></path>
@@ -115,7 +115,7 @@ export function Sidebar({ className, ...props }: SidebarProps) {
         <Button 
           variant="ghost" 
           size="sm" 
-          className="h-8 w-8 p-0" 
+          className="h-8 w-8 p-0 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700" 
           onClick={toggleCollapsed}
         >
           {collapsed ? <ChevronsRight size={16} /> : <ChevronsLeft size={16} />}
@@ -131,9 +131,10 @@ export function Sidebar({ className, ...props }: SidebarProps) {
                   <Link
                     to={item.path}
                     className={cn(
-                      "flex items-center gap-3 rounded-xl px-3 py-2.5 text-gray-700 dark:text-gray-300 transition-all hover:bg-blue-50 dark:hover:bg-blue-900/30",
+                      "flex items-center gap-3 rounded-xl px-3 py-3 text-gray-700 dark:text-gray-300 transition-all hover:bg-blue-50 dark:hover:bg-blue-900/30",
                       activePage === item.name && "bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 font-medium",
-                      collapsed ? "justify-center" : ""
+                      collapsed ? "justify-center" : "",
+                      "hover:scale-[1.02] hover:-translate-y-0.5"
                     )}
                   >
                     <item.icon className={cn(
@@ -144,7 +145,7 @@ export function Sidebar({ className, ...props }: SidebarProps) {
                   </Link>
                 </TooltipTrigger>
                 {collapsed && (
-                  <TooltipContent side="right">
+                  <TooltipContent side="right" className="rounded-xl">
                     {item.name}
                   </TooltipContent>
                 )}
@@ -162,7 +163,7 @@ export function Sidebar({ className, ...props }: SidebarProps) {
           "flex items-center",
           collapsed ? "flex-col gap-3" : "gap-3"
         )}>
-          <Avatar className="h-10 w-10 shrink-0">
+          <Avatar className="h-10 w-10 shrink-0 ring-2 ring-blue-100 dark:ring-blue-900">
             <AvatarImage src={avatarUrl} alt={userName} />
             <AvatarFallback className="bg-blue-100 text-blue-700">{userInitials}</AvatarFallback>
           </Avatar>
@@ -179,14 +180,14 @@ export function Sidebar({ className, ...props }: SidebarProps) {
               <button
                 onClick={() => signOut()}
                 className={cn(
-                  "flex items-center justify-center rounded-full text-gray-500 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 transition-colors",
+                  "flex items-center justify-center rounded-full text-gray-500 hover:text-red-500 dark:text-gray-400 dark:hover:text-red-400 transition-colors hover:bg-red-50 dark:hover:bg-red-900/20",
                   collapsed ? "h-8 w-8" : "h-8 w-8"
                 )}
               >
                 <LogOut className="h-4 w-4" />
               </button>
             </TooltipTrigger>
-            <TooltipContent side={collapsed ? "right" : "top"}>
+            <TooltipContent side={collapsed ? "right" : "top"} className="rounded-xl">
               Sair
             </TooltipContent>
           </Tooltip>

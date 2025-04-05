@@ -11,16 +11,27 @@ export function useThemeEffect() {
     // Get the HTML element
     const root = window.document.documentElement;
     
-    // Apply theme based on user preferences - removed system preference detection
-    // Now we only apply light or dark directly
-    if (preferences.theme === 'dark') {
-      root.classList.add('dark');
-      root.classList.remove('light');
-    } else {
-      // Default to light mode for any other value including 'light' and 'system'
-      root.classList.add('light');
-      root.classList.remove('dark');
-    }
+    // Apply theme based on user preferences with a smooth transition
+    const applyTheme = (theme: string) => {
+      // Create a transition effect
+      root.style.transition = 'background-color 0.5s ease, color 0.5s ease';
+      
+      // Apply the theme
+      if (theme === 'dark') {
+        root.classList.add('dark');
+        root.classList.remove('light');
+      } else {
+        root.classList.add('light');
+        root.classList.remove('dark');
+      }
+      
+      // Remove the transition after the change is complete to avoid affecting other transitions
+      setTimeout(() => {
+        root.style.transition = '';
+      }, 500);
+    };
+    
+    applyTheme(preferences.theme);
     
   }, [preferences.theme, loading]);
 }
