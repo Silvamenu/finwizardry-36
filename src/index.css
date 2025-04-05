@@ -19,17 +19,17 @@ html.index-page {
 /* Force white background and blue buttons for index page */
 .index-page-wrapper,
 .index-page-wrapper section {
-  @apply bg-white !important;
+  background-color: white !important;
 }
 
 .index-page-wrapper .bg-gray-50,
 .index-page-wrapper .bg-momoney-50 {
-  @apply bg-white !important;
+  background-color: white !important;
 }
 
 /* Keep blue buttons blue */
 .index-page-wrapper button {
-  @apply bg-momoney-500 !important;
+  background-color: #0ea5e9 !important;
 }
 
 /* Use the direct color value instead of @apply to avoid circular dependency */
@@ -38,17 +38,20 @@ html.index-page {
 }
 
 .index-page-wrapper .text-gray-700 {
-  @apply text-gray-700 !important;
+  color: rgba(55, 65, 81, 1) !important;
 }
 
 .index-page-wrapper .border-gray-100,
 .index-page-wrapper .border-gray-200 {
-  @apply border-gray-200 !important;
+  border-color: rgba(229, 231, 235, 1) !important;
 }
 
 /* Override glass card for index page */
 .index-page-wrapper .glass-card {
-  @apply bg-white border border-gray-200 shadow-lg rounded-2xl !important;
+  background-color: white !important;
+  border: 1px solid rgba(229, 231, 235, 1) !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+  border-radius: 1rem !important;
 }
 
 /* Animation for login transition */
