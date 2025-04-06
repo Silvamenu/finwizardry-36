@@ -23,6 +23,10 @@ import Login from "./pages/Login";
 import AuthCallback from "./pages/AuthCallback";
 import ResetPassword from "./pages/ResetPassword";
 import { LoadingScreen } from "./components/ui/loading-screen";
+import { SidebarDemo } from "./components/SidebarDemo";
+
+// Import the sidebar theme
+import "./sidebar-theme.css";
 
 // Theme component to apply theme based on user preferences
 const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
@@ -61,6 +65,7 @@ const AppRoutes = () => {
       <Route path="/dashboard/configuracoes" element={<ProtectedRoute><Configuracoes /></ProtectedRoute>} />
       <Route path="/dashboard/perfil" element={<ProtectedRoute><Perfil /></ProtectedRoute>} />
       <Route path="/dashboard/mensagens" element={<ProtectedRoute><Mensagens /></ProtectedRoute>} />
+      <Route path="/sidebar-demo" element={<SidebarDemo />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
