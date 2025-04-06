@@ -11,6 +11,7 @@ import { AvatarDropdown } from "@/components/ui/avatar-dropdown";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -69,34 +70,53 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex transition-colors duration-500">
+    <motion.div 
+      className="min-h-screen bg-gray-50 dark:bg-gray-900 flex transition-colors duration-500"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
       {/* Mobile sidebar backdrop */}
-      {isMobile && sidebarOpen && (
-        <div 
-          className="fixed inset-0 z-20 bg-black/50 backdrop-blur-sm transition-opacity"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
+      <AnimatePresence>
+        {isMobile && sidebarOpen && (
+          <motion.div 
+            className="fixed inset-0 z-20 bg-black/50 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+      </AnimatePresence>
       
       {/* Sidebar */}
-      <div 
+      <motion.div 
         className={cn(
           "fixed md:static inset-y-0 left-0 z-30 transition-all duration-500 ease-in-out",
           isMobile && !sidebarOpen ? "-translate-x-full" : "translate-x-0",
           isCollapsed && !isMobile ? "md:w-20" : "md:w-64"
         )}
+        initial={{ x: isMobile ? -320 : 0 }}
+        animate={{ x: 0 }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
       >
         <Sidebar data-active-page={activePage} className={cn(
-          "h-full transition-all duration-500",
+          "h-full transition-all duration-500 rounded-r-3xl overflow-hidden",
           isCollapsed && !isMobile ? "md:w-20" : "md:w-64"
         )} />
-      </div>
+      </motion.div>
       
       <div className={cn(
         "flex-1 min-w-0 flex flex-col transition-all duration-500",
         isCollapsed && !isMobile ? "md:ml-20" : "md:ml-0"
       )}>
-        <header className="bg-white dark:bg-gray-800 shadow-sm z-10 flex justify-between items-center p-4 transition-colors duration-500 border-b border-gray-100 dark:border-gray-700 rounded-b-xl">
+        <motion.header 
+          className="bg-white dark:bg-gray-800 shadow-sm z-10 flex justify-between items-center p-4 transition-colors duration-500 border-b border-gray-100 dark:border-gray-700 rounded-b-3xl"
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2, duration: 0.4 }}
+        >
           <div className="flex items-center">
             {isMobile ? (
               <Button
@@ -117,24 +137,34 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 {isCollapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
               </Button>
             )}
-            <h1 className="text-xl md:text-2xl font-bold text-gray-800 dark:text-white transition-colors duration-500 animate-fade-in">
+            <motion.h1 
+              className="text-xl md:text-2xl font-bold text-gray-800 dark:text-white transition-colors duration-500"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
               {activePage}
-            </h1>
+            </motion.h1>
           </div>
           <div className="flex items-center space-x-3">
             <ThemeToggle />
             <Separator orientation="vertical" className="h-8 mx-1 hidden sm:block dark:bg-gray-700" />
             <AvatarDropdown />
           </div>
-        </header>
+        </motion.header>
         
         <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50 dark:bg-gray-900 transition-colors duration-500">
-          <div className="animate-fade-in">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+            className="h-full"
+          >
             {children}
-          </div>
+          </motion.div>
         </main>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

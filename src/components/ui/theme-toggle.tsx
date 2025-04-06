@@ -1,99 +1,63 @@
 
-import { Moon, Sun } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { useUserPreferences } from "@/hooks/useUserPreferences"
-import { toast } from "sonner"
+"use client";
 
-interface ThemeToggleProps {
-  className?: string
-}
+import { motion, AnimatePresence } from "framer-motion";
+import { Moon, Sun } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useUserPreferences } from "@/hooks/useUserPreferences";
+import { useThemeEffect } from "@/hooks/useThemeEffect";
 
-export function ThemeToggle({ className }: ThemeToggleProps) {
-  const { preferences, setPreferences, savePreferences, saving } = useUserPreferences();
+export function ThemeToggle() {
+  const { preferences, updatePreferences, loading } = useUserPreferences();
+  const [mounted, setMounted] = useState(false);
+  const [isDark, setIsDark] = useState(false);
+
+  useThemeEffect();
   
-  const isDark = preferences.theme === 'dark';
-  
-  const toggleTheme = () => {
-    if (saving) {
-      toast.info("Aguarde, alterando o tema...");
-      return; // Prevent toggle while saving
+  // Update the mounted state once the component is mounted
+  useEffect(() => {
+    setMounted(true);
+    const isDarkMode = document.documentElement.classList.contains('dark');
+    setIsDark(isDarkMode);
+  }, []);
+
+  // Update the isDark state when the preferences change
+  useEffect(() => {
+    if (!loading && mounted) {
+      setIsDark(preferences.theme === 'dark');
     }
-    
+  }, [preferences.theme, loading, mounted]);
+
+  const toggleTheme = () => {
+    if (loading) return;
     const newTheme = isDark ? 'light' : 'dark';
-    
-    // Update local state immediately for responsive UI
-    setPreferences({
-      ...preferences,
-      theme: newTheme
-    });
-    
-    // Save to database
-    savePreferences({
-      ...preferences,
-      theme: newTheme
-    }).then(success => {
-      if (success) {
-        toast.success(`Tema alterado para ${newTheme === 'dark' ? 'escuro' : 'claro'}`);
-      }
-    });
-  }
+    updatePreferences({ theme: newTheme });
+    setIsDark(!isDark);
+  };
+
+  // Don't render anything until the component is mounted to avoid hydration mismatch
+  if (!mounted) return null;
 
   return (
-    <div
-      className={cn(
-        "flex w-16 h-8 p-1 rounded-full cursor-pointer transition-all duration-500",
-        isDark 
-          ? "bg-gray-800 border border-gray-700 shadow-inner shadow-gray-900/30" 
-          : "bg-white border border-zinc-200 shadow-inner shadow-gray-200/50",
-        className
-      )}
+    <motion.button
       onClick={toggleTheme}
-      role="button"
-      tabIndex={0}
-      aria-label={isDark ? "Mudar para modo claro" : "Mudar para modo escuro"}
+      className="relative flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-800 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+      whileHover={{ scale: 1.1 }}
+      whileTap={{ scale: 0.9 }}
+      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
     >
-      <div className="flex justify-between items-center w-full">
-        <div
-          className={cn(
-            "flex justify-center items-center w-6 h-6 rounded-full transition-all duration-500",
-            isDark 
-              ? "transform translate-x-0 bg-gray-700" 
-              : "transform translate-x-8 bg-gray-100"
-          )}
+      <AnimatePresence mode="wait" initial={false}>
+        <motion.div
+          key={isDark ? "dark" : "light"}
+          initial={{ y: -20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: 20, opacity: 0 }}
+          transition={{ duration: 0.2 }}
+          className="absolute"
         >
-          {isDark ? (
-            <Moon 
-              className="w-4 h-4 text-momoney-300 animate-pulse-soft" 
-              strokeWidth={1.5}
-            />
-          ) : (
-            <Sun 
-              className="w-4 h-4 text-amber-500 animate-pulse-soft" 
-              strokeWidth={1.5}
-            />
-          )}
-        </div>
-        <div
-          className={cn(
-            "flex justify-center items-center w-6 h-6 rounded-full transition-all duration-500",
-            isDark 
-              ? "bg-transparent" 
-              : "transform -translate-x-8"
-          )}
-        >
-          {isDark ? (
-            <Sun 
-              className="w-4 h-4 text-amber-300 opacity-50" 
-              strokeWidth={1.5}
-            />
-          ) : (
-            <Moon 
-              className="w-4 h-4 text-gray-400" 
-              strokeWidth={1.5}
-            />
-          )}
-        </div>
-      </div>
-    </div>
-  )
+          {isDark ? <Moon size={18} /> : <Sun size={18} />}
+        </motion.div>
+      </AnimatePresence>
+    </motion.button>
+  );
 }
