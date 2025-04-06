@@ -70,7 +70,8 @@ html.index-page {
 }
 
 .login-spinner {
-  @apply animate-spin h-12 w-12 border-4 border-momoney-600 rounded-full border-t-transparent;
+  @apply animate-spin h-12 w-12 border-4 border-momoney-600 border-t-transparent;
+  border-radius: 9999px;
 }
 
 /* Button styles */
@@ -91,65 +92,102 @@ html.index-page {
 
 /* Input field dark mode styles */
 .dark input {
-  @apply bg-gray-800 border-gray-700 text-white placeholder:text-gray-400;
+  background-color: rgb(31, 41, 55);
+  border-color: rgb(55, 65, 81);
+  color: white;
+}
+.dark input::placeholder {
+  color: rgb(156, 163, 175);
 }
 
-/* Rounded styles for inputs in dark mode */
-.dark .rounded-xl {
-  @apply border-gray-700;
+/* Fixed: Removed the circular dependency */
+/* Avoid applying tailwind classes to other tailwind classes */
+.dark .rounded-xl-borders {
+  border-color: rgb(55, 65, 81);
 }
 
 /* Card styles for dark mode */
 .dark .card {
-  @apply bg-gray-800 border-gray-700;
+  background-color: rgb(31, 41, 55);
+  border-color: rgb(55, 65, 81);
 }
 
 /* Button styles for dark mode */
 .dark button.btn {
-  @apply text-gray-200;
+  color: rgb(229, 231, 235);
 }
 
 /* Dark mode button variants */
 .dark button[class*="bg-momoney-600"] {
   background-color: #4b5563 !important;
-  @apply hover:bg-momoney-500;
+}
+.dark button[class*="bg-momoney-600"]:hover {
+  background-color: #6b7280 !important;
 }
 
 .dark button[class*="border-momoney-400"] {
   border-color: #6b7280 !important;
   color: #d1d5db !important;
-  @apply hover:bg-momoney-900/70;
+}
+.dark button[class*="border-momoney-400"]:hover {
+  background-color: rgba(75, 85, 99, 0.3);
 }
 
 /* Chart background for dark mode */
 .dark .recharts-surface {
-  @apply !bg-gray-800;
+  background-color: rgb(31, 41, 55) !important;
 }
 
 .dark .recharts-cartesian-grid-horizontal line,
 .dark .recharts-cartesian-grid-vertical line {
-  @apply !stroke-gray-700;
+  stroke: rgb(55, 65, 81) !important;
 }
 
 .dark .recharts-tooltip-wrapper .recharts-default-tooltip {
-  @apply !bg-gray-800 !border-gray-700 !text-white;
+  background-color: rgb(31, 41, 55) !important;
+  border-color: rgb(55, 65, 81) !important;
+  color: white !important;
 }
 
 .dark .recharts-text {
-  @apply !fill-gray-300;
+  fill: rgb(209, 213, 219) !important;
 }
 
 /* Dark mode card */
 .dark-card {
-  @apply bg-white dark:bg-gray-800 border dark:border-gray-700 dark:text-white transition-colors duration-500;
-  @apply rounded-2xl shadow-md hover:shadow-lg;
+  background-color: white;
+  border-width: 1px;
+  border-style: solid;
+  transition-property: color, background-color, border-color;
+  transition-duration: 500ms;
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+.dark-card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+.dark .dark-card {
+  background-color: rgb(31, 41, 55);
+  border-color: rgb(55, 65, 81);
+  color: white;
 }
 
 /* Make sure dropdowns are not transparent */
 .SelectContent,
 [role="listbox"],
 [data-radix-popper-content-wrapper] {
-  @apply bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg !backdrop-blur-none rounded-xl;
+  background-color: white;
+  border: 1px solid rgb(229, 231, 235);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  backdrop-filter: none !important;
+  border-radius: 0.75rem;
+}
+.dark .SelectContent,
+.dark [role="listbox"],
+.dark [data-radix-popper-content-wrapper] {
+  background-color: rgb(31, 41, 55);
+  border-color: rgb(55, 65, 81);
+  color: white;
 }
 
 /* Enhanced animations */
@@ -192,19 +230,36 @@ html.index-page {
 
 /* Glass card styling - enhanced for modern look */
 .glass-card {
-  @apply bg-white/95 border border-white/20 shadow-modern rounded-3xl;
-  @apply dark:bg-gray-800/95 dark:border-gray-700/30;
+  background-color: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1.5rem;
   transition: all 0.4s ease-in-out;
+}
+.dark .glass-card {
+  background-color: rgba(31, 41, 55, 0.95);
+  border-color: rgba(55, 65, 81, 0.3);
 }
 
 .glass-card:hover {
-  @apply shadow-modern-dark transform -translate-y-1;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.18);
+  transform: translateY(-4px);
 }
 
 /* Neo-brutalism button */
 .neo-button {
-  @apply relative rounded-xl shadow-[5px_5px_0px_0px_rgba(0,0,0,0.2)] transition-all hover:translate-x-[3px] hover:translate-y-[3px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,0.2)];
-  @apply dark:shadow-[5px_5px_0px_0px_rgba(50,50,50,1)];
+  position: relative;
+  border-radius: 0.75rem;
+  box-shadow: 5px 5px 0px 0px rgba(0, 0, 0, 0.2);
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+.neo-button:hover {
+  transform: translateX(3px) translateY(3px);
+  box-shadow: 2px 2px 0px 0px rgba(0, 0, 0, 0.2);
+}
+.dark .neo-button {
+  box-shadow: 5px 5px 0px 0px rgba(50, 50, 50, 1);
 }
 
 /* Add custom scrollbar */
@@ -218,61 +273,85 @@ html.index-page {
 }
 
 .scrollbar-thin::-webkit-scrollbar-track {
-  @apply bg-gray-100 dark:bg-gray-700 rounded-full;
+  background-color: rgb(243, 244, 246);
+  border-radius: 9999px;
+}
+.dark .scrollbar-thin::-webkit-scrollbar-track {
+  background-color: rgb(55, 65, 81);
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+  background-color: rgb(209, 213, 219);
+  border-radius: 9999px;
+}
+.dark .scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: rgb(75, 85, 99);
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  @apply bg-gray-400 dark:bg-gray-500;
+  background-color: rgb(156, 163, 175);
+}
+.dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(107, 114, 128);
 }
 
 /* Dark mode Tabs style */
 .dark .tabs-content {
-  @apply bg-gray-800 text-gray-100 rounded-2xl;
+  background-color: rgb(31, 41, 55);
+  color: rgb(243, 244, 246);
+  border-radius: 1rem;
 }
 
 .dark .tabs-trigger {
-  @apply bg-gray-700 text-gray-300 data-[state=active]:bg-gray-600 data-[state=active]:text-white rounded-xl;
+  background-color: rgb(55, 65, 81);
+  color: rgb(209, 213, 219);
+  border-radius: 0.75rem;
+}
+.dark .tabs-trigger[data-state=active] {
+  background-color: rgb(75, 85, 99);
+  color: white;
 }
 
 /* Enhance dark mode for various components */
 .dark .bg-white {
-  @apply bg-gray-800;
+  background-color: rgb(31, 41, 55);
 }
 
 .dark .bg-gray-50 {
-  @apply bg-gray-800;
+  background-color: rgb(31, 41, 55);
 }
 
 .dark .border-gray-100 {
-  @apply border-gray-700;
+  border-color: rgb(55, 65, 81);
 }
 
 .dark .text-gray-600 {
-  @apply text-gray-300;
+  color: rgb(209, 213, 219);
 }
 
 .dark .text-gray-900 {
-  @apply text-white;
+  color: white;
 }
 
 /* Fix dropdown menus in dark mode - removing transparency */
 .dark .bg-white\/80,
 .dark [data-radix-popper-content-wrapper] > div {
-  @apply bg-gray-800 !bg-opacity-100 rounded-xl;
+  background-color: rgb(31, 41, 55);
+  --tw-bg-opacity: 1 !important;
+  border-radius: 0.75rem;
 }
 
 /* Progress bar colors for dark mode */
 .dark .progress-value {
-  @apply bg-momoney-500 rounded-full;
+  background-color: rgb(107, 114, 128);
+  border-radius: 9999px;
 }
 
 /* Dialog content dark mode */
 .dark .dialog-content {
-  @apply bg-gray-800 border-gray-700 rounded-2xl;
+  background-color: rgb(31, 41, 55);
+  border-color: rgb(55, 65, 81);
+  border-radius: 1rem;
 }
 
 /* Animation keyframes - enhanced */
@@ -329,44 +408,79 @@ html.index-page {
 
 /* Hover underline animation - enhanced */
 .hover-underline {
-  @apply relative;
+  position: relative;
 }
 
 .hover-underline::after {
-  @apply content-[''] absolute left-0 bottom-0 w-0 h-0.5 bg-momoney-500 dark:bg-momoney-400 transition-all duration-500;
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 0.125rem;
+  background-color: rgb(107, 114, 128);
+  transition-property: all;
+  transition-duration: 500ms;
+}
+.dark .hover-underline::after {
+  background-color: rgb(156, 163, 175);
 }
 
 .hover-underline:hover::after {
-  @apply w-full;
+  width: 100%;
 }
 
 /* Button transitions - enhanced */
 .btn-transition {
-  @apply transition-all duration-500 transform hover:scale-105 hover:-translate-y-1 hover:shadow-lg;
+  transition-property: all;
+  transition-duration: 500ms;
+  transform-origin: center;
+}
+.btn-transition:hover {
+  transform: scale(1.05) translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 /* Card hover effects - enhanced */
 .card-hover-effect {
-  @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-2 rounded-2xl;
+  transition-property: all;
+  transition-duration: 300ms;
+  border-radius: 1rem;
+}
+.card-hover-effect:hover {
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  transform: translateY(-8px);
 }
 
 /* Chart tooltips */
 .chart-tooltip {
-  @apply bg-white p-3 rounded-2xl shadow-lg border border-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:text-white;
+  background-color: white;
+  padding: 0.75rem;
+  border-radius: 1rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgb(243, 244, 246);
+}
+.dark .chart-tooltip {
+  background-color: rgb(31, 41, 55);
+  border-color: rgb(55, 65, 81);
+  color: white;
 }
 
 /* Dialog styling */
 .dark .dialog-overlay {
-  @apply bg-black/80 backdrop-blur-sm;
+  background-color: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
 }
 
 /* Fix for TransactionForm dialog in dark mode */
 .dark [role="dialog"] {
-  @apply text-gray-100;
+  color: rgb(243, 244, 246);
 }
 
 .dark [role="dialog"] .bg-background {
-  @apply bg-gray-800 border-gray-700 rounded-2xl;
+  background-color: rgb(31, 41, 55);
+  border-color: rgb(55, 65, 81);
+  border-radius: 1rem;
 }
 
 /* Guaranteeing no transparency in UI */
@@ -374,7 +488,9 @@ html.index-page {
 .radix-popover-content,
 .radix-menu-content,
 .radix-select-content {
-  @apply !backdrop-blur-none !bg-opacity-100 rounded-xl;
+  backdrop-filter: none !important;
+  --tw-bg-opacity: 1 !important;
+  border-radius: 0.75rem;
 }
 
 /* New animations and styles for a more modern look */
@@ -421,13 +537,34 @@ html.index-page {
 
 /* Modernizing inputs */
 input, select, textarea {
-  @apply rounded-xl border-gray-200 transition-all duration-300 focus:ring-2 focus:ring-momoney-400 focus:border-transparent;
-  @apply dark:border-gray-700 dark:focus:ring-momoney-500;
+  border-radius: 0.75rem;
+  border-color: rgb(229, 231, 235);
+  transition-property: all;
+  transition-duration: 300ms;
+}
+input:focus, select:focus, textarea:focus {
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+  --tw-ring-color: rgb(156, 163, 175);
+  --tw-ring-opacity: 0.5;
+  border-color: transparent;
+}
+.dark input, .dark select, .dark textarea {
+  border-color: rgb(55, 65, 81);
+}
+.dark input:focus, .dark select:focus, .dark textarea:focus {
+  --tw-ring-color: rgb(107, 114, 128);
 }
 
 /* More rounded elements */
 .rounded-modern {
-  @apply rounded-2xl md:rounded-3xl;
+  border-radius: 1rem;
+}
+@media (min-width: 768px) {
+  .rounded-modern {
+    border-radius: 1.5rem;
+  }
 }
 
 /* Subtle shadow effects */
@@ -458,10 +595,24 @@ input, select, textarea {
 .card, 
 .dark-card, 
 .glass-card {
-  @apply rounded-2xl overflow-hidden transition-all duration-300;
+  border-radius: 1rem;
+  overflow: hidden;
+  transition-property: all;
+  transition-duration: 300ms;
 }
 
 /* Enhanced button focus states */
 button:focus-visible {
-  @apply outline-none ring-2 ring-momoney-400 dark:ring-momoney-300 ring-offset-2 ring-offset-white dark:ring-offset-gray-900;
+  outline: none;
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+  --tw-ring-color: rgb(156, 163, 175);
+  --tw-ring-opacity: 0.5;
+  --tw-ring-offset-width: 2px;
+  --tw-ring-offset-color: white;
+}
+.dark button:focus-visible {
+  --tw-ring-color: rgb(209, 213, 219);
+  --tw-ring-offset-color: rgb(17, 24, 39);
 }

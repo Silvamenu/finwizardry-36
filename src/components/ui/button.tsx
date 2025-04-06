@@ -43,15 +43,30 @@ export interface ButtonProps
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, isLoading, ...props }, ref) => {
+    const Comp = asChild ? Slot : "button";
+    
+    return (
+      <Comp
+        className={cn(buttonVariants({ variant, size, className }))}
+        ref={ref}
+        {...props}
+      />
+    );
+  }
+);
+
+// Create a motion button version
+export const MotionButton = React.forwardRef<HTMLButtonElement, ButtonProps & { whileHover?: any, whileTap?: any, transition?: any }>(
+  ({ className, variant, size, asChild = false, whileHover, whileTap, transition, isLoading, ...props }, ref) => {
     const Comp = asChild ? Slot : motion.button;
     
     return (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
-        whileHover={{ scale: 1.03 }}
-        whileTap={{ scale: 0.97 }}
-        transition={{ duration: 0.2 }}
+        whileHover={whileHover || { scale: 1.03 }}
+        whileTap={whileTap || { scale: 0.97 }}
+        transition={transition || { duration: 0.2 }}
         {...props}
       />
     );
@@ -59,5 +74,6 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 );
 
 Button.displayName = "Button";
+MotionButton.displayName = "MotionButton";
 
 export { Button, buttonVariants };
