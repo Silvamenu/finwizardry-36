@@ -2,7 +2,7 @@
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
-import { motion, type TargetAndTransition, type Variants } from "framer-motion";
+import { motion, type TargetAndTransition, type Variants, type HTMLMotionProps } from "framer-motion";
 
 import { cn } from "@/lib/utils";
 
@@ -62,14 +62,13 @@ const buttonAnimationVariants: Variants = {
   tap: { scale: 0.98 }
 };
 
-// Create a proper typed motion button version without prop type issues
-interface MotionButtonProps extends ButtonProps {
-  whileHover?: TargetAndTransition;
-  whileTap?: TargetAndTransition;
-  transition?: object;
-  animate?: TargetAndTransition;
-  initial?: TargetAndTransition;
-}
+// Create a proper typed motion button version that works with both React and Framer Motion
+type MotionButtonProps = Omit<HTMLMotionProps<"button">, "variants"> & 
+  VariantProps<typeof buttonVariants> & {
+    asChild?: boolean;
+    isLoading?: boolean;
+    className?: string;
+  };
 
 const MotionButton = React.forwardRef<HTMLButtonElement, MotionButtonProps>(
   ({ 
@@ -77,11 +76,11 @@ const MotionButton = React.forwardRef<HTMLButtonElement, MotionButtonProps>(
     variant, 
     size, 
     asChild = false, 
-    whileHover, 
-    whileTap, 
-    transition, 
-    animate, 
-    initial, 
+    whileHover = "hover", 
+    whileTap = "tap", 
+    transition = { duration: 0.2 }, 
+    animate = "initial", 
+    initial = "initial", 
     isLoading, 
     ...props 
   }, ref) => {
@@ -92,11 +91,11 @@ const MotionButton = React.forwardRef<HTMLButtonElement, MotionButtonProps>(
         className={buttonClasses}
         ref={ref}
         variants={buttonAnimationVariants}
-        initial="initial"
-        whileHover={whileHover || "hover"}
-        whileTap={whileTap || "tap"}
-        transition={transition || { duration: 0.2 }}
-        animate={animate || "initial"}
+        initial={initial}
+        whileHover={whileHover}
+        whileTap={whileTap}
+        transition={transition}
+        animate={animate}
         {...props}
       />
     );
