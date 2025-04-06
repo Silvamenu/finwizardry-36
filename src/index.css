@@ -6,7 +6,7 @@
 .gradient-text {
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  background-image: linear-gradient(to right, #4b5563, #9ca3af);
+  background-image: linear-gradient(to right, #3b82f6, #60a5fa);
 }
 
 /* Force light mode for index page */
@@ -31,12 +31,12 @@ html.index-page {
 
 /* Keep buttons styled consistently */
 .index-page-wrapper button {
-  background-color: #4b5563 !important;
+  background-color: #3b82f6 !important;
 }
 
 /* Use direct color value instead of @apply to avoid circular dependency */
 .index-page-wrapper .bg-momoney-500 {
-  background-color: #6b7280 !important;
+  background-color: #60a5fa !important;
 }
 
 .index-page-wrapper .text-gray-700 {
@@ -58,7 +58,10 @@ html.index-page {
 
 /* Animation for login transition */
 .login-transition {
-  @apply fixed inset-0 bg-background z-[9999];
+  position: fixed;
+  inset: 0;
+  background-color: hsl(var(--background));
+  z-index: 9999;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.5s ease-in-out;
@@ -70,17 +73,37 @@ html.index-page {
 }
 
 .login-spinner {
-  @apply animate-spin h-12 w-12 border-4 border-momoney-600 border-t-transparent;
+  animation: spin 1s linear infinite;
+  height: 3rem;
+  width: 3rem;
+  border: 4px solid #3b82f6;
   border-radius: 9999px;
+  border-top-color: transparent;
 }
 
 /* Button styles */
 .btn-clean {
-  @apply bg-momoney-600 text-white hover:bg-momoney-500 shadow-sm transition-all;
+  background-color: #3b82f6;
+  color: white;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+.btn-clean:hover {
+  background-color: #60a5fa;
 }
 
 .btn-clean-outline {
-  @apply border border-momoney-400 text-momoney-600 bg-transparent hover:bg-momoney-50 transition-all;
+  border: 1px solid #93c5fd;
+  color: #3b82f6;
+  background-color: transparent;
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+.btn-clean-outline:hover {
+  background-color: #f0f9ff;
 }
 
 /* Dark mode specific styles */
@@ -100,9 +123,9 @@ html.index-page {
   color: rgb(156, 163, 175);
 }
 
-/* Fixed: Removed the circular dependency */
-/* Avoid applying tailwind classes to other tailwind classes */
-.dark .rounded-xl-borders {
+/* Fix for circular dependency - removed @apply */
+/* Input borders in dark mode */
+.dark .rounded-borders {
   border-color: rgb(55, 65, 81);
 }
 
@@ -119,18 +142,18 @@ html.index-page {
 
 /* Dark mode button variants */
 .dark button[class*="bg-momoney-600"] {
-  background-color: #4b5563 !important;
+  background-color: #3b82f6 !important;
 }
 .dark button[class*="bg-momoney-600"]:hover {
-  background-color: #6b7280 !important;
+  background-color: #60a5fa !important;
 }
 
 .dark button[class*="border-momoney-400"] {
-  border-color: #6b7280 !important;
-  color: #d1d5db !important;
+  border-color: #93c5fd !important;
+  color: #dbeafe !important;
 }
 .dark button[class*="border-momoney-400"]:hover {
-  background-color: rgba(75, 85, 99, 0.3);
+  background-color: rgba(59, 130, 246, 0.3);
 }
 
 /* Chart background for dark mode */
@@ -343,7 +366,7 @@ html.index-page {
 
 /* Progress bar colors for dark mode */
 .dark .progress-value {
-  background-color: rgb(107, 114, 128);
+  background-color: #3b82f6;
   border-radius: 9999px;
 }
 
@@ -418,12 +441,12 @@ html.index-page {
   bottom: 0;
   width: 0;
   height: 0.125rem;
-  background-color: rgb(107, 114, 128);
+  background-color: #3b82f6;
   transition-property: all;
   transition-duration: 500ms;
 }
 .dark .hover-underline::after {
-  background-color: rgb(156, 163, 175);
+  background-color: #60a5fa;
 }
 
 .hover-underline:hover::after {
@@ -546,7 +569,7 @@ input:focus, select:focus, textarea:focus {
   --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
   --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
   box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
-  --tw-ring-color: rgb(156, 163, 175);
+  --tw-ring-color: #93c5fd;
   --tw-ring-opacity: 0.5;
   border-color: transparent;
 }
@@ -554,7 +577,7 @@ input:focus, select:focus, textarea:focus {
   border-color: rgb(55, 65, 81);
 }
 .dark input:focus, .dark select:focus, .dark textarea:focus {
-  --tw-ring-color: rgb(107, 114, 128);
+  --tw-ring-color: #60a5fa;
 }
 
 /* More rounded elements */
@@ -585,12 +608,6 @@ input:focus, select:focus, textarea:focus {
   transition-duration: 250ms;
 }
 
-/* Modern fadeIn animation for page elements */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
 /* Base styles for all cards */
 .card, 
 .dark-card, 
@@ -607,12 +624,56 @@ button:focus-visible {
   --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
   --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
   box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
-  --tw-ring-color: rgb(156, 163, 175);
+  --tw-ring-color: #93c5fd;
   --tw-ring-opacity: 0.5;
   --tw-ring-offset-width: 2px;
   --tw-ring-offset-color: white;
 }
 .dark button:focus-visible {
-  --tw-ring-color: rgb(209, 213, 219);
+  --tw-ring-color: #60a5fa;
   --tw-ring-offset-color: rgb(17, 24, 39);
+}
+
+/* Dock component styles */
+.dock {
+  backdrop-filter: blur(16px);
+  background-color: rgba(255, 255, 255, 0.95);
+  border-radius: 1rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  padding: 0.75rem;
+}
+
+.dark .dock {
+  background-color: rgba(31, 41, 55, 0.95);
+}
+
+.dock-item {
+  transition: all 0.3s ease;
+  border-radius: 0.75rem;
+}
+
+.dock-item:hover {
+  transform: translateY(-8px);
+}
+
+/* New blue-themed dashboard elements */
+.blue-gradient {
+  background: linear-gradient(135deg, #3b82f6, #1e40af);
+}
+
+.blue-glass {
+  background-color: rgba(219, 234, 254, 0.7);
+  backdrop-filter: blur(12px);
+}
+
+.dark .blue-glass {
+  background-color: rgba(29, 78, 216, 0.2);
+}
+
+.blue-border {
+  border: 1px solid rgb(191, 219, 254);
+}
+
+.dark .blue-border {
+  border-color: rgb(59, 130, 246, 0.5);
 }

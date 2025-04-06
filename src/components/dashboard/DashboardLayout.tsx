@@ -8,7 +8,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Sidebar } from "@/components/ui/sidebar";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { AvatarDropdown } from "@/components/ui/avatar-dropdown";
-import { Button } from "@/components/ui/button";
+import { MotionButton } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
@@ -71,7 +71,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
   return (
     <motion.div 
-      className="min-h-screen bg-gray-50 dark:bg-gray-900 flex transition-colors duration-500"
+      className="min-h-screen bg-white dark:bg-gray-900 flex transition-colors duration-500"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
@@ -80,7 +80,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       <AnimatePresence>
         {isMobile && sidebarOpen && (
           <motion.div 
-            className="fixed inset-0 z-20 bg-black/50 backdrop-blur-sm"
+            className="fixed inset-0 z-20 bg-black/30 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -112,33 +112,37 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         isCollapsed && !isMobile ? "md:ml-20" : "md:ml-0"
       )}>
         <motion.header 
-          className="bg-white dark:bg-gray-800 shadow-sm z-10 flex justify-between items-center p-4 transition-colors duration-500 border-b border-gray-100 dark:border-gray-700 rounded-b-3xl"
+          className="bg-white dark:bg-gray-800 shadow-sm z-10 flex justify-between items-center p-4 transition-colors duration-500 border-b border-blue-50 dark:border-blue-900/30 rounded-b-3xl"
           initial={{ y: -20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.4 }}
         >
           <div className="flex items-center">
             {isMobile ? (
-              <Button
+              <MotionButton
                 variant="ghost"
                 size="icon"
-                className="mr-2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white rounded-full"
+                className="mr-2 text-blue-600 dark:text-blue-400 rounded-full"
                 onClick={() => setSidebarOpen(!sidebarOpen)}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-              </Button>
+              </MotionButton>
             ) : (
-              <Button
+              <MotionButton
                 variant="ghost"
                 size="icon"
-                className="mr-2 text-gray-500 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white rounded-full"
+                className="mr-2 text-blue-600 dark:text-blue-400 rounded-full"
                 onClick={toggleCollapse}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
               >
                 {isCollapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
-              </Button>
+              </MotionButton>
             )}
             <motion.h1 
-              className="text-xl md:text-2xl font-bold text-gray-800 dark:text-white transition-colors duration-500"
+              className="text-xl md:text-2xl font-bold text-blue-900 dark:text-blue-50 transition-colors duration-500"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
@@ -148,12 +152,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           </div>
           <div className="flex items-center space-x-3">
             <ThemeToggle />
-            <Separator orientation="vertical" className="h-8 mx-1 hidden sm:block dark:bg-gray-700" />
+            <Separator orientation="vertical" className="h-8 mx-1 hidden sm:block dark:bg-blue-900/30" />
             <AvatarDropdown />
           </div>
         </motion.header>
         
-        <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50 dark:bg-gray-900 transition-colors duration-500">
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-blue-50/30 dark:bg-gray-900 transition-colors duration-500">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

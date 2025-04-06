@@ -7,23 +7,23 @@ import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-2xl text-sm font-medium transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 [&_svg]:h-4 [&_svg]:w-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-md hover:-translate-y-0.5",
-        destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 hover:shadow-md hover:-translate-y-0.5",
-        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground hover:shadow-md hover:-translate-y-0.5",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80 hover:shadow-md hover:-translate-y-0.5",
+        default: "bg-blue-500 text-white hover:bg-blue-600 shadow-sm",
+        destructive: "bg-red-500 text-white hover:bg-red-600 shadow-sm",
+        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost: "hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
-        clean: "bg-momoney-600 text-white hover:bg-momoney-500 hover:shadow-md hover:-translate-y-0.5",
-        cleanOutline: "border border-momoney-400 text-momoney-600 bg-transparent hover:bg-momoney-50 dark:hover:bg-momoney-900/20 hover:shadow-md hover:-translate-y-0.5",
+        link: "text-blue-500 underline-offset-4 hover:underline",
+        clean: "bg-blue-600 text-white hover:bg-blue-500 shadow-sm",
+        cleanOutline: "border border-blue-400 text-blue-600 bg-transparent hover:bg-blue-50 dark:hover:bg-blue-900/20",
       },
       size: {
         default: "h-10 px-5 py-2",
-        sm: "h-9 rounded-xl px-3",
-        lg: "h-11 rounded-2xl px-8 text-base",
+        sm: "h-9 rounded-lg px-3",
+        lg: "h-11 rounded-xl px-8 text-base",
         icon: "h-10 w-10 rounded-full",
       },
     },
@@ -55,18 +55,28 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   }
 );
 
-// Create a motion button version
-export const MotionButton = React.forwardRef<HTMLButtonElement, ButtonProps & { whileHover?: any, whileTap?: any, transition?: any }>(
-  ({ className, variant, size, asChild = false, whileHover, whileTap, transition, isLoading, ...props }, ref) => {
-    const Comp = asChild ? Slot : motion.button;
+// Create a proper typed motion button version without prop type issues
+interface MotionButtonProps extends ButtonProps {
+  whileHover?: object;
+  whileTap?: object;
+  transition?: object;
+  animate?: object;
+  initial?: object;
+}
+
+const MotionButton = React.forwardRef<HTMLButtonElement, MotionButtonProps>(
+  ({ className, variant, size, asChild = false, whileHover, whileTap, transition, animate, initial, isLoading, ...props }, ref) => {
+    const buttonClasses = cn(buttonVariants({ variant, size, className }));
     
     return (
-      <Comp
-        className={cn(buttonVariants({ variant, size, className }))}
+      <motion.button
+        className={buttonClasses}
         ref={ref}
-        whileHover={whileHover || { scale: 1.03 }}
-        whileTap={whileTap || { scale: 0.97 }}
+        whileHover={whileHover || { scale: 1.02, y: -2 }}
+        whileTap={whileTap || { scale: 0.98 }}
         transition={transition || { duration: 0.2 }}
+        animate={animate}
+        initial={initial}
         {...props}
       />
     );
@@ -76,4 +86,4 @@ export const MotionButton = React.forwardRef<HTMLButtonElement, ButtonProps & { 
 Button.displayName = "Button";
 MotionButton.displayName = "MotionButton";
 
-export { Button, buttonVariants };
+export { Button, MotionButton, buttonVariants };

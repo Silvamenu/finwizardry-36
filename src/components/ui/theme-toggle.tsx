@@ -8,7 +8,7 @@ import { useUserPreferences } from "@/hooks/useUserPreferences";
 import { useThemeEffect } from "@/hooks/useThemeEffect";
 
 export function ThemeToggle() {
-  const { preferences, updatePreferences, loading } = useUserPreferences();
+  const { preferences, savePreferences, loading } = useUserPreferences();
   const [mounted, setMounted] = useState(false);
   const [isDark, setIsDark] = useState(false);
 
@@ -31,7 +31,7 @@ export function ThemeToggle() {
   const toggleTheme = () => {
     if (loading) return;
     const newTheme = isDark ? 'light' : 'dark';
-    updatePreferences({ theme: newTheme });
+    savePreferences({ ...preferences, theme: newTheme });
     setIsDark(!isDark);
   };
 
@@ -41,7 +41,7 @@ export function ThemeToggle() {
   return (
     <motion.button
       onClick={toggleTheme}
-      className="relative flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-800 transition-colors hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+      className="relative flex h-10 w-10 items-center justify-center rounded-full bg-blue-50 text-blue-600 transition-colors hover:bg-blue-100 dark:bg-blue-900/30 dark:text-blue-300 dark:hover:bg-blue-800/50"
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
       aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
