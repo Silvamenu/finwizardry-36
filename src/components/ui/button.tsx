@@ -2,9 +2,21 @@
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
-import { motion, type TargetAndTransition, type Variants, type HTMLMotionProps } from "framer-motion";
+import { motion, type TargetAndTransition, type Variants } from "framer-motion";
 
 import { cn } from "@/lib/utils";
+
+// Define type properties from framer-motion's HTMLMotionProps that we want to use
+type MotionButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
+  VariantProps<typeof buttonVariants> & {
+    asChild?: boolean;
+    isLoading?: boolean;
+    whileHover?: TargetAndTransition | string;
+    whileTap?: TargetAndTransition | string;
+    initial?: TargetAndTransition | string;
+    animate?: TargetAndTransition | string;
+    transition?: any;
+  };
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 [&_svg]:h-4 [&_svg]:w-4 [&_svg]:shrink-0",
@@ -63,13 +75,6 @@ const buttonAnimationVariants: Variants = {
 };
 
 // Create a proper typed motion button version that works with both React and Framer Motion
-type MotionButtonProps = Omit<HTMLMotionProps<"button">, "variants"> & 
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean;
-    isLoading?: boolean;
-    className?: string;
-  };
-
 const MotionButton = React.forwardRef<HTMLButtonElement, MotionButtonProps>(
   ({ 
     className, 
