@@ -2,7 +2,7 @@
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
-import { motion } from "framer-motion";
+import { motion, type TargetAndTransition, type Variants } from "framer-motion";
 
 import { cn } from "@/lib/utils";
 
@@ -55,28 +55,48 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   }
 );
 
+// Define specific motion animation variants
+const buttonAnimationVariants: Variants = {
+  initial: { scale: 1, y: 0 },
+  hover: { scale: 1.02, y: -2 },
+  tap: { scale: 0.98 }
+};
+
 // Create a proper typed motion button version without prop type issues
 interface MotionButtonProps extends ButtonProps {
-  whileHover?: object;
-  whileTap?: object;
+  whileHover?: TargetAndTransition;
+  whileTap?: TargetAndTransition;
   transition?: object;
-  animate?: object;
-  initial?: object;
+  animate?: TargetAndTransition;
+  initial?: TargetAndTransition;
 }
 
 const MotionButton = React.forwardRef<HTMLButtonElement, MotionButtonProps>(
-  ({ className, variant, size, asChild = false, whileHover, whileTap, transition, animate, initial, isLoading, ...props }, ref) => {
+  ({ 
+    className, 
+    variant, 
+    size, 
+    asChild = false, 
+    whileHover, 
+    whileTap, 
+    transition, 
+    animate, 
+    initial, 
+    isLoading, 
+    ...props 
+  }, ref) => {
     const buttonClasses = cn(buttonVariants({ variant, size, className }));
     
     return (
       <motion.button
         className={buttonClasses}
         ref={ref}
-        whileHover={whileHover || { scale: 1.02, y: -2 }}
-        whileTap={whileTap || { scale: 0.98 }}
+        variants={buttonAnimationVariants}
+        initial="initial"
+        whileHover={whileHover || "hover"}
+        whileTap={whileTap || "tap"}
         transition={transition || { duration: 0.2 }}
-        animate={animate}
-        initial={initial}
+        animate={animate || "initial"}
         {...props}
       />
     );
