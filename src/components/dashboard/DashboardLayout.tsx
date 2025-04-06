@@ -5,7 +5,11 @@ import { X, Menu, ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/contexts/AuthContext";
-import { Sidebar } from "@/components/ui/sidebar";
+import { 
+  Sidebar, 
+  SidebarProvider,
+  SidebarTrigger 
+} from "@/components/ui/sidebar";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { AvatarDropdown } from "@/components/ui/avatar-dropdown";
 import { MotionButton } from "@/components/ui/button";
@@ -91,21 +95,23 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       </AnimatePresence>
       
       {/* Sidebar */}
-      <motion.div 
-        className={cn(
-          "fixed md:static inset-y-0 left-0 z-30 transition-all duration-500 ease-in-out",
-          isMobile && !sidebarOpen ? "-translate-x-full" : "translate-x-0",
-          isCollapsed && !isMobile ? "md:w-20" : "md:w-64"
-        )}
-        initial={{ x: isMobile ? -320 : 0 }}
-        animate={{ x: 0 }}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-      >
-        <Sidebar data-active-page={activePage} className={cn(
-          "h-full transition-all duration-500 rounded-r-3xl overflow-hidden",
-          isCollapsed && !isMobile ? "md:w-20" : "md:w-64"
-        )} />
-      </motion.div>
+      <SidebarProvider defaultOpen={!isCollapsed}>
+        <motion.div 
+          className={cn(
+            "fixed md:static inset-y-0 left-0 z-30 transition-all duration-500 ease-in-out",
+            isMobile && !sidebarOpen ? "-translate-x-full" : "translate-x-0",
+            isCollapsed && !isMobile ? "md:w-20" : "md:w-64"
+          )}
+          initial={{ x: isMobile ? -320 : 0 }}
+          animate={{ x: 0 }}
+          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        >
+          <Sidebar data-active-page={activePage} className={cn(
+            "h-full transition-all duration-500 rounded-r-3xl overflow-hidden",
+            isCollapsed && !isMobile ? "md:w-20" : "md:w-64"
+          )} />
+        </motion.div>
+      </SidebarProvider>
       
       <div className={cn(
         "flex-1 min-w-0 flex flex-col transition-all duration-500",
