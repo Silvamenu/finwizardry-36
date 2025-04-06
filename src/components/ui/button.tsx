@@ -2,12 +2,12 @@
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
-import { motion, type TargetAndTransition, type Variants } from "framer-motion";
+import { motion, type TargetAndTransition, type Variants, type HTMLMotionProps } from "framer-motion";
 
 import { cn } from "@/lib/utils";
 
-// Define type properties from framer-motion's HTMLMotionProps that we want to use
-type MotionButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> &
+// Define the MotionButtonProps type correctly
+type MotionButtonProps = Omit<HTMLMotionProps<"button">, "animate" | "initial" | "transition" | "whileHover" | "whileTap"> & 
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean;
     isLoading?: boolean;
