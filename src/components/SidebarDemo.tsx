@@ -20,53 +20,63 @@ import {
   Home,
   Inbox,
   Search,
-  Settings 
+  Settings,
+  PiggyBank,
+  BarChart3,
+  ArrowLeftRight,
+  Target,
+  MessageSquarePlus 
 } from "lucide-react"
 
 // Menu items
-const items = [
-  {
-    title: "Home",
-    url: "#",
-    icon: Home,
-  },
-  {
-    title: "Inbox",
-    url: "#",
-    icon: Inbox,
-  },
-  {
-    title: "Calendar",
-    url: "#",
-    icon: Calendar,
-  },
-  {
-    title: "Search",
-    url: "#",
-    icon: Search,
-  },
-  {
-    title: "Settings",
-    url: "#",
-    icon: Settings,
-  },
-]
+const mainItems = [
+  { title: "Dashboard", icon: Home, path: "/dashboard" },
+  { title: "Orçamento", icon: PiggyBank, path: "/dashboard/orcamento" },
+  { title: "Investimentos", icon: BarChart3, path: "/dashboard/investimentos" },
+  { title: "Transações", icon: ArrowLeftRight, path: "/dashboard/transacoes" },
+  { title: "Metas", icon: Target, path: "/dashboard/metas" },
+  { title: "Assistente", icon: MessageSquarePlus, path: "/dashboard/assistente" },
+];
+
+const userItems = [
+  { title: "Configurações", icon: Settings, path: "/dashboard/configuracoes" },
+  { title: "Perfil", icon: User, path: "/dashboard/perfil" },
+  { title: "Inbox", icon: Inbox, path: "/dashboard/mensagens" },
+];
 
 export function SidebarDemo() {
   return (
     <SidebarProvider>
       <div className="flex w-full">
-        <Sidebar>
+        <Sidebar variant="floating" className="rounded-2xl border border-blue-50 dark:border-blue-900/30 shadow-lg">
           <SidebarContent>
             <SidebarGroup>
-              <SidebarGroupLabel>Application</SidebarGroupLabel>
+              <SidebarGroupLabel>Navegação</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
-                  {items.map((item) => (
+                  {mainItems.map((item) => (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton asChild tooltip={item.title}>
-                        <a href={item.url}>
-                          <item.icon />
+                        <a href={item.path}>
+                          <item.icon className="h-5 w-5" />
+                          <span>{item.title}</span>
+                        </a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+            
+            <SidebarGroup>
+              <SidebarGroupLabel>Usuário</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {userItems.map((item) => (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton asChild tooltip={item.title}>
+                        <a href={item.path}>
+                          <item.icon className="h-5 w-5" />
                           <span>{item.title}</span>
                         </a>
                       </SidebarMenuButton>
@@ -98,8 +108,8 @@ export function SidebarDemo() {
             <SidebarTrigger className="h-4 w-4 mt-2" />
           </div>
           <div className="p-6">
-            <h1 className="text-2xl font-bold">Main Content</h1>
-            <p className="mt-2">This is the main content area of the page.</p>
+            <h1 className="text-2xl font-bold">Exemplo de Sidebar</h1>
+            <p className="mt-2">Esta é uma demonstração da sidebar aprimorada.</p>
           </div>
         </main>
       </div>

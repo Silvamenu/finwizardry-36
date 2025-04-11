@@ -8,19 +8,54 @@ import { useAuth } from "@/contexts/AuthContext";
 import { 
   Sidebar, 
   SidebarProvider,
-  SidebarTrigger 
+  SidebarTrigger,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarGroupContent,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
 } from "@/components/ui/sidebar";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { AvatarDropdown } from "@/components/ui/avatar-dropdown";
 import { MotionButton } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
+import { 
+  Home,
+  PiggyBank,
+  BarChart3,
+  ArrowLeftRight,
+  Target,
+  MessageSquarePlus,
+  Settings,
+  User,
+  Mail
+} from "lucide-react";
 
 interface DashboardLayoutProps {
   children: ReactNode;
   activePage?: string;
 }
+
+// Navigation items for the sidebar
+const navigationItems = [
+  { title: "Dashboard", icon: Home, path: "/dashboard" },
+  { title: "Orçamento", icon: PiggyBank, path: "/dashboard/orcamento" },
+  { title: "Investimentos", icon: BarChart3, path: "/dashboard/investimentos" },
+  { title: "Transações", icon: ArrowLeftRight, path: "/dashboard/transacoes" },
+  { title: "Metas", icon: Target, path: "/dashboard/metas" },
+  { title: "Assistente", icon: MessageSquarePlus, path: "/dashboard/assistente" },
+];
+
+// User-related items
+const userItems = [
+  { title: "Configurações", icon: Settings, path: "/dashboard/configuracoes" },
+  { title: "Perfil", icon: User, path: "/dashboard/perfil" },
+  { title: "Mensagens", icon: Mail, path: "/dashboard/mensagens" },
+];
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   children,
@@ -67,14 +102,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const toggleCollapse = () => {
     if (isMobile) return;
     setIsCollapsed(!isCollapsed);
-    toast.info(
-      !isCollapsed ? "Sidebar minimizada" : "Sidebar expandida", 
-      { duration: 1500 }
-    );
   };
 
   return (
-    <SidebarProvider defaultOpen={!isCollapsed}>
+    <SidebarProvider defaultOpen={!isMobile && !isCollapsed}>
       <motion.div 
         className="min-h-screen bg-white dark:bg-gray-900 flex w-full transition-colors duration-500"
         initial={{ opacity: 0 }}
@@ -95,27 +126,81 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           )}
         </AnimatePresence>
         
-        {/* Sidebar */}
-        <motion.div 
+        {/* Enhanced Sidebar */}
+        <Sidebar 
+          variant="floating"
           className={cn(
-            "fixed md:static inset-y-0 left-0 z-30 transition-all duration-500 ease-in-out",
-            isMobile && !sidebarOpen ? "-translate-x-full" : "translate-x-0",
-            isCollapsed && !isMobile ? "md:w-20" : "md:w-64"
+            "rounded-2xl overflow-hidden shadow-lg border border-blue-50 dark:border-blue-900/30",
+            isMobile && !sidebarOpen ? "-translate-x-full" : "translate-x-0"
           )}
-          initial={{ x: isMobile ? -320 : 0 }}
-          animate={{ x: 0 }}
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
         >
-          <Sidebar data-active-page={activePage} className={cn(
-            "h-full transition-all duration-500 rounded-r-3xl overflow-hidden",
-            isCollapsed && !isMobile ? "md:w-20" : "md:w-64"
-          )} />
-        </motion.div>
+          <SidebarContent>
+            {/* Main Navigation */}
+            <SidebarGroup>
+              <SidebarGroupLabel>Navegação</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {navigationItems.map((item) => (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton 
+                        tooltip={item.title}
+                        isActive={activePage === item.title}
+                        asChild
+                      >
+                        <a href={item.path} onClick={(e) => {
+                          e.preventDefault();
+                          navigate(item.path);
+                          if (isMobile) setSidebarOpen(false);
+                        }}>
+                          <item.icon className="h-5 w-5" />
+                          <span>{item.title}</span>
+                        </a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+
+            {/* User Section */}
+            <SidebarGroup>
+              <SidebarGroupLabel>Usuário</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
+                  {userItems.map((item) => (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton 
+                        tooltip={item.title}
+                        isActive={activePage === item.title}
+                        asChild
+                      >
+                        <a href={item.path} onClick={(e) => {
+                          e.preventDefault();
+                          navigate(item.path);
+                          if (isMobile) setSidebarOpen(false);
+                        }}>
+                          <item.icon className="h-5 w-5" />
+                          <span>{item.title}</span>
+                        </a>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+          </SidebarContent>
+
+          <SidebarFooter>
+            <SidebarGroup>
+              <div className="flex items-center justify-between px-2">
+                <AvatarDropdown />
+                <ThemeToggle />
+              </div>
+            </SidebarGroup>
+          </SidebarFooter>
+        </Sidebar>
         
-        <div className={cn(
-          "flex-1 min-w-0 flex flex-col transition-all duration-500",
-          isCollapsed && !isMobile ? "md:ml-20" : "md:ml-0"
-        )}>
+        <div className="flex-1 min-w-0 flex flex-col">
           <motion.header 
             className="bg-white dark:bg-gray-800 shadow-sm z-10 flex justify-between items-center p-4 transition-colors duration-500 border-b border-blue-50 dark:border-blue-900/30 rounded-b-3xl"
             initial={{ y: -20, opacity: 0 }}
@@ -154,11 +239,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               >
                 {activePage}
               </motion.h1>
-            </div>
-            <div className="flex items-center space-x-3">
-              <ThemeToggle />
-              <Separator orientation="vertical" className="h-8 mx-1 hidden sm:block dark:bg-blue-900/30" />
-              <AvatarDropdown />
             </div>
           </motion.header>
           
