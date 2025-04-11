@@ -17,7 +17,7 @@ export interface UserPreferences {
 }
 
 const defaultPreferences: UserPreferences = {
-  theme: 'light', // Changed from 'system' to 'light' as default
+  theme: 'system',
   language: 'pt-BR',
   currency: 'BRL',
   show_balance: true,
@@ -33,29 +33,28 @@ export function useUserPreferences() {
   const [saving, setSaving] = useState(false);
   const [initialized, setInitialized] = useState(false);
 
-  // Load preferences from Supabase
+  // Load preferences from localStorage or Supabase
   useEffect(() => {
     async function loadPreferences() {
-      if (!user) {
-        // If no user, use default preferences and mark as not loading
-        setPreferences(defaultPreferences);
-        setLoading(false);
-        return;
-      }
-
       try {
         setLoading(true);
-        // Fix the query to handle potential multiple rows by adding .single()
-        // instead of .maybeSingle() which was causing the error
-        const { data, error } = await supabase
-          .from('user_preferences')
-          .select('*')
-          .eq('user_id', user.id)
-          .single();
+        
+        // First, try to load from localStorage for immediate feedback
+        const localPrefs = localStorage.getItem('user_preferences');
+        if (localPrefs) {
+          setPreferences(JSON.parse(localPrefs));
+        }
+        
+        // If user is authenticated, load from Supabase
+        if (user) {
+          const { data, error } = await supabase
+            .from('user_preferences')
+            .select('*')
+            .eq('user_id', user.id)
+            .maybeSingle();
 
-        if (error) {
-          // If error is not found, create default preferences
-          if (error.code === 'PGRST116' || error.message.includes('not found')) {
+          if (error && error.message.includes('not found')) {
+            // No preferences stored yet, create default ones
             try {
               const { error: insertError } = await supabase
                 .from('user_preferences')
@@ -68,24 +67,21 @@ export function useUserPreferences() {
                 console.error('Error creating default preferences:', insertError);
               } else {
                 setInitialized(true);
+                // Save default preferences to localStorage too
+                localStorage.setItem('user_preferences', JSON.stringify(defaultPreferences));
               }
             } catch (err) {
               console.error('Failed to create default preferences:', err);
             }
-            
-            // Use defaults regardless of success/failure of insert
-            setPreferences(defaultPreferences);
-          } else {
-            console.error('Error loading preferences:', error);
-            setPreferences(defaultPreferences);
+          } else if (data) {
+            setPreferences(data as UserPreferences);
+            setInitialized(true);
+            // Update localStorage with server data
+            localStorage.setItem('user_preferences', JSON.stringify(data));
           }
-        } else if (data) {
-          setPreferences(data as UserPreferences);
-          setInitialized(true);
         }
       } catch (error) {
         console.error('Failed to load preferences:', error);
-        setPreferences(defaultPreferences);
       } finally {
         setLoading(false);
       }
@@ -94,41 +90,45 @@ export function useUserPreferences() {
     loadPreferences();
   }, [user]);
 
-  // Save preferences to Supabase
+  // Save preferences to Supabase and localStorage
   const savePreferences = async (newPreferences: UserPreferences): Promise<boolean> => {
-    if (!user) return false;
-
     try {
       setSaving(true);
       
-      const prefsToSave = {
-        ...newPreferences,
-        user_id: user.id
-      };
+      // Always update localStorage for immediate feedback
+      localStorage.setItem('user_preferences', JSON.stringify(newPreferences));
       
-      if (initialized) {
-        // Update existing preferences
-        const { error } = await supabase
-          .from('user_preferences')
-          .update({
-            ...prefsToSave,
-            updated_at: new Date().toISOString()
-          })
-          .eq('user_id', user.id);
-          
-        if (error) {
-          throw error;
+      // If logged in, also update in Supabase
+      if (user) {
+        const prefsToSave = {
+          ...newPreferences,
+          user_id: user.id
+        };
+        
+        if (initialized) {
+          // Update existing preferences
+          const { error } = await supabase
+            .from('user_preferences')
+            .update({
+              ...prefsToSave,
+              updated_at: new Date().toISOString()
+            })
+            .eq('user_id', user.id);
+            
+          if (error) {
+            throw error;
+          }
+        } else {
+          // Insert new preferences
+          const { error } = await supabase
+            .from('user_preferences')
+            .insert(prefsToSave);
+            
+          if (error) {
+            throw error;
+          }
+          setInitialized(true);
         }
-      } else {
-        // Insert new preferences
-        const { error } = await supabase
-          .from('user_preferences')
-          .insert(prefsToSave);
-          
-        if (error) {
-          throw error;
-        }
-        setInitialized(true);
       }
 
       setPreferences(newPreferences);

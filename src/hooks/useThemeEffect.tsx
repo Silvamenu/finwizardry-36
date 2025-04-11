@@ -8,15 +8,20 @@ export function useThemeEffect() {
   useEffect(() => {
     if (loading) return;
     
-    // Get the HTML element
     const root = window.document.documentElement;
     
-    // Apply theme based on user preferences with a smooth transition
+    const resolveTheme = () => {
+      if (preferences.theme === 'system') {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        return prefersDark ? 'dark' : 'light';
+      }
+      return preferences.theme;
+    };
+    
+    // Apply theme with smooth transition
     const applyTheme = (theme: string) => {
-      // Create a transition effect for multiple properties
       root.style.transition = 'background-color 0.6s ease, color 0.6s ease, border-color 0.6s ease, box-shadow 0.6s ease';
       
-      // Apply the theme with enhanced transitions
       if (theme === 'dark') {
         root.classList.add('dark');
         root.classList.remove('light');
@@ -31,7 +36,19 @@ export function useThemeEffect() {
       }, 600);
     };
     
-    applyTheme(preferences.theme);
+    applyTheme(resolveTheme());
+    
+    // Listen for system preference changes if in system mode
+    if (preferences.theme === 'system') {
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const handleChange = () => {
+        const newTheme = mediaQuery.matches ? 'dark' : 'light';
+        applyTheme(newTheme);
+      };
+      
+      mediaQuery.addEventListener('change', handleChange);
+      return () => mediaQuery.removeEventListener('change', handleChange);
+    }
     
   }, [preferences.theme, loading]);
 }

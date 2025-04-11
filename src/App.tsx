@@ -21,7 +21,6 @@ import Login from "./pages/Login";
 import AuthCallback from "./pages/AuthCallback";
 import ResetPassword from "./pages/ResetPassword";
 import { LoadingScreen } from "./components/ui/loading-screen";
-import { SidebarDemo } from "./components/SidebarDemo";
 
 // Import the sidebar theme
 import "./sidebar-theme.css";
@@ -50,7 +49,7 @@ const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
 const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<Index />} />
+      <Route path="/" element={<Navigate to="/dashboard" replace />} />
       <Route path="/login" element={<Login />} />
       <Route path="/auth-callback" element={<AuthCallback />} />
       <Route path="/reset-password" element={<ResetPassword />} />
@@ -63,7 +62,6 @@ const AppRoutes = () => {
       <Route path="/dashboard/configuracoes" element={<ProtectedRoute><Configuracoes /></ProtectedRoute>} />
       <Route path="/dashboard/perfil" element={<ProtectedRoute><Perfil /></ProtectedRoute>} />
       <Route path="/dashboard/mensagens" element={<ProtectedRoute><Mensagens /></ProtectedRoute>} />
-      <Route path="/sidebar-demo" element={<SidebarDemo />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

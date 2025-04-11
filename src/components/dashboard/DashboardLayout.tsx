@@ -1,14 +1,13 @@
 
 import React, { ReactNode, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { X, Menu, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/contexts/AuthContext";
 import { 
   Sidebar, 
   SidebarProvider,
-  SidebarTrigger,
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
@@ -21,8 +20,7 @@ import {
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { AvatarDropdown } from "@/components/ui/avatar-dropdown";
 import { MotionButton } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { 
   Home,
   PiggyBank,
@@ -34,6 +32,7 @@ import {
   User,
   Mail
 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -64,44 +63,43 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const { user } = useAuth();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  const [sidebarOpen, setSidebarOpen] = useState(!isMobile);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
-
-  // Check dark mode when component is mounted
+  
+  // Load sidebar state from localStorage on mount
   useEffect(() => {
-    const isDarkMode = document.documentElement.classList.contains('dark');
-    setDarkMode(isDarkMode);
-    
-    // Create an observer to track theme changes
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.attributeName === 'class') {
-          const isDark = document.documentElement.classList.contains('dark');
-          setDarkMode(isDark);
-        }
-      });
-    });
-    
-    // Start observing
-    observer.observe(document.documentElement, { attributes: true });
-    
-    // Clean up
-    return () => observer.disconnect();
+    const savedSidebarState = localStorage.getItem('sidebarCollapsed');
+    if (savedSidebarState) {
+      const isCollapsedValue = savedSidebarState === 'true';
+      setIsCollapsed(isCollapsedValue);
+      setSidebarOpen(!isCollapsedValue);
+    } else if (isMobile) {
+      // Default for mobile is collapsed
+      setIsCollapsed(true);
+      setSidebarOpen(false);
+    }
   }, []);
 
-  // For smaller screens, auto-close sidebar
+  // Adjust for smaller screens
   useEffect(() => {
     if (isMobile) {
       setSidebarOpen(false);
-    } else {
-      setSidebarOpen(true);
+      setIsCollapsed(true);
     }
   }, [isMobile]);
 
-  const toggleCollapse = () => {
-    if (isMobile) return;
-    setIsCollapsed(!isCollapsed);
+  // Save sidebar state to localStorage when it changes
+  useEffect(() => {
+    localStorage.setItem('sidebarCollapsed', isCollapsed.toString());
+  }, [isCollapsed]);
+
+  const toggleSidebar = () => {
+    if (isMobile) {
+      setSidebarOpen(!sidebarOpen);
+    } else {
+      setIsCollapsed(!isCollapsed);
+      setSidebarOpen(!isCollapsed);
+    }
   };
 
   return (
@@ -113,25 +111,24 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         transition={{ duration: 0.5 }}
       >
         {/* Mobile sidebar backdrop */}
-        <AnimatePresence>
-          {isMobile && sidebarOpen && (
-            <motion.div 
-              className="fixed inset-0 z-20 bg-black/30 backdrop-blur-sm"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              onClick={() => setSidebarOpen(false)}
-            />
-          )}
-        </AnimatePresence>
+        {isMobile && sidebarOpen && (
+          <motion.div 
+            className="fixed inset-0 z-20 bg-black/30 backdrop-blur-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
         
         {/* Enhanced Sidebar */}
         <Sidebar 
           variant="floating"
           className={cn(
-            "rounded-2xl overflow-hidden shadow-lg border border-blue-50 dark:border-blue-900/30",
-            isMobile && !sidebarOpen ? "-translate-x-full" : "translate-x-0"
+            "rounded-2xl overflow-hidden shadow-lg border border-blue-50 dark:border-blue-900/30 transition-all duration-300 ease-in-out",
+            isMobile ? (sidebarOpen ? "translate-x-0 z-50" : "-translate-x-full") : "",
+            !isMobile && isCollapsed ? "w-[4.5rem]" : "w-64"
           )}
         >
           <SidebarContent>
@@ -143,7 +140,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                   {navigationItems.map((item) => (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton 
-                        tooltip={item.title}
+                        tooltip={isCollapsed ? item.title : undefined}
                         isActive={activePage === item.title}
                         asChild
                       >
@@ -151,9 +148,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                           e.preventDefault();
                           navigate(item.path);
                           if (isMobile) setSidebarOpen(false);
-                        }}>
-                          <item.icon className="h-5 w-5" />
-                          <span>{item.title}</span>
+                        }}
+                        className="flex items-center">
+                          <item.icon className="h-5 w-5 flex-shrink-0" />
+                          <span className={cn(
+                            "ml-3 transition-opacity duration-300",
+                            isCollapsed && !isMobile ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
+                          )}>{item.title}</span>
                         </a>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -170,7 +171,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                   {userItems.map((item) => (
                     <SidebarMenuItem key={item.title}>
                       <SidebarMenuButton 
-                        tooltip={item.title}
+                        tooltip={isCollapsed ? item.title : undefined}
                         isActive={activePage === item.title}
                         asChild
                       >
@@ -178,9 +179,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                           e.preventDefault();
                           navigate(item.path);
                           if (isMobile) setSidebarOpen(false);
-                        }}>
-                          <item.icon className="h-5 w-5" />
-                          <span>{item.title}</span>
+                        }}
+                        className="flex items-center">
+                          <item.icon className="h-5 w-5 flex-shrink-0" />
+                          <span className={cn(
+                            "ml-3 transition-opacity duration-300",
+                            isCollapsed && !isMobile ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
+                          )}>{item.title}</span>
                         </a>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -208,29 +213,19 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             transition={{ delay: 0.2, duration: 0.4 }}
           >
             <div className="flex items-center">
-              {isMobile ? (
-                <MotionButton
-                  variant="ghost"
-                  size="icon"
-                  className="mr-2 text-blue-600 dark:text-blue-400 rounded-full"
-                  onClick={() => setSidebarOpen(!sidebarOpen)}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-                </MotionButton>
-              ) : (
-                <MotionButton
-                  variant="ghost"
-                  size="icon"
-                  className="mr-2 text-blue-600 dark:text-blue-400 rounded-full"
-                  onClick={toggleCollapse}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  {isCollapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />}
-                </MotionButton>
-              )}
+              <MotionButton
+                variant="ghost"
+                size="icon"
+                className="mr-2 text-blue-600 dark:text-blue-400 rounded-full"
+                onClick={toggleSidebar}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {isMobile ? 
+                  (sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />) :
+                  (isCollapsed ? <ChevronRight className="h-5 w-5" /> : <ChevronLeft className="h-5 w-5" />)
+                }
+              </MotionButton>
               <motion.h1 
                 className="text-xl md:text-2xl font-bold text-blue-900 dark:text-blue-50 transition-colors duration-500"
                 initial={{ opacity: 0 }}
