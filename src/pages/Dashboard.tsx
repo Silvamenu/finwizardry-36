@@ -1,19 +1,18 @@
-
 import { useEffect } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import FinancialOverview from "@/components/dashboard/FinancialOverview";
 import RecentActivity from "@/components/dashboard/RecentActivity";
 import SpendingAnalysis from "@/components/dashboard/SpendingAnalysis";
 import UpcomingTransactions from "@/components/dashboard/UpcomingTransactions";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { MotionButton } from "@/components/ui/button";
-import { useAuth } from "@/contexts/AuthContext";
+import { useProfile } from "@/hooks/useProfile";
 import { ArrowUp, ArrowDown, BadgeDollarSign, Clock, BarChart3, LineChart, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 
 const Dashboard = () => {
-  const { user } = useAuth();
-  const userName = user?.user_metadata?.name || "Usuário";
+  const { profile } = useProfile();
+  const userName = profile?.name || "Usuário";
 
   useEffect(() => {
     document.title = "MoMoney | Dashboard";
@@ -46,9 +45,16 @@ const Dashboard = () => {
         <motion.div variants={itemVariants} className="lg:col-span-1">
           <Card className="overflow-hidden border border-blue-100 dark:border-blue-900/30 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300">
             <CardContent className="pt-6">
-              <h2 className="text-2xl font-bold text-blue-900 dark:text-blue-50">Olá, {userName}!</h2>
-              <p className="text-gray-500 dark:text-gray-400">Bem-vindo de volta</p>
-              <MotionButton variant="clean" className="mt-4 w-full flex items-center justify-center gap-2">
+              <h2 className="text-2xl font-bold text-blue-900 dark:text-blue-50 truncate">
+                Olá, {userName}!
+              </h2>
+              <p className="text-gray-500 dark:text-gray-400 truncate">
+                Bem-vindo de volta
+              </p>
+              <MotionButton 
+                variant="clean" 
+                className="mt-4 w-full flex items-center justify-center gap-2 truncate"
+              >
                 <LineChart size={16} />
                 Visão Geral
               </MotionButton>

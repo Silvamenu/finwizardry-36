@@ -1,8 +1,12 @@
-
 import { useState } from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent } from "@/components/ui/chart";
-import { PieChart, Pie, ResponsiveContainer, Cell, Tooltip, Legend } from "recharts";
+import { 
+  Card, 
+  CardHeader, 
+  CardTitle, 
+  CardContent 
+} from "@/components/ui/card";
+import { ChartContainer } from "@/components/ui/chart";
+import { PieChart, Pie, ResponsiveContainer, Cell, Tooltip } from "recharts";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowUpRight, Download, Filter, FileBarChart, Calendar } from "lucide-react";
@@ -130,10 +134,10 @@ const SpendingAnalysis = () => {
   }>);
 
   return (
-    <Card className="h-full animate-fade-in reveal-delay-1 rounded-xl border-blue-50 dark:border-gray-700 transition-all duration-300 hover:shadow-md dark:bg-gray-800">
+    <Card className="h-full animate-fade-in reveal-delay-1">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-lg font-medium flex items-center gap-2">
-          <FileBarChart className="h-5 w-5 text-blue-500" />
+        <CardTitle className="text-lg font-medium flex items-center gap-2 truncate">
+          <FileBarChart className="h-5 w-5 text-blue-500 flex-shrink-0" />
           Análise de Gastos
         </CardTitle>
         <div className="flex items-center gap-2">
@@ -173,8 +177,8 @@ const SpendingAnalysis = () => {
       </CardHeader>
       <CardContent>
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="w-full md:w-1/2 h-72 mx-0 my-0 px-0 py-[24px] rounded-none relative group">
-            <ChartContainer config={chartConfig}>
+          <div className="w-full md:w-1/2 h-[300px] flex items-center justify-center">
+            <ChartContainer config={chartConfig} className="w-full max-w-[300px]">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <defs>
@@ -195,8 +199,6 @@ const SpendingAnalysis = () => {
                     dataKey="value" 
                     nameKey="name" 
                     paddingAngle={2}
-                    animationBegin={0}
-                    animationDuration={1500}
                     label={({
                       name,
                       percent
@@ -217,32 +219,29 @@ const SpendingAnalysis = () => {
                 </PieChart>
               </ResponsiveContainer>
             </ChartContainer>
-            
-            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <Button variant="ghost" size="icon" className="h-8 w-8 dark:text-gray-300">
-                <Download className="h-4 w-4" />
-              </Button>
-            </div>
           </div>
           
           <div className="w-full md:w-1/2">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-medium">Detalhes</h3>
-              <Button variant="outline" size="sm" className="h-8 gap-1 rounded-lg dark:bg-gray-700 dark:border-gray-600">
+              <h3 className="text-lg font-medium truncate">Detalhes</h3>
+              <Button variant="outline" size="sm" className="h-8 gap-1 rounded-lg">
                 <Filter className="h-3.5 w-3.5" />
                 <span className="text-xs">Filtrar</span>
               </Button>
             </div>
-            <div className="space-y-3">
+            <div className="space-y-3 overflow-hidden">
               {dataWithPercentage.map((item, index) => (
-                <div key={index} className="flex items-center justify-between p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors cursor-pointer">
-                  <div className="flex items-center">
-                    <div className="w-3 h-3 rounded-full mr-2" style={{ backgroundColor: item.color }} />
-                    <span>{item.name}</span>
+                <div key={index} className="flex items-center justify-between p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                  <div className="flex items-center min-w-0">
+                    <div 
+                      className="w-3 h-3 rounded-full mr-2 flex-shrink-0" 
+                      style={{ backgroundColor: item.color }} 
+                    />
+                    <span className="truncate">{item.name}</span>
                   </div>
-                  <div className="flex flex-col items-end">
-                    <span className="font-medium">{formatCurrency(item.value)}</span>
-                    <div className="flex items-center text-xs text-gray-500 dark:text-gray-400">
+                  <div className="flex flex-col items-end flex-shrink-0">
+                    <span className="font-medium whitespace-nowrap">{formatCurrency(item.value)}</span>
+                    <div className="flex items-center text-xs text-gray-500">
                       <span>{item.percentage}%</span>
                       <ArrowUpRight className="h-3 w-3 ml-0.5 text-green-500" />
                     </div>

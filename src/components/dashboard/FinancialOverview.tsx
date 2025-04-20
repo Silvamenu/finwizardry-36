@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { 
   Card, 
@@ -25,7 +24,6 @@ import { ArrowUp, ArrowDown, Info } from "lucide-react";
 import AnimatedIcon from "@/components/AnimatedIcon";
 import { cn } from "@/lib/utils";
 
-// Simulated data for the chart
 const generateMonthlyData = () => {
   const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
   return months.map((month, index) => {
@@ -58,7 +56,6 @@ const FinancialOverview = () => {
   const [timeRange, setTimeRange] = useState<'weekly' | 'monthly'>('monthly');
   const data = timeRange === 'monthly' ? generateMonthlyData() : generateWeeklyData();
   
-  // Calculate totals
   const totals = data.reduce((acc, item) => {
     acc.receita += item.receita;
     acc.despesa += item.despesa;
@@ -102,7 +99,7 @@ const FinancialOverview = () => {
   return (
     <Card className="h-full animate-fade-in dark-card">
       <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-lg font-medium">Visão Geral Financeira</CardTitle>
+        <CardTitle className="text-lg font-medium truncate">Visão Geral Financeira</CardTitle>
         <div className="flex space-x-2">
           <Button 
             variant={timeRange === 'weekly' ? "default" : "outline"} 
@@ -128,11 +125,13 @@ const FinancialOverview = () => {
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 transition-colors duration-300">
+          <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20">
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Receita</p>
-                <p className="text-xl font-bold text-blue-500 dark:text-blue-400">{formatCurrency(totals.receita)}</p>
+              <div className="min-w-0">
+                <p className="text-sm text-gray-500 dark:text-gray-400 truncate">Receita</p>
+                <p className="text-xl font-bold text-blue-500 dark:text-blue-400 truncate">
+                  {formatCurrency(totals.receita)}
+                </p>
               </div>
               <AnimatedIcon 
                 icon={ArrowUp} 
@@ -142,11 +141,13 @@ const FinancialOverview = () => {
             </div>
           </div>
           
-          <div className="p-4 rounded-lg bg-red-50 dark:bg-red-900/20 transition-colors duration-300">
+          <div className="p-4 rounded-lg bg-red-50 dark:bg-red-900/20">
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Despesa</p>
-                <p className="text-xl font-bold text-red-500 dark:text-red-400">{formatCurrency(totals.despesa)}</p>
+              <div className="min-w-0">
+                <p className="text-sm text-gray-500 dark:text-gray-400 truncate">Despesa</p>
+                <p className="text-xl font-bold text-red-500 dark:text-red-400 truncate">
+                  {formatCurrency(totals.despesa)}
+                </p>
               </div>
               <AnimatedIcon 
                 icon={ArrowDown} 
@@ -157,11 +158,13 @@ const FinancialOverview = () => {
             </div>
           </div>
           
-          <div className="p-4 rounded-lg bg-green-50 dark:bg-green-900/20 transition-colors duration-300">
+          <div className="p-4 rounded-lg bg-green-50 dark:bg-green-900/20">
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Saldo</p>
-                <p className="text-xl font-bold text-green-500 dark:text-green-400">{formatCurrency(totals.saldo)}</p>
+              <div className="min-w-0">
+                <p className="text-sm text-gray-500 dark:text-gray-400 truncate">Saldo</p>
+                <p className="text-xl font-bold text-green-500 dark:text-green-400 truncate">
+                  {formatCurrency(totals.saldo)}
+                </p>
               </div>
               <AnimatedIcon 
                 icon={Info} 
