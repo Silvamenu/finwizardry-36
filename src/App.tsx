@@ -1,3 +1,4 @@
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -7,6 +8,22 @@ import { useThemeEffect } from "./hooks/useThemeEffect";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useUserPreferences } from "./hooks/useUserPreferences";
 import i18n from "./i18n";
+import { LoadingScreen } from "@/components/ui/loading-screen";
+
+// Import page components
+import Login from "@/pages/Login";
+import AuthCallback from "@/pages/AuthCallback";
+import ResetPassword from "@/pages/ResetPassword";
+import Dashboard from "@/pages/Dashboard";
+import Orcamento from "@/pages/dashboard/Orcamento";
+import Investimentos from "@/pages/dashboard/Investimentos";
+import Transacoes from "@/pages/dashboard/Transacoes";
+import Metas from "@/pages/dashboard/Metas";
+import Assistente from "@/pages/dashboard/Assistente";
+import Configuracoes from "@/pages/dashboard/Configuracoes";
+import Perfil from "@/pages/dashboard/Perfil";
+import Mensagens from "@/pages/dashboard/Mensagens";
+import NotFound from "@/pages/NotFound";
 
 import "./sidebar-theme.css";
 
