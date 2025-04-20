@@ -13,40 +13,24 @@ import { ArrowUpRight, Download, Filter, FileBarChart, Calendar } from "lucide-r
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 
-// Simulated category spending data
 const generateCategoryData = () => {
-  const categories = [{
-    name: 'Moradia',
-    value: 2500,
-    color: '#0ea5e9'
-  }, {
-    name: 'Alimentação',
-    value: 1200,
-    color: '#22c55e'
-  }, {
-    name: 'Transporte',
-    value: 800,
-    color: '#f59e0b'
-  }, {
-    name: 'Lazer',
-    value: 600,
-    color: '#8b5cf6'
-  }, {
-    name: 'Saúde',
-    value: 450,
-    color: '#ef4444'
-  }, {
-    name: 'Outros',
-    value: 350,
-    color: '#6b7280'
-  }];
+  const categories = [
+    { name: 'Moradia', value: 2500, color: '#0ea5e9' },
+    { name: 'Alimentação', value: 1200, color: '#22c55e' },
+    { name: 'Transporte', value: 800, color: '#f59e0b' },
+    { name: 'Lazer', value: 600, color: '#8b5cf6' },
+    { name: 'Saúde', value: 450, color: '#ef4444' },
+    { name: 'Educação', value: 350, color: '#6b7280' },
+    { name: 'Vestuário', value: 300, color: '#ec4899' },
+    { name: 'Outros', value: 200, color: '#94a3b8' }
+  ];
+  
   return categories.map(cat => ({
     ...cat,
-    value: Math.round(cat.value + (Math.random() - 0.5) * 200) // Add some randomness
+    value: Math.round(cat.value + (Math.random() - 0.5) * 200)
   }));
 };
 
-// Simulated merchant spending data
 const generateMerchantData = () => {
   const merchants = [{
     name: 'Supermercado',
@@ -75,11 +59,10 @@ const generateMerchantData = () => {
   }];
   return merchants.map(merchant => ({
     ...merchant,
-    value: Math.round(merchant.value + (Math.random() - 0.5) * 100) // Add some randomness
+    value: Math.round(merchant.value + (Math.random() - 0.5) * 100)
   }));
 };
 
-// Custom tooltip component for PieChart
 const CustomTooltip = ({ active, payload }: any) => {
   if (active && payload && payload.length) {
     return (
@@ -98,7 +81,6 @@ const CustomTooltip = ({ active, payload }: any) => {
   return null;
 };
 
-// Helper function to format currency
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('pt-BR', {
     style: 'currency',
@@ -112,16 +94,13 @@ const SpendingAnalysis = () => {
   const [tabView, setTabView] = useState<'categories' | 'merchants'>('categories');
   const data = tabView === 'categories' ? generateCategoryData() : generateMerchantData();
 
-  // Calculate total
   const total = data.reduce((sum, item) => sum + item.value, 0);
   
-  // Add percentage to each item
   const dataWithPercentage = data.map(item => ({
     ...item,
     percentage: parseFloat(((item.value / total) * 100).toFixed(1))
   }));
 
-  // Create chart config for the categories
   const chartConfig = dataWithPercentage.reduce((config, item) => {
     config[item.name] = {
       label: item.name,

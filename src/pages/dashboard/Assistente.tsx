@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
@@ -73,7 +72,6 @@ const assistants: Assistant[] = [
   }
 ];
 
-// Respostas pré-definidas do assistente
 const predefinedResponses: Record<string, string[]> = {
   "financial-advisor": [
     "Diversificar seus investimentos é uma estratégia importante para reduzir riscos. Considere uma combinação de renda fixa, ações e fundos imobiliários de acordo com seu perfil de risco.",
@@ -140,7 +138,6 @@ const suggestedQuestions: Record<string, string[]> = {
   ]
 };
 
-// Histórico de conversas por assistente
 interface ConversationHistory {
   id: string;
   title: string;
@@ -202,12 +199,10 @@ const Assistente = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Efeito para rolar para a última mensagem
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Adicionar mensagem de boas-vindas ao trocar de assistente
   useEffect(() => {
     const welcomeMessage = {
       id: `welcome-${Date.now()}`,
@@ -222,7 +217,6 @@ const Assistente = () => {
   const handleSendMessage = () => {
     if (!input.trim()) return;
     
-    // Adicionar mensagem do usuário
     const userMessage: Message = {
       id: `user-${Date.now()}`,
       content: input,
@@ -234,7 +228,6 @@ const Assistente = () => {
     setInput("");
     setIsTyping(true);
     
-    // Simular resposta do assistente após um delay
     setTimeout(() => {
       const assistantResponses = predefinedResponses[activeAssistant.id];
       const randomResponse = assistantResponses[Math.floor(Math.random() * assistantResponses.length)];
@@ -249,7 +242,6 @@ const Assistente = () => {
       setMessages(prev => [...prev, assistantMessage]);
       setIsTyping(false);
 
-      // Simular leitura em voz alta
       if (audioEnabled) {
         speakMessage(randomResponse);
       }
@@ -257,7 +249,6 @@ const Assistente = () => {
   };
 
   const handleSuggestedQuestion = (question: string) => {
-    // Adicionar mensagem do usuário com a pergunta sugerida
     const userMessage: Message = {
       id: `user-${Date.now()}`,
       content: question,
@@ -268,7 +259,6 @@ const Assistente = () => {
     setMessages(prev => [...prev, userMessage]);
     setIsTyping(true);
     
-    // Simular resposta do assistente após um delay
     setTimeout(() => {
       const assistantResponses = predefinedResponses[activeAssistant.id];
       const randomResponse = assistantResponses[Math.floor(Math.random() * assistantResponses.length)];
@@ -283,7 +273,6 @@ const Assistente = () => {
       setMessages(prev => [...prev, assistantMessage]);
       setIsTyping(false);
 
-      // Simular leitura em voz alta
       if (audioEnabled) {
         speakMessage(randomResponse);
       }
@@ -298,12 +287,10 @@ const Assistente = () => {
   };
 
   const loadConversation = (conversationId: string) => {
-    // Simular carregamento de uma conversa anterior
     toast.info("Carregando conversa...", {
       description: `Conversa ${conversationId} selecionada.`
     });
     
-    // Para demonstração, apenas muda o assistente baseado na conversa
     const conversation = conversations.find(c => c.id === conversationId);
     if (conversation) {
       const selectedAssistant = assistants.find(a => a.id === conversation.assistantId);
@@ -316,7 +303,6 @@ const Assistente = () => {
   };
 
   const createNewConversation = () => {
-    // Limpar mensagens e começar nova conversa
     const welcomeMessage = {
       id: `welcome-${Date.now()}`,
       content: `Olá! Sou o assistente ${activeAssistant.name}. ${activeAssistant.description}. Como posso ajudar você hoje?`,
@@ -329,7 +315,6 @@ const Assistente = () => {
   };
 
   const speakMessage = (text: string) => {
-    // Simulação de leitura em voz alta
     const speech = new SpeechSynthesisUtterance(text);
     speech.lang = 'pt-BR';
     window.speechSynthesis.speak(speech);
@@ -343,16 +328,14 @@ const Assistente = () => {
     );
   };
 
-  // Filtragem de conversas baseada no termo de pesquisa
   const filteredConversations = conversations.filter(convo => 
     convo.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     convo.preview.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  
+
   return (
     <DashboardLayout activePage="Assistente IA">
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-[calc(100vh-12rem)]">
-        {/* Assistants Sidebar */}
         <div className="lg:col-span-1">
           <Card className="h-full flex flex-col dark-card">
             <CardHeader>
@@ -374,19 +357,19 @@ const Assistente = () => {
                           key={assistant.id}
                           variant={activeAssistant.id === assistant.id ? "default" : "outline"}
                           className={cn(
-                            "w-full justify-start h-auto py-3 transition-all duration-300",
+                            "w-full justify-start h-auto py-3 transition-all duration-300 whitespace-normal text-left",
                             activeAssistant.id === assistant.id 
                               ? "bg-gradient-to-r from-momoney-600 to-momoney-500 text-white" 
                               : `bg-gradient-to-r ${assistant.gradient} hover:bg-gradient-to-r hover:from-momoney-500/10 hover:to-momoney-400/10`
                           )}
                           onClick={() => setActiveAssistant(assistant)}
                         >
-                          <div className="mr-2">
+                          <div className="mr-2 flex-shrink-0">
                             {assistant.icon}
                           </div>
-                          <div className="text-left">
-                            <p className="font-medium">{assistant.name}</p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-1 mt-1">
+                          <div className="flex-1 min-w-0">
+                            <p className="font-medium truncate">{assistant.name}</p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 break-words">
                               {assistant.description}
                             </p>
                           </div>
@@ -457,7 +440,88 @@ const Assistente = () => {
             </CardHeader>
             
             <CardContent className="flex-1 overflow-y-auto scrollbar-thin">
-              {/* Content is now handled by the TabsContent above */}
+              <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin">
+                {messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={cn(
+                      "flex animate-fade-in",
+                      message.role === "user" ? "justify-end" : "justify-start"
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        "max-w-[80%] rounded-lg p-4",
+                        message.role === "user"
+                          ? "bg-gradient-to-r from-momoney-600 to-momoney-500 text-white"
+                          : "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white"
+                      )}
+                    >
+                      <div className="flex items-center mb-2">
+                        {message.role === "assistant" ? (
+                          <Avatar className="h-6 w-6 mr-2">
+                            <AvatarFallback className="bg-momoney-100 text-momoney-700 dark:bg-momoney-900 dark:text-momoney-300">
+                              <Bot className="h-4 w-4" />
+                            </AvatarFallback>
+                          </Avatar>
+                        ) : (
+                          <Avatar className="h-6 w-6 mr-2">
+                            <AvatarFallback className="bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300">
+                              <User className="h-4 w-4" />
+                            </AvatarFallback>
+                          </Avatar>
+                        )}
+                        <span className="text-xs">
+                          {message.role === "assistant" ? activeAssistant.name : "Você"}
+                        </span>
+                        <span className="text-xs ml-auto flex items-center">
+                          <Clock className="h-3 w-3 mr-1" />
+                          {message.timestamp.toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit"
+                          })}
+                        </span>
+                      </div>
+                      <p className="text-sm">{message.content}</p>
+                      
+                      {message.role === "assistant" && (
+                        <div className="flex justify-end mt-2 space-x-2">
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="h-6 px-2 hover:bg-white/10"
+                            onClick={() => handleFeedback(true)}
+                          >
+                            <ThumbsUp className="h-3 w-3" />
+                          </Button>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="h-6 px-2 hover:bg-white/10"
+                            onClick={() => handleFeedback(false)}
+                          >
+                            <ThumbsDown className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+                
+                {isTyping && (
+                  <div className="flex justify-start animate-fade-in">
+                    <div className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg p-4 max-w-[80%]">
+                      <div className="flex space-x-2">
+                        <div className="h-2 w-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
+                        <div className="h-2 w-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
+                        <div className="h-2 w-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "600ms" }}></div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                <div ref={messagesEndRef} />
+              </div>
             </CardContent>
             
             <CardFooter className="flex justify-center border-t pt-4">
@@ -503,7 +567,6 @@ const Assistente = () => {
           </Card>
         </div>
 
-        {/* Chat Area */}
         <div className="lg:col-span-3 flex flex-col">
           <Card className="flex-1 flex flex-col h-full overflow-hidden relative dark-card">
             <CardHeader className="pb-3 border-b flex-shrink-0">
@@ -518,7 +581,6 @@ const Assistente = () => {
               </div>
             </CardHeader>
             
-            {/* Messages Container */}
             <CardContent className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin">
               {messages.map((message) => (
                 <div
@@ -602,7 +664,6 @@ const Assistente = () => {
               <div ref={messagesEndRef} />
             </CardContent>
             
-            {/* Suggested Questions */}
             {messages.length <= 2 && (
               <div className="px-4 pb-4">
                 <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Perguntas sugeridas:</p>
@@ -622,7 +683,6 @@ const Assistente = () => {
               </div>
             )}
             
-            {/* Input Area */}
             <CardFooter className="border-t pt-4 pb-4 flex-shrink-0">
               <form
                 className="flex w-full items-center space-x-2"

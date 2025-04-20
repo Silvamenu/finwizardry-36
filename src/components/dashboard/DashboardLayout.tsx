@@ -1,4 +1,3 @@
-
 import React, { ReactNode, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Menu, X } from "lucide-react";
@@ -33,33 +32,18 @@ import {
   Mail
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useTranslation } from "react-i18next";
 
 interface DashboardLayoutProps {
   children: ReactNode;
   activePage?: string;
 }
 
-// Navigation items for the sidebar
-const navigationItems = [
-  { title: "Dashboard", icon: Home, path: "/dashboard" },
-  { title: "Orçamento", icon: PiggyBank, path: "/dashboard/orcamento" },
-  { title: "Investimentos", icon: BarChart3, path: "/dashboard/investimentos" },
-  { title: "Transações", icon: ArrowLeftRight, path: "/dashboard/transacoes" },
-  { title: "Metas", icon: Target, path: "/dashboard/metas" },
-  { title: "Assistente", icon: MessageSquarePlus, path: "/dashboard/assistente" },
-];
-
-// User-related items
-const userItems = [
-  { title: "Configurações", icon: Settings, path: "/dashboard/configuracoes" },
-  { title: "Perfil", icon: User, path: "/dashboard/perfil" },
-  { title: "Mensagens", icon: Mail, path: "/dashboard/mensagens" },
-];
-
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   children,
   activePage = "",
 }) => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -102,6 +86,23 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     }
   };
 
+  // Navigation items for the sidebar with translations
+  const navigationItems = [
+    { title: t("sidebar.dashboard"), icon: Home, path: "/dashboard" },
+    { title: t("sidebar.budget"), icon: PiggyBank, path: "/dashboard/orcamento" },
+    { title: t("sidebar.investments"), icon: BarChart3, path: "/dashboard/investimentos" },
+    { title: t("sidebar.transactions"), icon: ArrowLeftRight, path: "/dashboard/transacoes" },
+    { title: t("sidebar.goals"), icon: Target, path: "/dashboard/metas" },
+    { title: t("sidebar.assistant"), icon: MessageSquarePlus, path: "/dashboard/assistente" },
+  ];
+
+  // User-related items
+  const userItems = [
+    { title: t("sidebar.settings"), icon: Settings, path: "/dashboard/configuracoes" },
+    { title: t("sidebar.profile"), icon: User, path: "/dashboard/perfil" },
+    { title: t("sidebar.messages"), icon: Mail, path: "/dashboard/mensagens" },
+  ];
+
   return (
     <SidebarProvider defaultOpen={!isMobile && !isCollapsed}>
       <motion.div 
@@ -134,7 +135,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           <SidebarContent>
             {/* Main Navigation */}
             <SidebarGroup>
-              <SidebarGroupLabel>Navegação</SidebarGroupLabel>
+              <SidebarGroupLabel>{t("sidebar.navigation")}</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   {navigationItems.map((item) => (
@@ -165,7 +166,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
             {/* User Section */}
             <SidebarGroup>
-              <SidebarGroupLabel>Usuário</SidebarGroupLabel>
+              <SidebarGroupLabel>{t("sidebar.user")}</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   {userItems.map((item) => (
