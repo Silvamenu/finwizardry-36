@@ -1,10 +1,11 @@
+
 import { useEffect } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import FinancialOverview from "@/components/dashboard/FinancialOverview";
 import RecentActivity from "@/components/dashboard/RecentActivity";
 import SpendingAnalysis from "@/components/dashboard/SpendingAnalysis";
 import UpcomingTransactions from "@/components/dashboard/UpcomingTransactions";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MotionButton } from "@/components/ui/button";
 import { useProfile } from "@/hooks/useProfile";
 import { ArrowUp, ArrowDown, BadgeDollarSign, Clock, BarChart3, LineChart, Sparkles } from "lucide-react";
