@@ -1,0 +1,59 @@
+
+{
+  "dashboard": {
+    "welcome": "Hola",
+    "welcome_back": "Bienvenido de nuevo",
+    "overview": "Vista General",
+    "current_balance": "Saldo Actual",
+    "monthly_expenses": "Gastos Mensuales",
+    "savings": "Ahorros",
+    "since_last_month": "desde el mes pasado",
+    "of_current_balance": "de tu saldo actual",
+    "ai_assistant": {
+      "title": "¡Nuevo! FinAI - Tu Asesor Financiero Inteligente",
+      "description": "FinAI es una inteligencia artificial avanzada que funciona como tu asesor financiero digital personalizado.",
+      "features": "Conoce algunas de las principales características:",
+      "spending_analysis": "Análisis de Gastos",
+      "smart_budget": "Presupuesto Inteligente",
+      "investment_suggestions": "Sugerencias de Inversión",
+      "risk_prediction": "Predicción de Riesgos",
+      "learn_more": "Conocer más"
+    }
+  },
+  "sidebar": {
+    "navigation": "Navegación",
+    "user": "Usuario",
+    "dashboard": "Dashboard",
+    "budget": "Presupuesto",
+    "investments": "Inversiones",
+    "transactions": "Transacciones",
+    "goals": "Metas",
+    "assistant": "Asistente",
+    "settings": "Configuración",
+    "profile": "Perfil",
+    "messages": "Mensajes"
+  },
+  "settings": {
+    "appearance": "Apariencia",
+    "appearance_desc": "Configura cómo se mostrará la aplicación",
+    "theme": "Tema",
+    "light": "Claro",
+    "dark": "Oscuro",
+    "system": "Sistema",
+    "show_balance": "Mostrar saldo",
+    "show_values": "Mostrar valores",
+    "show_values_desc": "Mostrar u ocultar valores monetarios en la interfaz",
+    "localization": "Regionalización",
+    "localization_desc": "Configura tu idioma y moneda preferidos",
+    "language": "Idioma",
+    "currency": "Moneda",
+    "date_format": "Formato de fecha",
+    "security": "Seguridad",
+    "security_desc": "Configura las opciones de seguridad de tu cuenta",
+    "save_preferences": "Guardar preferencias",
+    "saving": "Guardando...",
+    "restore_defaults": "Restaurar valores predeterminados",
+    "unsaved_changes": "Cambios no guardados",
+    "unsaved_changes_desc": "Has realizado cambios en tus preferencias. Haz clic en \"Guardar preferencias\" para aplicarlos."
+  }
+}

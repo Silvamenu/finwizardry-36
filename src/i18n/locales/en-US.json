@@ -1,0 +1,59 @@
+
+{
+  "dashboard": {
+    "welcome": "Hello",
+    "welcome_back": "Welcome back",
+    "overview": "Overview",
+    "current_balance": "Current Balance",
+    "monthly_expenses": "Monthly Expenses",
+    "savings": "Savings",
+    "since_last_month": "since last month",
+    "of_current_balance": "of your current balance",
+    "ai_assistant": {
+      "title": "New! FinAI - Your Intelligent Financial Advisor",
+      "description": "FinAI is an advanced artificial intelligence that works as your personalized digital financial advisor.",
+      "features": "Check out some of the main features:",
+      "spending_analysis": "Spending Analysis",
+      "smart_budget": "Smart Budget",
+      "investment_suggestions": "Investment Suggestions",
+      "risk_prediction": "Risk Prediction",
+      "learn_more": "Learn More"
+    }
+  },
+  "sidebar": {
+    "navigation": "Navigation",
+    "user": "User",
+    "dashboard": "Dashboard",
+    "budget": "Budget",
+    "investments": "Investments",
+    "transactions": "Transactions",
+    "goals": "Goals",
+    "assistant": "Assistant",
+    "settings": "Settings",
+    "profile": "Profile",
+    "messages": "Messages"
+  },
+  "settings": {
+    "appearance": "Appearance",
+    "appearance_desc": "Configure how the application will be displayed",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "show_balance": "Show balance",
+    "show_values": "Show values",
+    "show_values_desc": "Show or hide monetary values in the interface",
+    "localization": "Localization",
+    "localization_desc": "Configure your preferred language and currency",
+    "language": "Language",
+    "currency": "Currency",
+    "date_format": "Date format",
+    "security": "Security",
+    "security_desc": "Configure your account security options",
+    "save_preferences": "Save preferences",
+    "saving": "Saving...",
+    "restore_defaults": "Restore defaults",
+    "unsaved_changes": "Unsaved changes",
+    "unsaved_changes_desc": "You have made changes to your preferences. Click \"Save preferences\" to apply them."
+  }
+}

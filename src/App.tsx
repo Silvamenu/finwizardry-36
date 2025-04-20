@@ -1,37 +1,20 @@
-
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HashRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { useAuth } from "./contexts/AuthContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useThemeEffect } from "./hooks/useThemeEffect";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import Index from "./pages/Index";
-import Dashboard from "./pages/Dashboard";
-import NotFound from "./pages/NotFound";
-import Orcamento from "./pages/dashboard/Orcamento";
-import Investimentos from "./pages/dashboard/Investimentos";
-import Transacoes from "./pages/dashboard/Transacoes";
-import Metas from "./pages/dashboard/Metas";
-import Assistente from "./pages/dashboard/Assistente";
-import Configuracoes from "./pages/dashboard/Configuracoes";
-import Perfil from "./pages/dashboard/Perfil";
-import Mensagens from "./pages/dashboard/Mensagens";
-import Login from "./pages/Login";
-import AuthCallback from "./pages/AuthCallback";
-import ResetPassword from "./pages/ResetPassword";
-import { LoadingScreen } from "./components/ui/loading-screen";
+import { useUserPreferences } from "./hooks/useUserPreferences";
+import i18n from "./i18n";
 
-// Import the sidebar theme
 import "./sidebar-theme.css";
 
-// Theme component to apply theme based on user preferences
 const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   useThemeEffect();
   return <>{children}</>;
 };
 
-// Protected route component
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const { user, loading } = useAuth();
   
@@ -67,8 +50,20 @@ const AppRoutes = () => {
   );
 };
 
+const ThemeAndLanguageProvider = ({ children }: { children: React.ReactNode }) => {
+  const { preferences } = useUserPreferences();
+  useThemeEffect();
+  
+  useEffect(() => {
+    if (preferences.language) {
+      i18n.changeLanguage(preferences.language);
+    }
+  }, [preferences.language]);
+
+  return <>{children}</>;
+};
+
 const App = () => {
-  // Create a new QueryClient instance inside the component using useState
   const [queryClient] = useState(() => new QueryClient({
     defaultOptions: {
       queries: {
@@ -83,9 +78,9 @@ const App = () => {
       <TooltipProvider>
         <HashRouter>
           <AuthProvider>
-            <ThemeProvider>
+            <ThemeAndLanguageProvider>
               <AppRoutes />
-            </ThemeProvider>
+            </ThemeAndLanguageProvider>
           </AuthProvider>
         </HashRouter>
       </TooltipProvider>

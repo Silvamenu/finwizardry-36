@@ -1,0 +1,59 @@
+
+{
+  "dashboard": {
+    "welcome": "Olá",
+    "welcome_back": "Bem-vindo de volta",
+    "overview": "Visão Geral",
+    "current_balance": "Saldo Atual",
+    "monthly_expenses": "Despesas do Mês",
+    "savings": "Economia",
+    "since_last_month": "desde o mês passado",
+    "of_current_balance": "do seu saldo atual",
+    "ai_assistant": {
+      "title": "Novo! FinAI - Seu Consultor Financeiro Inteligente",
+      "description": "A FinAI é uma inteligência artificial avançada que funciona como um consultor financeiro digital personalizado.",
+      "features": "Conheça algumas das principais funcionalidades:",
+      "spending_analysis": "Análise de Gastos",
+      "smart_budget": "Orçamento Inteligente",
+      "investment_suggestions": "Sugestões de Investimento",
+      "risk_prediction": "Previsão de Riscos",
+      "learn_more": "Conhecer"
+    }
+  },
+  "sidebar": {
+    "navigation": "Navegação",
+    "user": "Usuário",
+    "dashboard": "Dashboard",
+    "budget": "Orçamento",
+    "investments": "Investimentos",
+    "transactions": "Transações",
+    "goals": "Metas",
+    "assistant": "Assistente",
+    "settings": "Configurações",
+    "profile": "Perfil",
+    "messages": "Mensagens"
+  },
+  "settings": {
+    "appearance": "Aparência",
+    "appearance_desc": "Configure como o aplicativo será exibido",
+    "theme": "Tema",
+    "light": "Claro",
+    "dark": "Escuro",
+    "system": "Sistema",
+    "show_balance": "Mostrar saldo",
+    "show_values": "Exibir valores",
+    "show_values_desc": "Mostrar ou ocultar os valores monetários na interface",
+    "localization": "Regionalização",
+    "localization_desc": "Configure seu idioma e moeda preferidos",
+    "language": "Idioma",
+    "currency": "Moeda",
+    "date_format": "Formato de data",
+    "security": "Segurança",
+    "security_desc": "Configure as opções de segurança da sua conta",
+    "save_preferences": "Salvar preferências",
+    "saving": "Salvando...",
+    "restore_defaults": "Restaurar padrões",
+    "unsaved_changes": "Alterações não salvas",
+    "unsaved_changes_desc": "Você fez alterações nas suas preferências. Clique em \"Salvar preferências\" para aplicá-las."
+  }
+}
