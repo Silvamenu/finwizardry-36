@@ -1,13 +1,13 @@
 
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { 
   Bell, 
   Settings, 
   Shield, 
   Globe, 
   PaintBucket, 
-  Wallet, 
   Save,
   Loader2,
   AlertCircle
@@ -28,6 +28,8 @@ const Configuracoes = () => {
     document.title = "MoMoney | Configurações";
   }, []);
 
+  const { t, i18n } = useTranslation();
+  
   const { 
     preferences, 
     setPreferences, 
@@ -38,12 +40,17 @@ const Configuracoes = () => {
 
   const [isModified, setIsModified] = useState(false);
 
-  // Track changes to preferences
   const handlePreferenceChange = (key: string, value: any) => {
     setPreferences({
       ...preferences,
       [key]: value
     });
+    
+    // If changing language, update i18n immediately
+    if (key === 'language') {
+      i18n.changeLanguage(value);
+    }
+    
     setIsModified(true);
   };
 
@@ -55,7 +62,6 @@ const Configuracoes = () => {
   };
 
   const handleResetSettings = () => {
-    // Reset to defaults
     setPreferences({
       ...preferences,
       theme: "system",
@@ -65,13 +71,16 @@ const Configuracoes = () => {
       date_format: "dd/MM/yyyy",
     });
     
+    // Update i18n when resetting language
+    i18n.changeLanguage("pt-BR");
+    
     setIsModified(true);
-    toast.info("Configurações redefinidas para o padrão");
+    toast.info(t("settings.defaults_restored"));
   };
 
   if (loading) {
     return (
-      <DashboardLayout activePage="Configurações">
+      <DashboardLayout activePage={t("sidebar.settings")}>
         <div className="flex items-center justify-center h-full">
           <Loader2 className="h-10 w-10 animate-spin text-momoney-600" />
         </div>
@@ -80,14 +89,14 @@ const Configuracoes = () => {
   }
 
   return (
-    <DashboardLayout activePage="Configurações">
+    <DashboardLayout activePage={t("sidebar.settings")}>
       <div className="grid gap-6">
         {isModified && (
           <Alert variant="default" className="bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800">
             <AlertCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-            <AlertTitle>Alterações não salvas</AlertTitle>
+            <AlertTitle>{t("settings.unsaved_changes")}</AlertTitle>
             <AlertDescription>
-              Você fez alterações nas suas preferências. Clique em "Salvar preferências" para aplicá-las.
+              {t("settings.unsaved_changes_desc")}
             </AlertDescription>
           </Alert>
         )}
@@ -96,15 +105,15 @@ const Configuracoes = () => {
           <TabsList className="mb-4 bg-white dark:bg-gray-800 border dark:border-gray-700">
             <TabsTrigger value="appearance" className="flex items-center gap-2 data-[state=active]:bg-momoney-100 dark:data-[state=active]:bg-momoney-900">
               <PaintBucket className="h-4 w-4" />
-              <span>Aparência</span>
+              <span>{t("settings.appearance")}</span>
             </TabsTrigger>
             <TabsTrigger value="localization" className="flex items-center gap-2 data-[state=active]:bg-momoney-100 dark:data-[state=active]:bg-momoney-900">
               <Globe className="h-4 w-4" />
-              <span>Regionalização</span>
+              <span>{t("settings.localization")}</span>
             </TabsTrigger>
             <TabsTrigger value="security" className="flex items-center gap-2 data-[state=active]:bg-momoney-100 dark:data-[state=active]:bg-momoney-900">
               <Shield className="h-4 w-4" />
-              <span>Segurança</span>
+              <span>{t("settings.security")}</span>
             </TabsTrigger>
           </TabsList>
           
@@ -114,13 +123,13 @@ const Configuracoes = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <PaintBucket className="h-5 w-5" />
-                  Aparência
+                  {t("settings.appearance")}
                 </CardTitle>
-                <CardDescription>Configure como o aplicativo será exibido</CardDescription>
+                <CardDescription>{t("settings.appearance_desc")}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-4">
-                  <Label>Tema</Label>
+                  <Label>{t("settings.theme")}</Label>
                   <RadioGroup 
                     value={preferences.theme} 
                     onValueChange={(value: 'light' | 'dark' | 'system') => handlePreferenceChange('theme', value)}
@@ -128,26 +137,26 @@ const Configuracoes = () => {
                   >
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="light" id="theme-light" />
-                      <Label htmlFor="theme-light">Claro</Label>
+                      <Label htmlFor="theme-light">{t("settings.light")}</Label>
                     </div>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="dark" id="theme-dark" />
-                      <Label htmlFor="theme-dark">Escuro</Label>
+                      <Label htmlFor="theme-dark">{t("settings.dark")}</Label>
                     </div>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="system" id="theme-system" />
-                      <Label htmlFor="theme-system">Sistema</Label>
+                      <Label htmlFor="theme-system">{t("settings.system")}</Label>
                     </div>
                   </RadioGroup>
                 </div>
                 
                 <div className="space-y-2">
-                  <Label>Mostrar saldo</Label>
+                  <Label>{t("settings.show_balance")}</Label>
                   <div className="flex items-center justify-between">
                     <div className="space-y-0.5">
-                      <span className="text-sm font-medium">Exibir valores</span>
+                      <span className="text-sm font-medium">{t("settings.show_values")}</span>
                       <div className="text-xs text-muted-foreground">
-                        Mostrar ou ocultar os valores monetários na interface
+                        {t("settings.show_values_desc")}
                       </div>
                     </div>
                     <Switch 
@@ -166,19 +175,19 @@ const Configuracoes = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Globe className="h-5 w-5" />
-                  Regionalização
+                  {t("settings.localization")}
                 </CardTitle>
-                <CardDescription>Configure seu idioma e moeda preferidos</CardDescription>
+                <CardDescription>{t("settings.localization_desc")}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-4">
-                  <Label>Idioma</Label>
+                  <Label>{t("settings.language")}</Label>
                   <Select 
                     value={preferences.language} 
                     onValueChange={(value) => handlePreferenceChange('language', value)}
                   >
                     <SelectTrigger className="bg-white dark:bg-gray-800">
-                      <SelectValue placeholder="Selecionar idioma" />
+                      <SelectValue placeholder={t("settings.select_language")} />
                     </SelectTrigger>
                     <SelectContent className="bg-white dark:bg-gray-800">
                       <SelectItem value="pt-BR">Português (Brasil)</SelectItem>
@@ -189,13 +198,13 @@ const Configuracoes = () => {
                 </div>
                 
                 <div className="space-y-4">
-                  <Label>Moeda</Label>
+                  <Label>{t("settings.currency")}</Label>
                   <Select 
                     value={preferences.currency} 
                     onValueChange={(value) => handlePreferenceChange('currency', value)}
                   >
                     <SelectTrigger className="bg-white dark:bg-gray-800">
-                      <SelectValue placeholder="Selecionar moeda" />
+                      <SelectValue placeholder={t("settings.select_currency")} />
                     </SelectTrigger>
                     <SelectContent className="bg-white dark:bg-gray-800">
                       <SelectItem value="BRL">Real (R$)</SelectItem>
@@ -206,13 +215,13 @@ const Configuracoes = () => {
                 </div>
                 
                 <div className="space-y-4">
-                  <Label>Formato de data</Label>
+                  <Label>{t("settings.date_format")}</Label>
                   <Select 
                     value={preferences.date_format} 
                     onValueChange={(value) => handlePreferenceChange('date_format', value)}
                   >
                     <SelectTrigger className="bg-white dark:bg-gray-800">
-                      <SelectValue placeholder="Formato de data" />
+                      <SelectValue placeholder={t("settings.select_date_format")} />
                     </SelectTrigger>
                     <SelectContent className="bg-white dark:bg-gray-800">
                       <SelectItem value="dd/MM/yyyy">DD/MM/AAAA</SelectItem>
@@ -231,16 +240,16 @@ const Configuracoes = () => {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Shield className="h-5 w-5" />
-                  Segurança da conta
+                  {t("settings.security")}
                 </CardTitle>
-                <CardDescription>Configure as opções de segurança da sua conta</CardDescription>
+                <CardDescription>{t("settings.security_desc")}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <Alert className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
                   <Settings className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                  <AlertTitle>Opções de segurança</AlertTitle>
+                  <AlertTitle>{t("settings.security_options")}</AlertTitle>
                   <AlertDescription>
-                    As opções avançadas de segurança estão disponíveis na tela de Perfil.
+                    {t("settings.security_options_desc")}
                   </AlertDescription>
                 </Alert>
               </CardContent>
@@ -254,7 +263,7 @@ const Configuracoes = () => {
             onClick={handleResetSettings}
             className="border-gray-200 dark:border-gray-700"
           >
-            Restaurar padrões
+            {t("settings.restore_defaults")}
           </Button>
           <Button 
             variant="default"
@@ -263,7 +272,7 @@ const Configuracoes = () => {
             disabled={saving || !isModified}
           >
             {saving ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-1" />}
-            {saving ? 'Salvando...' : 'Salvar preferências'}
+            {saving ? t("settings.saving") : t("settings.save_preferences")}
           </Button>
         </div>
       </div>
