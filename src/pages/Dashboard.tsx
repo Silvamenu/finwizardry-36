@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import FinancialOverview from "@/components/dashboard/FinancialOverview";
 import RecentActivity from "@/components/dashboard/RecentActivity";
-import SpendingAnalysis from "@/components/dashboard/SpendingAnalysis";
+import SpendingCategories from "@/components/dashboard/SpendingCategories";
 import UpcomingTransactions from "@/components/dashboard/UpcomingTransactions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MotionButton } from "@/components/ui/button";
@@ -178,13 +178,13 @@ const Dashboard = () => {
           </Card>
         </motion.div>
 
-        {/* Recent Activities and Charts in 2-column Layout */}
+        {/* Recent Activities and Charts Layout */}
         <motion.div variants={itemVariants} className="lg:col-span-2">
           <RecentActivity />
         </motion.div>
 
         <motion.div variants={itemVariants} className="lg:col-span-2">
-          <SpendingAnalysis />
+          <SpendingCategories />
         </motion.div>
 
         {/* Upcoming Transactions */}
