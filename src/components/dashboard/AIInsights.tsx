@@ -78,9 +78,6 @@ type InsightType = {
 const AIInsights = () => {
   const [currentInsights, setCurrentInsights] = useState<InsightType[]>(insights);
   const [loading, setLoading] = useState(false);
-  const [thinking, setThinking] = useState(false);
-  const [question, setQuestion] = useState("");
-  const [response, setResponse] = useState<string | null>(null);
 
   const handleAskMore = () => {
     setLoading(true);
@@ -90,34 +87,6 @@ const AIInsights = () => {
       setCurrentInsights([...currentInsights, ...additionalInsights]);
       setLoading(false);
     }, 1500);
-  };
-
-  const handleAskQuestion = () => {
-    if (!question.trim()) return;
-    
-    setThinking(true);
-    setResponse(null);
-    
-    // Simulate AI thinking and responding
-    setTimeout(() => {
-      // Generate a contextual response based on the question
-      const lowerQuestion = question.toLowerCase();
-      let aiResponse = "";
-      
-      if (lowerQuestion.includes("investir") || lowerQuestion.includes("investimento")) {
-        aiResponse = "Com base na sua reserva atual de R$ 15.840 e seu perfil de investidor moderado, recomendo distribuir seus investimentos da seguinte forma: 40% em renda fixa (CDBs e Tesouro Direto), 30% em fundos multimercado, 20% em ações de empresas consolidadas e 10% em investimentos alternativos. Esta estratégia otimiza seu retorno enquanto mantém um nível de risco aceitável para seu perfil.";
-      } else if (lowerQuestion.includes("economia") || lowerQuestion.includes("economizar") || lowerQuestion.includes("poupar")) {
-        aiResponse = "Analisando seus gastos dos últimos 6 meses, identifiquei três áreas com potencial de economia: (1) Serviços de streaming - você possui 5 assinaturas com sobreposição de conteúdo, economize R$79,70/mês cancelando serviços duplicados; (2) Delivery - reduzindo em 30% os pedidos, você economizaria R$320/mês; (3) Compras por impulso - estabeleça um limite de 48h para compras acima de R$200, isso pode reduzir gastos em até R$450/mês.";
-      } else if (lowerQuestion.includes("dívida") || lowerQuestion.includes("débito") || lowerQuestion.includes("negativo")) {
-        aiResponse = "Baseado na sua dívida atual de R$8.200 no cartão de crédito com juros de 12% ao mês, recomendo priorizar a quitação total utilizando parte da sua reserva de emergência, já que a taxa de retorno dos seus investimentos atuais (cerca de 1,2% ao mês) é muito inferior aos juros que você está pagando. Em seguida, reconstrua sua reserva gradualmente com 25% da sua renda mensal.";
-      } else {
-        aiResponse = "Analisei seus padrões financeiros e posso sugerir algumas ações: 1) Sua reserva de emergência está abaixo do ideal para seu estilo de vida - aumente de 3 para 6 meses de despesas; 2) Seus gastos com alimentação aumentaram 22% nos últimos 3 meses - revise hábitos de consumo; 3) Existe uma oportunidade de renegociação do seu seguro auto que pode gerar economia de até 15% no próximo ano.";
-      }
-      
-      setThinking(false);
-      setResponse(aiResponse);
-      setQuestion("");
-    }, 2500);
   };
 
   const getColorClass = (color: string) => {
@@ -144,8 +113,6 @@ const AIInsights = () => {
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
-        
-      
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {currentInsights.map((insight) => (
             <div 
