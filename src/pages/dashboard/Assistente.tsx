@@ -1,31 +1,18 @@
 import { useEffect, useState, useRef } from "react";
+import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Bot, Send, Info, Clock, Volume2, VolumeX, Sparkles, ArrowUp, HelpCircle, Brain, FileText, Cpu } from "lucide-react";
+import { Bot, Send, Info, User, Sparkles, ArrowUp, HelpCircle, Clock, Volume2, VolumeX, Brain, FileText, Cpu, ThumbsUp, ThumbsDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import { type Assistant, type Message, type ConversationHistory } from "@/types/assistant";
 import AssistantSelect from "@/components/assistant/AssistantSelect";
 import ChatMessage from "@/components/assistant/ChatMessage";
-import { type Assistant, type Message, type ConversationHistory } from "@/types/assistant";
-
-interface Message {
-  id: string;
-  content: string;
-  role: "user" | "assistant";
-  timestamp: Date;
-}
-
-interface Assistant {
-  id: string;
-  name: string;
-  description: string;
-  icon: React.ReactNode;
-  gradient: string;
-}
 
 const assistants: Assistant[] = [
   {
@@ -132,19 +119,11 @@ const suggestedQuestions: Record<string, string[]> = {
     "Como negociar melhores condições em contratos?"
   ],
   "ai-analyst": [
-    "Qual minha projeção financeira para os próximos 5 anos?",
+    "Qual minha projeç��o financeira para os próximos 5 anos?",
     "Como otimizar minha alocação de ativos?",
     "Quais padrões de gasto posso melhorar?"
   ]
 };
-
-interface ConversationHistory {
-  id: string;
-  title: string;
-  date: Date;
-  assistantId: string;
-  preview: string;
-}
 
 const sampleHistories: ConversationHistory[] = [
   {
