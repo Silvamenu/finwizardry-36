@@ -1,16 +1,16 @@
 import { useEffect, useState, useRef } from "react";
-import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Bot, Send, Info, User, Sparkles, ArrowUp, HelpCircle, Clock, ThumbsUp, ThumbsDown, Volume2, VolumeX, Brain, FileText, Cpu } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Bot, Send, Info, Clock, Volume2, VolumeX, Sparkles, ArrowUp, HelpCircle, Brain, FileText, Cpu } from "lucide-react";
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Separator } from "@/components/ui/separator";
+import DashboardLayout from "@/components/dashboard/DashboardLayout";
+import AssistantSelect from "@/components/assistant/AssistantSelect";
+import ChatMessage from "@/components/assistant/ChatMessage";
+import { type Assistant, type Message, type ConversationHistory } from "@/types/assistant";
 
 interface Message {
   id: string;
@@ -351,32 +351,13 @@ const Assistente = () => {
                     <TabsTrigger value="history">Histórico</TabsTrigger>
                   </TabsList>
                   <TabsContent value="chat" className="space-y-4 mt-0">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3">
-                      {assistants.map((assistant) => (
-                        <Button
-                          key={assistant.id}
-                          variant={activeAssistant.id === assistant.id ? "default" : "outline"}
-                          className={cn(
-                            "w-full justify-start h-auto py-3 transition-all duration-300 whitespace-normal text-left",
-                            activeAssistant.id === assistant.id 
-                              ? "bg-gradient-to-r from-momoney-600 to-momoney-500 text-white" 
-                              : `bg-gradient-to-r ${assistant.gradient} hover:bg-gradient-to-r hover:from-momoney-500/10 hover:to-momoney-400/10`
-                          )}
-                          onClick={() => setActiveAssistant(assistant)}
-                        >
-                          <div className="mr-2 flex-shrink-0">
-                            {assistant.icon}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="font-medium truncate">{assistant.name}</p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 break-words">
-                              {assistant.description}
-                            </p>
-                          </div>
-                        </Button>
-                      ))}
-                    </div>
+                    <AssistantSelect
+                      assistants={assistants}
+                      activeAssistant={activeAssistant}
+                      onSelectAssistant={setActiveAssistant}
+                    />
                   </TabsContent>
+                  
                   <TabsContent value="history" className="space-y-3 mt-0">
                     <Button 
                       variant="outline" 
@@ -439,92 +420,7 @@ const Assistente = () => {
               </div>
             </CardHeader>
             
-            <CardContent className="flex-1 overflow-y-auto scrollbar-thin">
-              <div className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin">
-                {messages.map((message) => (
-                  <div
-                    key={message.id}
-                    className={cn(
-                      "flex animate-fade-in",
-                      message.role === "user" ? "justify-end" : "justify-start"
-                    )}
-                  >
-                    <div
-                      className={cn(
-                        "max-w-[80%] rounded-lg p-4",
-                        message.role === "user"
-                          ? "bg-gradient-to-r from-momoney-600 to-momoney-500 text-white"
-                          : "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white"
-                      )}
-                    >
-                      <div className="flex items-center mb-2">
-                        {message.role === "assistant" ? (
-                          <Avatar className="h-6 w-6 mr-2">
-                            <AvatarFallback className="bg-momoney-100 text-momoney-700 dark:bg-momoney-900 dark:text-momoney-300">
-                              <Bot className="h-4 w-4" />
-                            </AvatarFallback>
-                          </Avatar>
-                        ) : (
-                          <Avatar className="h-6 w-6 mr-2">
-                            <AvatarFallback className="bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300">
-                              <User className="h-4 w-4" />
-                            </AvatarFallback>
-                          </Avatar>
-                        )}
-                        <span className="text-xs">
-                          {message.role === "assistant" ? activeAssistant.name : "Você"}
-                        </span>
-                        <span className="text-xs ml-auto flex items-center">
-                          <Clock className="h-3 w-3 mr-1" />
-                          {message.timestamp.toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit"
-                          })}
-                        </span>
-                      </div>
-                      <p className="text-sm">{message.content}</p>
-                      
-                      {message.role === "assistant" && (
-                        <div className="flex justify-end mt-2 space-x-2">
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            className="h-6 px-2 hover:bg-white/10"
-                            onClick={() => handleFeedback(true)}
-                          >
-                            <ThumbsUp className="h-3 w-3" />
-                          </Button>
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            className="h-6 px-2 hover:bg-white/10"
-                            onClick={() => handleFeedback(false)}
-                          >
-                            <ThumbsDown className="h-3 w-3" />
-                          </Button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ))}
-                
-                {isTyping && (
-                  <div className="flex justify-start animate-fade-in">
-                    <div className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg p-4 max-w-[80%]">
-                      <div className="flex space-x-2">
-                        <div className="h-2 w-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
-                        <div className="h-2 w-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
-                        <div className="h-2 w-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "600ms" }}></div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                
-                <div ref={messagesEndRef} />
-              </div>
-            </CardContent>
-            
-            <CardFooter className="flex justify-center border-t pt-4">
+            <CardFooter className="border-t pt-4 mt-auto">
               <div className="flex space-x-2 w-full">
                 <TooltipProvider>
                   <Tooltip>
@@ -583,70 +479,12 @@ const Assistente = () => {
             
             <CardContent className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin">
               {messages.map((message) => (
-                <div
+                <ChatMessage
                   key={message.id}
-                  className={cn(
-                    "flex animate-fade-in",
-                    message.role === "user" ? "justify-end" : "justify-start"
-                  )}
-                >
-                  <div
-                    className={cn(
-                      "max-w-[80%] rounded-lg p-4",
-                      message.role === "user"
-                        ? "bg-gradient-to-r from-momoney-600 to-momoney-500 text-white"
-                        : "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white"
-                    )}
-                  >
-                    <div className="flex items-center mb-2">
-                      {message.role === "assistant" ? (
-                        <Avatar className="h-6 w-6 mr-2">
-                          <AvatarFallback className="bg-momoney-100 text-momoney-700 dark:bg-momoney-900 dark:text-momoney-300">
-                            <Bot className="h-4 w-4" />
-                          </AvatarFallback>
-                        </Avatar>
-                      ) : (
-                        <Avatar className="h-6 w-6 mr-2">
-                          <AvatarFallback className="bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300">
-                            <User className="h-4 w-4" />
-                          </AvatarFallback>
-                        </Avatar>
-                      )}
-                      <span className="text-xs">
-                        {message.role === "assistant" ? activeAssistant.name : "Você"}
-                      </span>
-                      <span className="text-xs ml-auto flex items-center">
-                        <Clock className="h-3 w-3 mr-1" />
-                        {message.timestamp.toLocaleTimeString([], {
-                          hour: "2-digit",
-                          minute: "2-digit"
-                        })}
-                      </span>
-                    </div>
-                    <p className="text-sm">{message.content}</p>
-                    
-                    {message.role === "assistant" && (
-                      <div className="flex justify-end mt-2 space-x-2">
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          className="h-6 px-2 hover:bg-white/10"
-                          onClick={() => handleFeedback(true)}
-                        >
-                          <ThumbsUp className="h-3 w-3" />
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          className="h-6 px-2 hover:bg-white/10"
-                          onClick={() => handleFeedback(false)}
-                        >
-                          <ThumbsDown className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                </div>
+                  message={message}
+                  assistantName={activeAssistant.name}
+                  onFeedback={handleFeedback}
+                />
               ))}
               
               {isTyping && (
