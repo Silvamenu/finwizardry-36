@@ -1,4 +1,3 @@
-
 {
   "dashboard": {
     "welcome": "Hola",
@@ -61,5 +60,12 @@
     "defaults_restored": "Configuraciones restauradas a valores predeterminados",
     "unsaved_changes": "Cambios no guardados",
     "unsaved_changes_desc": "Has realizado cambios en tus preferencias. Haz clic en \"Guardar preferencias\" para aplicarlos."
+  },
+  "categories": {
+    "food": "Alimentación",
+    "transport": "Transporte",
+    "housing": "Vivienda",
+    "entertainment": "Entretenimiento",
+    "others": "Otros"
   }
 }

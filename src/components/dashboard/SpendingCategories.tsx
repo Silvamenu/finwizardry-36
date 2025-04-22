@@ -7,7 +7,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recha
 const SpendingCategories = () => {
   const { t } = useTranslation();
 
-  // Sample data for spending categories
+  // Sample data for spending categories with updated translation keys
   const data = [
     { name: t('categories.food'), value: 400 },
     { name: t('categories.transport'), value: 300 },
