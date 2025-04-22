@@ -1,13 +1,18 @@
 
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import Features from "@/components/Features";
 import Benefits from "@/components/Benefits";
-import CTA from "@/components/CTA";
+import HowItWorks from "@/components/HowItWorks";
+import Testimonials from "@/components/Testimonials";
 import Footer from "@/components/Footer";
-import { useEffect } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Index = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  
   // Smooth scroll to sections when clicking anchor links
   useEffect(() => {
     const handleAnchorClick = (e: MouseEvent) => {
@@ -37,6 +42,11 @@ const Index = () => {
     html.classList.add('light');
     html.classList.add('index-page');
     
+    // Redirect to dashboard if logged in
+    if (user) {
+      navigate('/dashboard');
+    }
+    
     return () => {
       // Restore previous theme class when component unmounts
       document.removeEventListener('click', handleAnchorClick);
@@ -46,16 +56,16 @@ const Index = () => {
         html.classList.add(previousClass);
       }
     };
-  }, []);
+  }, [user, navigate]);
   
   return (
     <div className="min-h-screen bg-white overflow-hidden index-page-wrapper">
       <Navbar />
       <main>
         <Hero />
-        <Features />
         <Benefits />
-        <CTA />
+        <HowItWorks />
+        <Testimonials />
       </main>
       <Footer />
     </div>

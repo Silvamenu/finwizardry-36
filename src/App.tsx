@@ -11,6 +11,7 @@ import i18n from "./i18n";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 
 // Import page components
+import Index from "@/pages/Index";
 import Login from "@/pages/Login";
 import AuthCallback from "@/pages/AuthCallback";
 import ResetPassword from "@/pages/ResetPassword";
@@ -49,7 +50,7 @@ const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
 const AppRoutes = () => {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route path="/" element={<Index />} />
       <Route path="/login" element={<Login />} />
       <Route path="/auth-callback" element={<AuthCallback />} />
       <Route path="/reset-password" element={<ResetPassword />} />
