@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
@@ -11,6 +12,7 @@ import { useProfile } from "@/hooks/useProfile";
 import { useFormatters } from "@/hooks/useFormatters";
 import { ArrowUp, ArrowDown, BadgeDollarSign, Clock, BarChart3, LineChart, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
+import OnboardingDialog from "@/components/onboarding/OnboardingDialog";
 
 const Dashboard = () => {
   const { t } = useTranslation();
@@ -39,6 +41,9 @@ const Dashboard = () => {
 
   return (
     <DashboardLayout activePage="Dashboard">
+      {/* Onboarding Dialog */}
+      <OnboardingDialog />
+      
       <motion.div
         variants={containerVariants}
         initial="hidden"

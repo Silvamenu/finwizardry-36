@@ -197,6 +197,27 @@ export type Database = {
           },
         ]
       }
+      user_onboarding: {
+        Row: {
+          completed: boolean
+          created_at: string
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          completed?: boolean
+          created_at?: string
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          completed?: boolean
+          created_at?: string
+          id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_preferences: {
         Row: {
           created_at: string

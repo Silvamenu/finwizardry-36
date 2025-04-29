@@ -1,3 +1,4 @@
+
 {
   "dashboard": {
     "welcome": "Hello",
@@ -67,5 +68,26 @@
     "housing": "Housing",
     "entertainment": "Entertainment",
     "others": "Others"
+  },
+  "common": {
+    "previous": "Previous",
+    "next": "Next",
+    "finish": "Get Started",
+    "close": "Close",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete"
+  },
+  "onboarding": {
+    "welcome_title": "Welcome to MoMoney",
+    "welcome_description": "Your intelligent personal financial assistant. Let's explore the main features.",
+    "dashboard_title": "Personalized Dashboard",
+    "dashboard_description": "View your expenses, investments, and finances in one place. Interactive charts make it easy to understand your data.",
+    "assistant_title": "AI Assistant",
+    "assistant_description": "Our AI analyzes your financial data and offers personalized tips to save and invest better.",
+    "planning_title": "Financial Planning",
+    "planning_description": "Set financial goals, track your progress, and receive guidance to reach them faster.",
+    "customize_title": "Customize Your Experience",
+    "customize_description": "Adjust settings in the profile options to customize MoMoney to your needs."
   }
 }

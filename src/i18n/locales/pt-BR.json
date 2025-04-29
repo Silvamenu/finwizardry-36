@@ -1,3 +1,4 @@
+
 {
   "dashboard": {
     "welcome": "Olá",
@@ -67,5 +68,26 @@
     "housing": "Moradia",
     "entertainment": "Entretenimento", 
     "others": "Outros"
+  },
+  "common": {
+    "previous": "Anterior",
+    "next": "Próximo",
+    "finish": "Começar",
+    "close": "Fechar",
+    "cancel": "Cancelar",
+    "save": "Salvar",
+    "delete": "Excluir"
+  },
+  "onboarding": {
+    "welcome_title": "Bem-vindo ao MoMoney",
+    "welcome_description": "O seu assistente financeiro pessoal inteligente. Vamos conhecer as principais funcionalidades.",
+    "dashboard_title": "Dashboard Personalizado",
+    "dashboard_description": "Visualize seus gastos, investimentos e finanças em um só lugar. Gráficos interativos facilitam o entendimento dos seus dados.",
+    "assistant_title": "Assistente de IA",
+    "assistant_description": "Nossa IA analisa seus dados financeiros e oferece dicas personalizadas para economizar e investir melhor.",
+    "planning_title": "Planejamento Financeiro",
+    "planning_description": "Defina metas financeiras, acompanhe seu progresso e receba orientações para alcançá-las mais rapidamente.",
+    "customize_title": "Personalize sua Experiência",
+    "customize_description": "Ajuste as configurações nas opções do perfil para personalizar o MoMoney conforme suas necessidades."
   }
 }
