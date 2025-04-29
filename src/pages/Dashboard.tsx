@@ -1,5 +1,5 @@
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import FinancialOverview from "@/components/dashboard/FinancialOverview";
@@ -10,15 +10,21 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MotionButton } from "@/components/ui/button";
 import { useProfile } from "@/hooks/useProfile";
 import { useFormatters } from "@/hooks/useFormatters";
-import { ArrowUp, ArrowDown, BadgeDollarSign, Clock, BarChart3, LineChart, Sparkles } from "lucide-react";
+import { ArrowUp, ArrowDown, BadgeDollarSign, Clock, BarChart3, LineChart, Sparkles, Target } from "lucide-react";
 import { motion } from "framer-motion";
 import OnboardingDialog from "@/components/onboarding/OnboardingDialog";
+import NewGoalModal from "@/components/goals/NewGoalModal";
+import NewInvestmentModal from "@/components/investments/NewInvestmentModal";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const { t } = useTranslation();
   const { profile } = useProfile();
   const { formatCurrency } = useFormatters();
+  const navigate = useNavigate();
   const userName = profile?.name || t('dashboard.welcome');
+  const [showNewGoalModal, setShowNewGoalModal] = useState(false);
+  const [showNewInvestmentModal, setShowNewInvestmentModal] = useState(false);
 
   useEffect(() => {
     document.title = "MoMoney | Dashboard";
@@ -39,10 +45,40 @@ const Dashboard = () => {
     visible: { opacity: 1, y: 0 }
   };
 
+  const handleAddGoal = (goal: any) => {
+    // Simula a adição de uma nova meta
+    // Em uma aplicação real, isso enviaria os dados para o backend
+    console.log("Nova meta adicionada:", goal);
+    // Navegue para a página de metas após adicionar
+    navigate("/dashboard/metas");
+  };
+
+  const handleAddInvestment = (investment: any) => {
+    // Simula a adição de um novo investimento
+    // Em uma aplicação real, isso enviaria os dados para o backend
+    console.log("Novo investimento adicionado:", investment);
+    // Navegue para a página de investimentos após adicionar
+    navigate("/dashboard/investimentos");
+  };
+
   return (
     <DashboardLayout activePage="Dashboard">
       {/* Onboarding Dialog */}
       <OnboardingDialog />
+      
+      {/* New Goal Modal */}
+      <NewGoalModal 
+        open={showNewGoalModal} 
+        onOpenChange={setShowNewGoalModal}
+        onAddGoal={handleAddGoal}
+      />
+
+      {/* New Investment Modal */}
+      <NewInvestmentModal 
+        open={showNewInvestmentModal} 
+        onOpenChange={setShowNewInvestmentModal}
+        onAddInvestment={handleAddInvestment}
+      />
       
       <motion.div
         variants={containerVariants}
@@ -174,7 +210,10 @@ const Dashboard = () => {
                     </MotionButton>
                   </div>
                 </div>
-                <MotionButton className="bg-blue-600 hover:bg-blue-500 text-white rounded-full px-6 py-2 whitespace-nowrap">
+                <MotionButton 
+                  className="bg-blue-600 hover:bg-blue-500 text-white rounded-full px-6 py-2 whitespace-nowrap"
+                  onClick={() => navigate('/dashboard/assistente')}
+                >
                   {t('dashboard.ai_assistant.learn_more')}
                 </MotionButton>
               </div>
@@ -194,6 +233,23 @@ const Dashboard = () => {
         {/* Upcoming Transactions */}
         <motion.div variants={itemVariants} className="lg:col-span-4">
           <UpcomingTransactions />
+        </motion.div>
+
+        {/* Action Buttons (Shown on Mobile Only) */}
+        <motion.div variants={itemVariants} className="fixed bottom-6 right-6 flex flex-col space-y-3 z-10 md:hidden">
+          <MotionButton
+            className="bg-blue-600 hover:bg-blue-500 text-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg"
+            onClick={() => setShowNewGoalModal(true)}
+          >
+            <Target className="h-6 w-6" />
+          </MotionButton>
+          
+          <MotionButton
+            className="bg-green-600 hover:bg-green-500 text-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg"
+            onClick={() => setShowNewInvestmentModal(true)}
+          >
+            <BarChart3 className="h-6 w-6" />
+          </MotionButton>
         </motion.div>
       </motion.div>
     </DashboardLayout>

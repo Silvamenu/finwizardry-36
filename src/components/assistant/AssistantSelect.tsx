@@ -11,7 +11,7 @@ interface AssistantSelectProps {
 
 const AssistantSelect = ({ assistants, activeAssistant, onSelectAssistant }: AssistantSelectProps) => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3">
+    <div className="grid grid-cols-1 gap-3 overflow-y-auto max-h-[calc(100vh-20rem)]">
       {assistants.map((assistant) => (
         <Button
           key={assistant.id}

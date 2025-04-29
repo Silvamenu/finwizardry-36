@@ -3,10 +3,9 @@ import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Bot, Send, Info, User, Sparkles, ArrowUp, HelpCircle, Clock, Volume2, VolumeX, Brain, FileText, Cpu, ThumbsUp, ThumbsDown } from "lucide-react";
+import { Bot, Send, Info, Volume2, VolumeX, Brain, FileText, Cpu, ThumbsUp, ThumbsDown, Clock, Sparkles, ArrowUp, HelpCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -315,9 +314,9 @@ const Assistente = () => {
   return (
     <DashboardLayout activePage="Assistente IA">
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 h-[calc(100vh-12rem)]">
-        <div className="lg:col-span-1">
-          <Card className="h-full flex flex-col dark-card">
-            <CardHeader>
+        <div className="lg:col-span-1 h-auto">
+          <Card className="h-full flex flex-col dark-card overflow-hidden">
+            <CardHeader className="pb-3">
               <CardTitle className="flex items-center">
                 <Bot className="mr-2 h-5 w-5 text-momoney-500" />
                 Assistente IA
@@ -329,7 +328,7 @@ const Assistente = () => {
                     <TabsTrigger value="chat">Assistentes</TabsTrigger>
                     <TabsTrigger value="history">Histórico</TabsTrigger>
                   </TabsList>
-                  <TabsContent value="chat" className="space-y-4 mt-0">
+                  <TabsContent value="chat" className="space-y-4 mt-2 overflow-y-auto max-h-[calc(100vh-22rem)]">
                     <AssistantSelect
                       assistants={assistants}
                       activeAssistant={activeAssistant}
@@ -337,7 +336,7 @@ const Assistente = () => {
                     />
                   </TabsContent>
                   
-                  <TabsContent value="history" className="space-y-3 mt-0">
+                  <TabsContent value="history" className="space-y-3 mt-2 overflow-y-auto max-h-[calc(100vh-22rem)]">
                     <Button 
                       variant="outline" 
                       className="w-full justify-start mb-4 bg-gradient-to-r from-momoney-500/10 to-momoney-400/10 hover:from-momoney-500/20 hover:to-momoney-400/20"
@@ -362,38 +361,40 @@ const Assistente = () => {
                       </div>
                     </div>
                     
-                    {filteredConversations.length > 0 ? (
-                      filteredConversations.map((convo) => (
-                        <Button
-                          key={convo.id}
-                          variant="ghost"
-                          className="w-full justify-start h-auto py-2 px-3 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors rounded-lg"
-                          onClick={() => loadConversation(convo.id)}
-                        >
-                          <div className="w-full flex flex-col items-start">
-                            <div className="flex items-center w-full">
-                              <span className="font-medium line-clamp-1 text-sm">{convo.title}</span>
-                              <Clock className="h-3 w-3 ml-auto text-gray-400" />
+                    <div className="space-y-2 overflow-y-auto pr-1">
+                      {filteredConversations.length > 0 ? (
+                        filteredConversations.map((convo) => (
+                          <Button
+                            key={convo.id}
+                            variant="ghost"
+                            className="w-full justify-start h-auto py-2 px-3 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors rounded-lg"
+                            onClick={() => loadConversation(convo.id)}
+                          >
+                            <div className="w-full flex flex-col items-start">
+                              <div className="flex items-center w-full">
+                                <span className="font-medium line-clamp-1 text-sm">{convo.title}</span>
+                                <Clock className="h-3 w-3 ml-auto text-gray-400" />
+                              </div>
+                              <p className="text-xs text-gray-500 line-clamp-1 text-left mt-1">{convo.preview}</p>
+                              <div className="flex items-center w-full mt-1">
+                                <span className="text-xs text-gray-500">
+                                  {convo.date.toLocaleDateString()}
+                                </span>
+                                <Badge variant="outline" className="ml-auto text-xs bg-transparent">
+                                  {assistants.find(a => a.id === convo.assistantId)?.name.split(' ')[0]}
+                                </Badge>
+                              </div>
                             </div>
-                            <p className="text-xs text-gray-500 line-clamp-1 text-left mt-1">{convo.preview}</p>
-                            <div className="flex items-center w-full mt-1">
-                              <span className="text-xs text-gray-500">
-                                {convo.date.toLocaleDateString()}
-                              </span>
-                              <Badge variant="outline" className="ml-auto text-xs bg-transparent">
-                                {assistants.find(a => a.id === convo.assistantId)?.name.split(' ')[0]}
-                              </Badge>
-                            </div>
-                          </div>
-                        </Button>
-                      ))
-                    ) : (
-                      <div className="text-center py-4">
-                        <p className="text-gray-500 dark:text-gray-400 text-sm">
-                          Nenhuma conversa encontrada
-                        </p>
-                      </div>
-                    )}
+                          </Button>
+                        ))
+                      ) : (
+                        <div className="text-center py-4">
+                          <p className="text-gray-500 dark:text-gray-400 text-sm">
+                            Nenhuma conversa encontrada
+                          </p>
+                        </div>
+                      )}
+                    </div>
                   </TabsContent>
                 </Tabs>
               </div>
@@ -442,7 +443,7 @@ const Assistente = () => {
           </Card>
         </div>
 
-        <div className="lg:col-span-3 flex flex-col">
+        <div className="lg:col-span-3 flex flex-col h-full">
           <Card className="flex-1 flex flex-col h-full overflow-hidden relative dark-card">
             <CardHeader className="pb-3 border-b flex-shrink-0">
               <div className="flex items-center">
