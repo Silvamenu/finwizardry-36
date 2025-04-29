@@ -48,7 +48,7 @@ const Dashboard = () => {
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="grid grid-cols-1 lg:grid-cols-4 gap-6"
+        className="grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-6"
       >
         {/* Welcome Card */}
         <motion.div variants={itemVariants} className="lg:col-span-1">
@@ -76,8 +76,9 @@ const Dashboard = () => {
           <FinancialOverview />
         </motion.div>
 
-        {/* Financial Cards */}
-        <motion.div variants={itemVariants} className="lg:col-span-1">
+        {/* Financial Cards Row */}
+        <motion.div variants={itemVariants} className="lg:col-span-4 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+          {/* Card 1 - Current Balance */}
           <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-blue-100 dark:border-blue-900/30 rounded-2xl overflow-hidden">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-blue-700 dark:text-blue-400">
@@ -98,9 +99,8 @@ const Dashboard = () => {
               </p>
             </CardContent>
           </Card>
-        </motion.div>
 
-        <motion.div variants={itemVariants} className="lg:col-span-1">
+          {/* Card 2 - Monthly Expenses */}
           <Card className="bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 border-red-100 dark:border-red-900/30 rounded-2xl overflow-hidden">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-red-700 dark:text-red-400">
@@ -121,9 +121,8 @@ const Dashboard = () => {
               </p>
             </CardContent>
           </Card>
-        </motion.div>
 
-        <motion.div variants={itemVariants} className="lg:col-span-1">
+          {/* Card 3 - Economy */}
           <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 border-green-100 dark:border-green-900/30 rounded-2xl overflow-hidden">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-green-700 dark:text-green-400">
@@ -148,7 +147,7 @@ const Dashboard = () => {
 
         {/* AI Assistant Card */}
         <motion.div variants={itemVariants} className="lg:col-span-4">
-          <Card className="border-l-4 border-l-blue-500 mt-4 bg-gradient-to-r from-blue-50/80 to-white dark:from-blue-900/10 dark:to-transparent shadow-sm hover:shadow-md transition-all rounded-2xl overflow-hidden">
+          <Card className="border-l-4 border-l-blue-500 mt-2 md:mt-4 bg-gradient-to-r from-blue-50/80 to-white dark:from-blue-900/10 dark:to-transparent shadow-sm hover:shadow-md transition-all rounded-2xl overflow-hidden">
             <CardContent className="pt-6 pb-6">
               <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
                 <div>
@@ -175,7 +174,7 @@ const Dashboard = () => {
                     </MotionButton>
                   </div>
                 </div>
-                <MotionButton className="bg-blue-600 hover:bg-blue-500 text-white rounded-full px-6 py-2">
+                <MotionButton className="bg-blue-600 hover:bg-blue-500 text-white rounded-full px-6 py-2 whitespace-nowrap">
                   {t('dashboard.ai_assistant.learn_more')}
                 </MotionButton>
               </div>

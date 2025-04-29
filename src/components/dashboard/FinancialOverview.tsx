@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { 
   Card, 
@@ -97,8 +98,8 @@ const FinancialOverview = () => {
   };
 
   return (
-    <Card className="h-full animate-fade-in dark-card">
-      <CardHeader className="flex flex-row items-center justify-between">
+    <Card className="h-full animate-fade-in dark-card overflow-hidden">
+      <CardHeader className="flex flex-row items-center justify-between pt-4 pb-2 px-4 md:p-6 md:pb-4">
         <CardTitle className="text-lg font-medium truncate">Visão Geral Financeira</CardTitle>
         <div className="flex space-x-2">
           <Button 
@@ -106,7 +107,7 @@ const FinancialOverview = () => {
             size="sm"
             onClick={() => setTimeRange('weekly')}
             className={cn(
-              timeRange === 'weekly' && "bg-gradient-to-r from-momoney-600 to-momoney-500"
+              timeRange === 'weekly' && "bg-gradient-to-r from-blue-600 to-blue-500 text-white"
             )}
           >
             Semanal
@@ -116,16 +117,16 @@ const FinancialOverview = () => {
             size="sm"
             onClick={() => setTimeRange('monthly')}
             className={cn(
-              timeRange === 'monthly' && "bg-gradient-to-r from-momoney-600 to-momoney-500"
+              timeRange === 'monthly' && "bg-gradient-to-r from-blue-600 to-blue-500 text-white"
             )}
           >
             Mensal
           </Button>
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-3 gap-4 mb-6">
-          <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20">
+      <CardContent className="px-4 pb-4 md:p-6 md:pt-0">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4 md:mb-6">
+          <div className="p-3 md:p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 transition-all duration-300">
             <div className="flex items-center justify-between">
               <div className="min-w-0">
                 <p className="text-sm text-gray-500 dark:text-gray-400 truncate">Receita</p>
@@ -141,7 +142,7 @@ const FinancialOverview = () => {
             </div>
           </div>
           
-          <div className="p-4 rounded-lg bg-red-50 dark:bg-red-900/20">
+          <div className="p-3 md:p-4 rounded-lg bg-red-50 dark:bg-red-900/20 transition-all duration-300">
             <div className="flex items-center justify-between">
               <div className="min-w-0">
                 <p className="text-sm text-gray-500 dark:text-gray-400 truncate">Despesa</p>
@@ -158,7 +159,7 @@ const FinancialOverview = () => {
             </div>
           </div>
           
-          <div className="p-4 rounded-lg bg-green-50 dark:bg-green-900/20">
+          <div className="p-3 md:p-4 rounded-lg bg-green-50 dark:bg-green-900/20 transition-all duration-300">
             <div className="flex items-center justify-between">
               <div className="min-w-0">
                 <p className="text-sm text-gray-500 dark:text-gray-400 truncate">Saldo</p>
@@ -176,7 +177,7 @@ const FinancialOverview = () => {
           </div>
         </div>
         
-        <div className="h-80">
+        <div className="h-64 md:h-80">
           <ChartContainer config={chartConfig}>
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
@@ -198,6 +199,7 @@ const FinancialOverview = () => {
                   strokeDasharray="3 3" 
                   vertical={false} 
                   stroke="var(--chart-grid-color, rgba(0, 0, 0, 0.1))"
+                  opacity={0.5}
                 />
                 <XAxis 
                   dataKey="name" 
@@ -215,7 +217,7 @@ const FinancialOverview = () => {
                   content={({ active, payload }) => {
                     if (active && payload && payload.length) {
                       return (
-                        <div className="chart-tooltip">
+                        <div className="chart-tooltip bg-white dark:bg-gray-800 p-3 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
                           <p className="font-medium mb-1">{payload[0].payload.name}</p>
                           {payload.map((entry, index) => (
                             <div key={index} className="flex items-center justify-between mb-1">
@@ -246,6 +248,7 @@ const FinancialOverview = () => {
                   dataKey="receita" 
                   name="receita"
                   stroke="#0ea5e9" 
+                  strokeWidth={2}
                   fillOpacity={1} 
                   fill="url(#colorReceita)" 
                 />
@@ -254,6 +257,7 @@ const FinancialOverview = () => {
                   dataKey="despesa" 
                   name="despesa"
                   stroke="#f43f5e" 
+                  strokeWidth={2}
                   fillOpacity={1} 
                   fill="url(#colorDespesa)" 
                 />
@@ -262,6 +266,7 @@ const FinancialOverview = () => {
                   dataKey="saldo" 
                   name="saldo"
                   stroke="#22c55e" 
+                  strokeWidth={2}
                   fillOpacity={1} 
                   fill="url(#colorSaldo)" 
                 />
