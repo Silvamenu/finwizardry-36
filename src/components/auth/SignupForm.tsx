@@ -23,7 +23,11 @@ const signupSchema = z.object({
   path: ["confirmPassword"],
 });
 
-const SignupForm = () => {
+interface SignupFormProps {
+  onSuccess?: () => void;
+}
+
+const SignupForm = ({ onSuccess }: SignupFormProps) => {
   const { signUp } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -43,6 +47,9 @@ const SignupForm = () => {
     setIsSubmitting(true);
     try {
       await signUp(values.email, values.password, values.name);
+      if (onSuccess) {
+        onSuccess();
+      }
     } catch (error) {
       console.error(error);
     } finally {

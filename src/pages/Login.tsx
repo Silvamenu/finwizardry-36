@@ -1,5 +1,5 @@
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -14,6 +14,11 @@ const Login = () => {
   }, []);
 
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState("login");
+
+  const switchToLoginTab = () => {
+    setActiveTab("login");
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col items-center justify-center p-4 transition-colors duration-300">
@@ -35,7 +40,7 @@ const Login = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-4">
-            <Tabs defaultValue="login" className="w-full">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
               <TabsList className="grid w-full grid-cols-2 mb-6 rounded-xl dark:bg-gray-700">
                 <TabsTrigger 
                   value="login" 
@@ -54,7 +59,7 @@ const Login = () => {
                 <LoginForm />
               </TabsContent>
               <TabsContent value="signup">
-                <SignupForm />
+                <SignupForm onSuccess={switchToLoginTab} />
               </TabsContent>
             </Tabs>
           </CardContent>
