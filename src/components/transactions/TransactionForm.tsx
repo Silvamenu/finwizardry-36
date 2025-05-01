@@ -32,7 +32,7 @@ interface TransactionFormProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (data: TransactionFormData) => Promise<void>;
-  initialData?: Partial<TransactionFormData>;
+  initialData?: Partial<TransactionFormData> & { id?: string }; // Add optional id here
   isEditing?: boolean;
 }
 
@@ -75,9 +75,24 @@ export function TransactionForm({
   const handleSubmit = async (values: z.infer<typeof transactionSchema>) => {
     setIsSubmitting(true);
     try {
-      const result = isEditing && initialData?.id
-        ? await updateTransaction(initialData.id, values)
-        : await addTransaction(values);
+      // Make sure all required fields are present when editing
+      const completeData: TransactionFormData = {
+        description: values.description,
+        amount: values.amount,
+        category_id: values.category_id,
+        type: values.type,
+        date: values.date,
+        payment_method: values.payment_method,
+        status: values.status
+      };
+      
+      // Handle different cases: editing (with id) or creating new
+      let result;
+      if (isEditing && initialData?.id) {
+        result = await updateTransaction(initialData.id, completeData);
+      } else {
+        result = await addTransaction(completeData);
+      }
       
       if (result) {
         refetchFinancialData(); 

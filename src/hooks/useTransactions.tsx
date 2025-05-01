@@ -18,6 +18,7 @@ export interface Transaction {
 }
 
 export interface TransactionFormData {
+  id?: string; // Added optional id field
   description: string;
   amount: number;
   category_id: string | null;
