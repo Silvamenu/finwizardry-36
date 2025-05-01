@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { TransactionFormData } from '@/hooks/useTransactions';
+import { TransactionFormData, useTransactions } from '@/hooks/useTransactions';
 import { useCategories, Category } from '@/hooks/useCategories';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -16,6 +16,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useFinancialData } from '@/hooks/useFinancialData';
+import { toast } from 'sonner';
 
 const transactionSchema = z.object({
   description: z.string().min(3, { message: 'A descrição deve ter pelo menos 3 caracteres' }),
@@ -44,6 +45,7 @@ export function TransactionForm({
 }: TransactionFormProps) {
   const { categories, loading: loadingCategories } = useCategories();
   const { refetch: refetchFinancialData } = useFinancialData();
+  const { addTransaction, updateTransaction } = useTransactions();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Filtered categories by type
@@ -70,15 +72,15 @@ export function TransactionForm({
     }
   }, [categories, form.watch('type')]);
 
-  const handleSubmit = async (values: z.infer<typeof formSchema>) => {
+  const handleSubmit = async (values: z.infer<typeof transactionSchema>) => {
     setIsSubmitting(true);
     try {
-      const result = isEditing
-        ? await updateTransaction(values)
+      const result = isEditing && initialData?.id
+        ? await updateTransaction(initialData.id, values)
         : await addTransaction(values);
       
       if (result) {
-        refetchFinancialData(); // Add this line to update financial data
+        refetchFinancialData(); 
         toast.success(
           isEditing ? 'Transação atualizada com sucesso!' : 'Transação criada com sucesso!'
         );
@@ -303,7 +305,7 @@ export function TransactionForm({
               >
                 Cancelar
               </Button>
-              <Button type="submit" variant="clean" disabled={isSubmitting}>
+              <Button type="submit" disabled={isSubmitting}>
                 {isSubmitting ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
