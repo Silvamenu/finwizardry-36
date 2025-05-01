@@ -76,7 +76,7 @@ const NewGoalModal = ({ open, onOpenChange, onAddGoal }: NewGoalModalProps) => {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] bg-white">
         <DialogHeader>
           <DialogTitle className="flex items-center text-blue-600">
             <Target className="mr-2 h-5 w-5" />
@@ -107,7 +107,7 @@ const NewGoalModal = ({ open, onOpenChange, onAddGoal }: NewGoalModalProps) => {
                 <SelectTrigger id="category" className="rounded-xl border-gray-200 shadow-sm bg-white h-10">
                   <SelectValue placeholder="Selecione uma categoria" />
                 </SelectTrigger>
-                <SelectContent className="rounded-xl">
+                <SelectContent className="rounded-xl bg-white">
                   {categories.map((cat) => (
                     <SelectItem key={cat.id} value={cat.id} className="rounded-lg my-0.5 focus:bg-blue-50">
                       <div className="flex items-center">
@@ -167,7 +167,7 @@ const NewGoalModal = ({ open, onOpenChange, onAddGoal }: NewGoalModalProps) => {
                     {date ? format(date, "PPP", { locale: ptBR }) : <span>Selecione uma data</span>}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0 rounded-xl border-gray-200 shadow-lg" align="start">
+                <PopoverContent className="w-auto p-0 rounded-xl border-gray-200 shadow-lg bg-white" align="start">
                   <Calendar
                     mode="single"
                     selected={date}

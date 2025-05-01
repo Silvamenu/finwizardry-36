@@ -1,180 +1,75 @@
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PlusCircle, DollarSign, TrendingDown, TrendingUp, Pencil } from "lucide-react";
-import { Progress } from "@/components/ui/progress";
-
-const BudgetCategory = ({ 
-  name, 
-  spent, 
-  limit, 
-  color = "bg-blue-500" 
-}: { 
-  name: string; 
-  spent: number; 
-  limit: number;
-  color?: string;
-}) => {
-  const percentage = Math.min(Math.round((spent / limit) * 100), 100);
-  const remaining = limit - spent;
-  
-  return (
-    <div className="space-y-2">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <div className={`w-3 h-3 rounded-full ${color}`}></div>
-          <h4 className="font-medium">{name}</h4>
-        </div>
-        <Button variant="ghost" size="sm" className="p-0 h-auto">
-          <Pencil className="h-4 w-4 text-gray-400" />
-        </Button>
-      </div>
-      <Progress value={percentage} className="h-2" />
-      <div className="flex justify-between text-sm text-gray-500 dark:text-gray-400">
-        <span>R$ {spent.toFixed(2)} de R$ {limit.toFixed(2)}</span>
-        <span className={remaining >= 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}>
-          {remaining >= 0 
-            ? `R$ ${remaining.toFixed(2)} disponível` 
-            : `R$ ${Math.abs(remaining).toFixed(2)} acima do limite`}
-        </span>
-      </div>
-    </div>
-  );
-};
+import { Plus } from "lucide-react";
+import BudgetProgress from "@/components/dashboard/BudgetProgress";
+import { CategoryForm } from "@/components/transactions/CategoryForm"; 
+import { useCategories, CategoryFormData } from "@/hooks/useCategories";
+import { toast } from "sonner";
 
 const Orcamento = () => {
+  const [categoryFormOpen, setCategoryFormOpen] = useState(false);
+  const { addCategory } = useCategories();
+  
   useEffect(() => {
     document.title = "MoMoney | Orçamento";
   }, []);
 
-  // Dados simulados de categorias de orçamento
-  const expenses = [
-    { name: "Moradia", spent: 1200, limit: 1500, color: "bg-indigo-500" },
-    { name: "Alimentação", spent: 850, limit: 800, color: "bg-red-500" },
-    { name: "Transporte", spent: 420, limit: 500, color: "bg-yellow-500" },
-    { name: "Lazer", spent: 380, limit: 400, color: "bg-green-500" },
-    { name: "Saúde", spent: 250, limit: 300, color: "bg-blue-500" },
-    { name: "Educação", spent: 280, limit: 300, color: "bg-purple-500" },
-  ];
-
-  // Dados simulados de receitas
-  const income = [
-    { name: "Salário", amount: 3500, color: "bg-green-500" },
-    { name: "Freelance", amount: 1200, color: "bg-blue-500" },
-    { name: "Investimentos", amount: 450, color: "bg-purple-500" },
-  ];
+  const handleAddCategory = async (data: CategoryFormData) => {
+    try {
+      await addCategory(data);
+      toast.success("Categoria adicionada com sucesso!");
+      setCategoryFormOpen(false);
+    } catch (error) {
+      console.error("Erro ao adicionar categoria:", error);
+      toast.error("Erro ao adicionar categoria");
+    }
+  };
 
   return (
     <DashboardLayout activePage="Orçamento">
+      {/* Formulário para adicionar categoria */}
+      <CategoryForm 
+        open={categoryFormOpen} 
+        onOpenChange={setCategoryFormOpen}
+        onSubmit={handleAddCategory}
+        isEditing={false}
+      />
+      
       <div className="grid gap-6">
         <div className="flex flex-col md:flex-row gap-6 md:items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Orçamento Mensal</h1>
-            <p className="text-gray-500 dark:text-gray-400">Gerencie suas despesas e receitas de forma eficiente</p>
+            <h1 className="text-3xl font-bold mb-2">Orçamento</h1>
+            <p className="text-gray-500">Acompanhe e gerencie seus gastos mensais</p>
           </div>
           <div className="flex gap-3">
-            <Button>
-              <PlusCircle className="h-4 w-4 mr-2" />
+            <Button onClick={() => setCategoryFormOpen(true)}>
+              <Plus className="h-4 w-4 mr-2" />
               Nova Categoria
             </Button>
           </div>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6">
-          <Card className="md:col-span-2 animate-fade-in dark-card">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-xl">Orçamento de Junho</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Tabs defaultValue="despesas">
-                <TabsList className="mb-6">
-                  <TabsTrigger value="despesas" className="tabs-trigger">Despesas</TabsTrigger>
-                  <TabsTrigger value="receitas" className="tabs-trigger">Receitas</TabsTrigger>
-                </TabsList>
-                <TabsContent value="despesas" className="space-y-6 tabs-content">
-                  {expenses.map((category, index) => (
-                    <BudgetCategory 
-                      key={index}
-                      name={category.name}
-                      spent={category.spent}
-                      limit={category.limit}
-                      color={category.color}
-                    />
-                  ))}
-                </TabsContent>
-                <TabsContent value="receitas" className="space-y-6 tabs-content">
-                  {income.map((item, index) => (
-                    <div key={index} className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-10 h-10 rounded-full ${item.color} flex items-center justify-center`}>
-                          <DollarSign className="h-5 w-5 text-white" />
-                        </div>
-                        <span className="font-medium">{item.name}</span>
-                      </div>
-                      <div className="text-right">
-                        <div className="font-semibold">R$ {item.amount.toFixed(2)}</div>
-                      </div>
-                    </div>
-                  ))}
-                </TabsContent>
-              </Tabs>
-            </CardContent>
-          </Card>
-
-          <Card className="animate-fade-in dark-card">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-xl">Resumo</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-6">
-                <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center">
-                      <TrendingUp className="h-4 w-4 text-white" />
-                    </div>
-                    <span className="font-medium">Total de Receitas</span>
-                  </div>
-                  <div className="text-2xl font-bold text-green-600 dark:text-green-400">
-                    R$ {income.reduce((acc, curr) => acc + curr.amount, 0).toFixed(2)}
-                  </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="md:col-span-2">
+            <Card className="h-full">
+              <CardHeader>
+                <CardTitle>Visão Geral do Orçamento</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {/* Conteúdo do orçamento */}
+                <div className="text-center text-gray-500 py-10">
+                  Implemente aqui suas categorias e limites de orçamento
                 </div>
-
-                <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg">
-                  <div className="flex items-center gap-3 mb-2">
-                    <div className="w-8 h-8 rounded-full bg-red-500 flex items-center justify-center">
-                      <TrendingDown className="h-4 w-4 text-white" />
-                    </div>
-                    <span className="font-medium">Total de Despesas</span>
-                  </div>
-                  <div className="text-2xl font-bold text-red-600 dark:text-red-400">
-                    R$ {expenses.reduce((acc, curr) => acc + curr.spent, 0).toFixed(2)}
-                  </div>
-                </div>
-
-                <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="font-medium">Saldo do Mês</span>
-                    <span className="text-xl font-bold text-green-600 dark:text-green-400">
-                      R$ {(
-                        income.reduce((acc, curr) => acc + curr.amount, 0) - 
-                        expenses.reduce((acc, curr) => acc + curr.spent, 0)
-                      ).toFixed(2)}
-                    </span>
-                  </div>
-                  <div className="text-sm text-gray-500 dark:text-gray-400">
-                    Economia de {Math.round((
-                      (income.reduce((acc, curr) => acc + curr.amount, 0) - 
-                      expenses.reduce((acc, curr) => acc + curr.spent, 0)) /
-                      income.reduce((acc, curr) => acc + curr.amount, 0)
-                    ) * 100)}% da sua renda
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          </div>
+          
+          <div>
+            <BudgetProgress />
+          </div>
         </div>
       </div>
     </DashboardLayout>

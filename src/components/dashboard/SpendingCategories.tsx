@@ -5,15 +5,22 @@ import { useTranslation } from "react-i18next";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFinancialData } from '@/hooks/useFinancialData';
+import { useCategories } from '@/hooks/useCategories';
 
 const SpendingCategories = () => {
   const { t } = useTranslation();
   const { summary, loading } = useFinancialData();
+  const { categories } = useCategories();
   
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82ca9d', '#ffc658', '#8dd1e1', '#a4de6c', '#d0ed57'];
 
+  // Obter dados para o gráfico a partir do resumo financeiro
   const chartData = summary.spendingByCategory.length > 0 
-    ? summary.spendingByCategory 
+    ? summary.spendingByCategory.map(item => ({
+        name: item.name,
+        value: item.value,
+        color: item.color || COLORS[summary.spendingByCategory.indexOf(item) % COLORS.length]
+      }))
     : [
         { name: t('categories.food'), value: 400, color: COLORS[0] },
         { name: t('categories.transport'), value: 300, color: COLORS[1] },
