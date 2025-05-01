@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -16,6 +15,7 @@ import { cn } from '@/lib/utils';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useFinancialData } from '@/hooks/useFinancialData';
 
 const transactionSchema = z.object({
   description: z.string().min(3, { message: 'A descrição deve ter pelo menos 3 caracteres' }),
@@ -43,6 +43,7 @@ export function TransactionForm({
   isEditing = false 
 }: TransactionFormProps) {
   const { categories, loading: loadingCategories } = useCategories();
+  const { refetch: refetchFinancialData } = useFinancialData();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Filtered categories by type
@@ -69,25 +70,24 @@ export function TransactionForm({
     }
   }, [categories, form.watch('type')]);
 
-  const handleSubmit = async (data: z.infer<typeof transactionSchema>) => {
+  const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsSubmitting(true);
     try {
-      // Ensure all required fields are present in the data
-      const transactionData: TransactionFormData = {
-        description: data.description,
-        amount: data.amount,
-        category_id: data.category_id,
-        type: data.type,
-        date: data.date,
-        payment_method: data.payment_method,
-        status: data.status
-      };
+      const result = isEditing
+        ? await updateTransaction(values)
+        : await addTransaction(values);
       
-      await onSubmit(transactionData);
-      form.reset();
-      onOpenChange(false);
+      if (result) {
+        refetchFinancialData(); // Add this line to update financial data
+        toast.success(
+          isEditing ? 'Transação atualizada com sucesso!' : 'Transação criada com sucesso!'
+        );
+        form.reset();
+        onOpenChange(false);
+      }
     } catch (error) {
-      console.error('Erro ao salvar transação:', error);
+      console.error('Error submitting transaction:', error);
+      toast.error('Erro ao processar a transação');
     } finally {
       setIsSubmitting(false);
     }

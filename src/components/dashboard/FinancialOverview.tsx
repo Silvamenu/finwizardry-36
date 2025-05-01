@@ -24,45 +24,20 @@ import { Button } from "@/components/ui/button";
 import { ArrowUp, ArrowDown, Info } from "lucide-react";
 import AnimatedIcon from "@/components/AnimatedIcon";
 import { cn } from "@/lib/utils";
-
-const generateMonthlyData = () => {
-  const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-  return months.map((month, index) => {
-    const baseValue = 10000 + Math.random() * 5000;
-    const expenses = baseValue - Math.random() * 6000;
-    return {
-      name: month,
-      receita: Math.round(baseValue),
-      despesa: Math.round(expenses),
-      saldo: Math.round(baseValue - expenses),
-    };
-  });
-};
-
-const generateWeeklyData = () => {
-  const weeks = ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4'];
-  return weeks.map((week) => {
-    const baseValue = 2500 + Math.random() * 1500;
-    const expenses = baseValue - Math.random() * 1800;
-    return {
-      name: week,
-      receita: Math.round(baseValue),
-      despesa: Math.round(expenses),
-      saldo: Math.round(baseValue - expenses),
-    };
-  });
-};
+import { useFinancialData } from "@/hooks/useFinancialData";
 
 const FinancialOverview = () => {
   const [timeRange, setTimeRange] = useState<'weekly' | 'monthly'>('monthly');
-  const data = timeRange === 'monthly' ? generateMonthlyData() : generateWeeklyData();
+  const { summary, loading } = useFinancialData();
   
-  const totals = data.reduce((acc, item) => {
-    acc.receita += item.receita;
-    acc.despesa += item.despesa;
-    acc.saldo += item.saldo;
-    return acc;
-  }, { receita: 0, despesa: 0, saldo: 0 });
+  const data = summary.monthlyData;
+  
+  // Calculate totals from actual transaction data
+  const totals = {
+    receita: summary.totalIncome,
+    despesa: summary.totalExpense,
+    saldo: summary.balance
+  };
 
   const chartConfig = {
     receita: {
@@ -202,7 +177,7 @@ const FinancialOverview = () => {
                   opacity={0.5}
                 />
                 <XAxis 
-                  dataKey="name" 
+                  dataKey="month" 
                   tick={{ fontSize: 12, fill: "var(--chart-text-color, rgba(0, 0, 0, 0.7))" }} 
                   tickLine={{ stroke: "var(--chart-grid-color, rgba(0, 0, 0, 0.1))" }} 
                   axisLine={{ stroke: "var(--chart-grid-color, rgba(0, 0, 0, 0.1))" }} 
@@ -218,21 +193,24 @@ const FinancialOverview = () => {
                     if (active && payload && payload.length) {
                       return (
                         <div className="chart-tooltip bg-white dark:bg-gray-800 p-3 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
-                          <p className="font-medium mb-1">{payload[0].payload.name}</p>
+                          <p className="font-medium mb-1">{payload[0].payload.month}</p>
                           {payload.map((entry, index) => (
                             <div key={index} className="flex items-center justify-between mb-1">
                               <span className="flex items-center">
                                 <span 
                                   className="w-2 h-2 rounded-full mr-1" 
                                   style={{
-                                    backgroundColor: entry.name === 'receita' 
+                                    backgroundColor: entry.name === 'income' || entry.name === 'receita'
                                       ? '#0ea5e9' 
-                                      : entry.name === 'despesa' 
+                                      : entry.name === 'expense' || entry.name === 'despesa'
                                         ? '#f43f5e' 
                                         : '#22c55e'
                                   }}
                                 />
-                                <span className="text-sm">{entry.name === 'receita' ? 'Receita' : entry.name === 'despesa' ? 'Despesa' : 'Saldo'}</span>
+                                <span className="text-sm">
+                                  {entry.name === 'income' || entry.name === 'receita' ? 'Receita' : 
+                                   entry.name === 'expense' || entry.name === 'despesa' ? 'Despesa' : 'Saldo'}
+                                </span>
                               </span>
                               <span className="font-medium text-sm">{formatCurrency(entry.value as number)}</span>
                             </div>
@@ -245,7 +223,7 @@ const FinancialOverview = () => {
                 />
                 <Area 
                   type="monotone" 
-                  dataKey="receita" 
+                  dataKey="income" 
                   name="receita"
                   stroke="#0ea5e9" 
                   strokeWidth={2}
@@ -254,7 +232,7 @@ const FinancialOverview = () => {
                 />
                 <Area 
                   type="monotone" 
-                  dataKey="despesa" 
+                  dataKey="expense" 
                   name="despesa"
                   stroke="#f43f5e" 
                   strokeWidth={2}
@@ -263,7 +241,7 @@ const FinancialOverview = () => {
                 />
                 <Area 
                   type="monotone" 
-                  dataKey="saldo" 
+                  dataKey="balance" 
                   name="saldo"
                   stroke="#22c55e" 
                   strokeWidth={2}
