@@ -1,11 +1,12 @@
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Button, MotionButton } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { PlusCircle, Calendar, Trophy, Car, Home, Plane, Briefcase, GraduationCap } from "lucide-react";
+import NewGoalModal from "@/components/goals/NewGoalModal";
 
 interface Goal {
   id: number;
@@ -87,36 +88,46 @@ const GoalCard = ({ goal }: { goal: Goal }) => {
     }
   };
   
+  const handleEdit = () => {
+    console.log("Editando meta:", goal);
+    // Lógica para editar a meta
+  };
+  
+  const handleAddFunds = () => {
+    console.log("Adicionando fundos à meta:", goal);
+    // Lógica para adicionar fundos
+  };
+  
   return (
     <Card className="overflow-hidden hover:shadow-md transition-shadow duration-300">
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start mb-2">
-          <div className="p-2 rounded-lg bg-momoney-100">
-            <goal.icon className="h-5 w-5 text-momoney-600" />
+          <div className="p-2 rounded-xl bg-blue-100">
+            <goal.icon className="h-5 w-5 text-blue-600" />
           </div>
           {getStatusBadge(goal.status)}
         </div>
-        <CardTitle>{goal.name}</CardTitle>
-        <CardDescription>{goal.category}</CardDescription>
+        <CardTitle className="text-lg truncate">{goal.name}</CardTitle>
+        <CardDescription className="truncate">{goal.category}</CardDescription>
       </CardHeader>
       <CardContent className="pb-2">
         <div className="space-y-4">
           <div>
             <div className="flex justify-between mb-1 text-sm">
               <span>Progresso: {progress}%</span>
-              <span>R$ {goal.current.toLocaleString('pt-BR')} / R$ {goal.target.toLocaleString('pt-BR')}</span>
+              <span className="truncate">R$ {goal.current.toLocaleString('pt-BR')} / R$ {goal.target.toLocaleString('pt-BR')}</span>
             </div>
-            <Progress value={progress} className="h-2" />
+            <Progress value={progress} className="h-2 bg-gray-100" />
           </div>
           <div className="flex items-center text-sm text-gray-500">
-            <Calendar className="h-4 w-4 mr-1 inline" />
-            Prazo: {goal.deadline}
+            <Calendar className="h-4 w-4 mr-1 inline flex-shrink-0" />
+            <span className="truncate">Prazo: {goal.deadline}</span>
           </div>
         </div>
       </CardContent>
       <CardFooter className="pt-2 flex gap-2">
-        <Button variant="outline" size="sm" className="flex-1">Editar</Button>
-        <Button variant="clean" size="sm" className="flex-1">Adicionar</Button>
+        <Button variant="outline" size="sm" className="flex-1 rounded-xl" onClick={handleEdit}>Editar</Button>
+        <Button variant="primary" size="sm" className="flex-1 rounded-xl" onClick={handleAddFunds}>Adicionar</Button>
       </CardFooter>
     </Card>
   );
@@ -128,9 +139,9 @@ const SummaryCard = ({ title, value, icon: Icon, color }: any) => (
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-medium text-gray-500">{title}</p>
-          <p className="text-2xl font-bold">{value}</p>
+          <p className="text-2xl font-bold truncate">{value}</p>
         </div>
-        <div className={`p-3 rounded-full ${color}`}>
+        <div className={`p-3 rounded-xl ${color}`}>
           <Icon className="h-6 w-6 text-white" />
         </div>
       </div>
@@ -139,9 +150,16 @@ const SummaryCard = ({ title, value, icon: Icon, color }: any) => (
 );
 
 const Metas = () => {
+  const [showNewGoalModal, setShowNewGoalModal] = useState(false);
+  
   useEffect(() => {
     document.title = "MoMoney | Metas";
   }, []);
+
+  const handleAddGoal = (goal: any) => {
+    console.log("Nova meta adicionada:", goal);
+    // Lógica para adicionar a meta ao estado
+  };
 
   // Calcular estatísticas
   const totalGoals = goals.length;
@@ -157,7 +175,11 @@ const Metas = () => {
             <h1 className="text-3xl font-bold mb-2">Suas Metas Financeiras</h1>
             <p className="text-gray-500">Acompanhe o progresso das suas metas e realize seus sonhos</p>
           </div>
-          <Button className="animate-fade-in" variant="clean">
+          <Button 
+            className="animate-fade-in rounded-xl" 
+            variant="primary"
+            onClick={() => setShowNewGoalModal(true)}
+          >
             <PlusCircle className="h-4 w-4 mr-2" />
             Nova Meta
           </Button>
@@ -198,7 +220,10 @@ const Metas = () => {
           ))}
           
           {/* Add Goal Card */}
-          <Card className="flex flex-col items-center justify-center p-8 border-dashed border-2 bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer">
+          <Card 
+            className="flex flex-col items-center justify-center p-8 border-dashed border-2 bg-gray-50 dark:bg-gray-800/50 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors cursor-pointer"
+            onClick={() => setShowNewGoalModal(true)}
+          >
             <PlusCircle className="h-10 w-10 text-gray-400 mb-4" />
             <h3 className="text-lg font-medium text-gray-600 dark:text-gray-300">Adicionar Nova Meta</h3>
             <p className="text-sm text-gray-500 dark:text-gray-400 text-center mt-2">
@@ -206,6 +231,13 @@ const Metas = () => {
             </p>
           </Card>
         </div>
+        
+        {/* New Goal Modal */}
+        <NewGoalModal 
+          open={showNewGoalModal} 
+          onOpenChange={setShowNewGoalModal}
+          onAddGoal={handleAddGoal}
+        />
       </div>
     </DashboardLayout>
   );

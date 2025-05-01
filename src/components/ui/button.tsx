@@ -1,3 +1,4 @@
+
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
@@ -22,19 +23,23 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-blue-500 text-white hover:bg-blue-600 shadow-sm",
-        destructive: "bg-red-500 text-white hover:bg-red-600 shadow-sm",
-        outline: "border border-input bg-background hover:bg-accent hover:text-accent-foreground",
-        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        ghost: "hover:bg-accent hover:text-accent-foreground",
+        default: "bg-blue-500 text-white hover:bg-blue-600 active:bg-blue-700 shadow-sm",
+        destructive: "bg-red-500 text-white hover:bg-red-600 active:bg-red-700 shadow-sm",
+        outline: "border border-gray-200 bg-white hover:bg-gray-50 active:bg-gray-100 text-gray-700 shadow-sm",
+        secondary: "bg-gray-100 text-gray-900 hover:bg-gray-200 active:bg-gray-300 shadow-sm",
+        ghost: "hover:bg-gray-50 active:bg-gray-100 text-gray-700",
         link: "text-blue-500 underline-offset-4 hover:underline",
-        clean: "bg-blue-600 text-white hover:bg-blue-500 shadow-sm",
-        cleanOutline: "border border-blue-400 text-blue-600 bg-transparent hover:bg-blue-50 dark:hover:bg-blue-900/20",
+        clean: "bg-blue-500 text-white hover:bg-blue-400 active:bg-blue-600 shadow-sm",
+        cleanOutline: "border border-blue-200 text-blue-600 bg-white hover:bg-blue-50 active:bg-blue-100",
+        success: "bg-green-500 text-white hover:bg-green-400 active:bg-green-600 shadow-sm",
+        primary: "bg-gradient-to-r from-blue-600 to-blue-500 text-white hover:from-blue-500 hover:to-blue-400 active:from-blue-700 active:to-blue-600 shadow-md",
       },
       size: {
         default: "h-10 px-5 py-2",
+        xs: "h-7 text-xs px-2.5 py-1 rounded-lg",
         sm: "h-9 rounded-lg px-3",
         lg: "h-11 rounded-xl px-8 text-base",
+        xl: "h-12 rounded-xl px-10 text-base",
         icon: "h-10 w-10 rounded-full",
       },
     },
@@ -66,11 +71,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   }
 );
 
-// Define specific motion animation variants
+// Define specific motion animation variants for enhanced interactions
 const buttonAnimationVariants: Variants = {
   initial: { scale: 1, y: 0 },
-  hover: { scale: 1.02, y: -2 },
-  tap: { scale: 0.98 }
+  hover: { scale: 1.03, y: -1 },
+  tap: { scale: 0.97 }
 };
 
 // Create a proper typed motion button version that works with both React and Framer Motion
@@ -82,7 +87,7 @@ const MotionButton = React.forwardRef<HTMLButtonElement, MotionButtonProps>(
     asChild = false, 
     whileHover = "hover", 
     whileTap = "tap", 
-    transition = { duration: 0.2 }, 
+    transition = { duration: 0.15 }, 
     animate = "initial", 
     initial = "initial", 
     isLoading, 

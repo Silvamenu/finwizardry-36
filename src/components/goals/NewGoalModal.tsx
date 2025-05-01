@@ -78,8 +78,8 @@ const NewGoalModal = ({ open, onOpenChange, onAddGoal }: NewGoalModalProps) => {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle className="flex items-center">
-            <Target className="mr-2 h-5 w-5 text-blue-500" />
+          <DialogTitle className="flex items-center text-blue-600">
+            <Target className="mr-2 h-5 w-5" />
             Nova Meta Financeira
           </DialogTitle>
           <DialogDescription>
@@ -87,28 +87,29 @@ const NewGoalModal = ({ open, onOpenChange, onAddGoal }: NewGoalModalProps) => {
           </DialogDescription>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="name">Nome da Meta *</Label>
+        <form onSubmit={handleSubmit} className="space-y-6 mt-2">
+          <div className="grid gap-5">
+            <div className="grid gap-3">
+              <Label htmlFor="name" className="text-sm font-medium text-gray-700">Nome da Meta *</Label>
               <Input 
                 id="name" 
                 value={name} 
                 onChange={(e) => setName(e.target.value)} 
                 placeholder="Ex: Viagem para Europa"
+                className="shadow-sm"
                 required
               />
             </div>
             
-            <div className="grid gap-2">
-              <Label htmlFor="category">Categoria *</Label>
+            <div className="grid gap-3">
+              <Label htmlFor="category" className="text-sm font-medium text-gray-700">Categoria *</Label>
               <Select value={category} onValueChange={setCategory} required>
-                <SelectTrigger id="category">
+                <SelectTrigger id="category" className="rounded-xl border-gray-200 shadow-sm bg-white h-10">
                   <SelectValue placeholder="Selecione uma categoria" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="rounded-xl">
                   {categories.map((cat) => (
-                    <SelectItem key={cat.id} value={cat.id}>
+                    <SelectItem key={cat.id} value={cat.id} className="rounded-lg my-0.5 focus:bg-blue-50">
                       <div className="flex items-center">
                         <span className="mr-2">{cat.icon}</span>
                         {cat.name}
@@ -120,8 +121,8 @@ const NewGoalModal = ({ open, onOpenChange, onAddGoal }: NewGoalModalProps) => {
             </div>
             
             <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="target-amount">Valor Alvo (R$) *</Label>
+              <div className="grid gap-3">
+                <Label htmlFor="target-amount" className="text-sm font-medium text-gray-700">Valor Alvo (R$) *</Label>
                 <Input 
                   id="target-amount" 
                   type="number" 
@@ -130,12 +131,13 @@ const NewGoalModal = ({ open, onOpenChange, onAddGoal }: NewGoalModalProps) => {
                   placeholder="10000"
                   min="0"
                   step="0.01"
+                  className="shadow-sm"
                   required
                 />
               </div>
               
-              <div className="grid gap-2">
-                <Label htmlFor="initial-amount">Valor Inicial (R$)</Label>
+              <div className="grid gap-3">
+                <Label htmlFor="initial-amount" className="text-sm font-medium text-gray-700">Valor Inicial (R$)</Label>
                 <Input 
                   id="initial-amount" 
                   type="number" 
@@ -144,27 +146,28 @@ const NewGoalModal = ({ open, onOpenChange, onAddGoal }: NewGoalModalProps) => {
                   placeholder="0"
                   min="0"
                   step="0.01"
+                  className="shadow-sm"
                 />
               </div>
             </div>
             
-            <div className="grid gap-2">
-              <Label htmlFor="deadline">Data Limite *</Label>
+            <div className="grid gap-3">
+              <Label htmlFor="deadline" className="text-sm font-medium text-gray-700">Data Limite *</Label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
                     id="deadline"
-                    variant={"outline"}
+                    variant="outline"
                     className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !date && "text-muted-foreground"
+                      "w-full justify-start text-left font-normal shadow-sm h-10 border-gray-200",
+                      !date && "text-gray-400"
                     )}
                   >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    <CalendarIcon className="mr-2 h-4 w-4 text-gray-500" />
                     {date ? format(date, "PPP", { locale: ptBR }) : <span>Selecione uma data</span>}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+                <PopoverContent className="w-auto p-0 rounded-xl border-gray-200 shadow-lg" align="start">
                   <Calendar
                     mode="single"
                     selected={date}
@@ -172,6 +175,7 @@ const NewGoalModal = ({ open, onOpenChange, onAddGoal }: NewGoalModalProps) => {
                     initialFocus
                     locale={ptBR}
                     disabled={(date) => date < new Date()}
+                    className="rounded-xl border-0 p-3 pointer-events-auto"
                   />
                 </PopoverContent>
               </Popover>
@@ -179,10 +183,21 @@ const NewGoalModal = ({ open, onOpenChange, onAddGoal }: NewGoalModalProps) => {
           </div>
           
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={() => onOpenChange(false)}
+              size="lg"
+              className="rounded-xl"
+            >
               Cancelar
             </Button>
-            <Button type="submit" className="bg-gradient-to-r from-blue-600 to-blue-500 text-white">
+            <Button 
+              type="submit" 
+              variant="primary"
+              size="lg"
+              className="rounded-xl"
+            >
               Adicionar Meta
             </Button>
           </DialogFooter>

@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import * as TogglePrimitive from "@radix-ui/react-toggle"
 import { cva, type VariantProps } from "class-variance-authority"
@@ -5,18 +6,21 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const toggleVariants = cva(
-  "inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors hover:bg-muted hover:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-accent data-[state=on]:text-accent-foreground",
+  "inline-flex items-center justify-center rounded-xl text-sm font-medium ring-offset-background transition-colors hover:bg-gray-50 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=on]:bg-blue-50 data-[state=on]:text-blue-700",
   {
     variants: {
       variant: {
-        default: "bg-transparent",
+        default: "bg-white text-gray-700",
         outline:
-          "border border-input bg-transparent hover:bg-accent hover:text-accent-foreground",
+          "border border-gray-200 bg-white hover:bg-gray-50 hover:text-gray-900",
+        blue: "data-[state=on]:bg-blue-500 data-[state=on]:text-white",
+        ghost: "bg-transparent hover:bg-gray-50 hover:text-gray-900 data-[state=on]:bg-gray-50 data-[state=on]:text-gray-900",
       },
       size: {
         default: "h-10 px-3",
         sm: "h-9 px-2.5",
         lg: "h-11 px-5",
+        icon: "h-10 w-10",
       },
     },
     defaultVariants: {

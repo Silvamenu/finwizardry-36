@@ -80,8 +80,8 @@ const NewInvestmentModal = ({ open, onOpenChange, onAddInvestment }: NewInvestme
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle className="flex items-center">
-            <BarChart3 className="mr-2 h-5 w-5 text-green-500" />
+          <DialogTitle className="flex items-center text-green-600">
+            <BarChart3 className="mr-2 h-5 w-5" />
             Novo Investimento
           </DialogTitle>
           <DialogDescription>
@@ -89,28 +89,29 @@ const NewInvestmentModal = ({ open, onOpenChange, onAddInvestment }: NewInvestme
           </DialogDescription>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="investment-name">Nome do Investimento *</Label>
+        <form onSubmit={handleSubmit} className="space-y-6 mt-2">
+          <div className="grid gap-5">
+            <div className="grid gap-3">
+              <Label htmlFor="investment-name" className="text-sm font-medium text-gray-700">Nome do Investimento *</Label>
               <Input 
                 id="investment-name" 
                 value={name} 
                 onChange={(e) => setName(e.target.value)} 
                 placeholder="Ex: PETR4, Tesouro Selic 2026, etc."
+                className="shadow-sm"
                 required
               />
             </div>
             
-            <div className="grid gap-2">
-              <Label htmlFor="asset-type">Tipo de Ativo *</Label>
+            <div className="grid gap-3">
+              <Label htmlFor="asset-type" className="text-sm font-medium text-gray-700">Tipo de Ativo *</Label>
               <Select value={assetType} onValueChange={setAssetType} required>
-                <SelectTrigger id="asset-type">
+                <SelectTrigger id="asset-type" className="rounded-xl border-gray-200 shadow-sm bg-white h-10">
                   <SelectValue placeholder="Selecione um tipo de ativo" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="rounded-xl">
                   {assetTypes.map((type) => (
-                    <SelectItem key={type.id} value={type.id}>
+                    <SelectItem key={type.id} value={type.id} className="rounded-lg my-0.5 focus:bg-green-50">
                       <div className="flex items-center">
                         <span className="mr-2">{type.icon}</span>
                         {type.name}
@@ -122,8 +123,8 @@ const NewInvestmentModal = ({ open, onOpenChange, onAddInvestment }: NewInvestme
             </div>
             
             <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="amount">Quantidade *</Label>
+              <div className="grid gap-3">
+                <Label htmlFor="amount" className="text-sm font-medium text-gray-700">Quantidade *</Label>
                 <Input 
                   id="amount" 
                   type="number" 
@@ -132,12 +133,13 @@ const NewInvestmentModal = ({ open, onOpenChange, onAddInvestment }: NewInvestme
                   placeholder="10"
                   min="0"
                   step="0.01"
+                  className="shadow-sm"
                   required
                 />
               </div>
               
-              <div className="grid gap-2">
-                <Label htmlFor="purchase-price">Preço de Compra (R$) *</Label>
+              <div className="grid gap-3">
+                <Label htmlFor="purchase-price" className="text-sm font-medium text-gray-700">Preço de Compra (R$) *</Label>
                 <Input 
                   id="purchase-price" 
                   type="number" 
@@ -146,28 +148,29 @@ const NewInvestmentModal = ({ open, onOpenChange, onAddInvestment }: NewInvestme
                   placeholder="25.75"
                   min="0"
                   step="0.01"
+                  className="shadow-sm"
                   required
                 />
               </div>
             </div>
             
-            <div className="grid gap-2">
-              <Label htmlFor="purchase-date">Data de Compra *</Label>
+            <div className="grid gap-3">
+              <Label htmlFor="purchase-date" className="text-sm font-medium text-gray-700">Data de Compra *</Label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
                     id="purchase-date"
-                    variant={"outline"}
+                    variant="outline"
                     className={cn(
-                      "w-full justify-start text-left font-normal",
-                      !purchaseDate && "text-muted-foreground"
+                      "w-full justify-start text-left font-normal shadow-sm h-10 border-gray-200",
+                      !purchaseDate && "text-gray-400"
                     )}
                   >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    <CalendarIcon className="mr-2 h-4 w-4 text-gray-500" />
                     {purchaseDate ? format(purchaseDate, "PPP", { locale: ptBR }) : <span>Selecione uma data</span>}
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
+                <PopoverContent className="w-auto p-0 rounded-xl border-gray-200 shadow-lg" align="start">
                   <Calendar
                     mode="single"
                     selected={purchaseDate}
@@ -175,6 +178,7 @@ const NewInvestmentModal = ({ open, onOpenChange, onAddInvestment }: NewInvestme
                     initialFocus
                     locale={ptBR}
                     disabled={(date) => date > new Date()}
+                    className="rounded-xl border-0 p-3 pointer-events-auto"
                   />
                 </PopoverContent>
               </Popover>
@@ -182,10 +186,21 @@ const NewInvestmentModal = ({ open, onOpenChange, onAddInvestment }: NewInvestme
           </div>
           
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={() => onOpenChange(false)}
+              size="lg"
+              className="rounded-xl"
+            >
               Cancelar
             </Button>
-            <Button type="submit" className="bg-gradient-to-r from-green-600 to-green-500 text-white">
+            <Button 
+              type="submit" 
+              variant="success"
+              size="lg"
+              className="rounded-xl"
+            >
               Adicionar Investimento
             </Button>
           </DialogFooter>

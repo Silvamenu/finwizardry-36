@@ -3,9 +3,14 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --border-radius: 0.75rem;
+  --font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
 /* Glass card effect */
 .glass-card {
-  @apply bg-white/80 backdrop-blur-sm border border-gray-100/80 shadow-lg rounded-xl;
+  @apply bg-white/90 backdrop-blur-sm border border-gray-100/80 shadow-lg rounded-2xl;
 }
 
 /* Gradient text */
@@ -15,7 +20,7 @@
 
 /* Button effects */
 .neo-button {
-  @apply relative shadow-lg hover:shadow-xl active:shadow-md transition-shadow;
+  @apply relative shadow-md hover:shadow-lg active:shadow-sm transition-shadow;
 }
 
 /* Animation classes */
@@ -69,6 +74,31 @@
   animation-delay: 0.8s;
 }
 
+/* Form styles */
+input:focus, 
+select:focus, 
+textarea:focus,
+button:focus {
+  @apply outline-none ring-2 ring-blue-500 ring-offset-2 transition-shadow;
+}
+
+/* NovaFin styled components */
+.novafin-card {
+  @apply rounded-2xl border border-gray-100 bg-white shadow-sm hover:shadow-md transition-shadow duration-200;
+}
+
+.novafin-input {
+  @apply rounded-xl border border-gray-200 focus:border-blue-500 shadow-sm transition-colors;
+}
+
+.novafin-button {
+  @apply rounded-xl font-medium shadow-sm hover:shadow transition-all duration-200;
+}
+
+.novafin-button-primary {
+  @apply bg-gradient-to-r from-blue-600 to-blue-500 text-white hover:from-blue-500 hover:to-blue-400;
+}
+
 /* Index page specific styles */
 .index-page {
   background-color: #ffffff;
@@ -76,4 +106,13 @@
 
 .index-page-wrapper {
   position: relative;
+}
+
+/* Modern Dialog/Modal Styles */
+.dialog-content {
+  @apply rounded-2xl border border-gray-100 bg-white;
+}
+
+.dialog-overlay {
+  @apply bg-black/50 backdrop-blur-sm;
 }
