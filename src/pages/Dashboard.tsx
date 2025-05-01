@@ -1,6 +1,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import FinancialOverview from "@/components/dashboard/FinancialOverview";
 import RecentActivity from "@/components/dashboard/RecentActivity";
@@ -15,7 +16,6 @@ import { motion } from "framer-motion";
 import OnboardingDialog from "@/components/onboarding/OnboardingDialog";
 import NewGoalModal from "@/components/goals/NewGoalModal";
 import NewInvestmentModal from "@/components/investments/NewInvestmentModal";
-import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
   const { t } = useTranslation();
@@ -123,7 +123,7 @@ const Dashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
-                <h3 className="text-2xl font-bold text-blue-700 dark:text-blue-400">
+                <h3 className="text-2xl font-bold text-blue-700 dark:text-blue-400 truncate">
                   {formatCurrency(-67634.49)}
                 </h3>
                 <div className="p-2 bg-blue-200/50 dark:bg-blue-800/50 rounded-lg">
@@ -131,7 +131,7 @@ const Dashboard = () => {
                 </div>
               </div>
               <p className="text-sm flex items-center mt-2 text-green-600 dark:text-green-400">
-                <ArrowUp className="h-4 w-4 mr-1" /> 100% {t('dashboard.since_last_month')}
+                <ArrowUp className="h-4 w-4 mr-1 flex-shrink-0" /> <span className="truncate">100% {t('dashboard.since_last_month')}</span>
               </p>
             </CardContent>
           </Card>
@@ -145,7 +145,7 @@ const Dashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
-                <h3 className="text-2xl font-bold text-red-700 dark:text-red-400">
+                <h3 className="text-2xl font-bold text-red-700 dark:text-red-400 truncate">
                   {formatCurrency(1124405.31)}
                 </h3>
                 <div className="p-2 bg-red-200/50 dark:bg-red-800/50 rounded-lg">
@@ -153,7 +153,7 @@ const Dashboard = () => {
                 </div>
               </div>
               <p className="text-sm flex items-center mt-2 text-gray-600 dark:text-gray-400">
-                <ArrowDown className="h-4 w-4 mr-1" /> 0% {t('dashboard.since_last_month')}
+                <ArrowDown className="h-4 w-4 mr-1 flex-shrink-0" /> <span className="truncate">0% {t('dashboard.since_last_month')}</span>
               </p>
             </CardContent>
           </Card>
@@ -167,7 +167,7 @@ const Dashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="flex items-center justify-between">
-                <h3 className="text-2xl font-bold text-green-700 dark:text-green-400">
+                <h3 className="text-2xl font-bold text-green-700 dark:text-green-400 truncate">
                   {formatCurrency(56220.27)}
                 </h3>
                 <div className="p-2 bg-green-200/50 dark:bg-green-800/50 rounded-lg">
@@ -175,7 +175,7 @@ const Dashboard = () => {
                 </div>
               </div>
               <p className="text-sm flex items-center mt-2 text-red-600 dark:text-red-400">
-                <ArrowDown className="h-4 w-4 mr-1" /> -83.1% {t('dashboard.of_current_balance')}
+                <ArrowDown className="h-4 w-4 mr-1 flex-shrink-0" /> <span className="truncate">-83.1% {t('dashboard.of_current_balance')}</span>
               </p>
             </CardContent>
           </Card>
@@ -213,6 +213,8 @@ const Dashboard = () => {
                 <MotionButton 
                   className="bg-blue-600 hover:bg-blue-500 text-white rounded-full px-6 py-2 whitespace-nowrap"
                   onClick={() => navigate('/dashboard/assistente')}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                 >
                   {t('dashboard.ai_assistant.learn_more')}
                 </MotionButton>
@@ -235,21 +237,48 @@ const Dashboard = () => {
           <UpcomingTransactions />
         </motion.div>
 
-        {/* Action Buttons (Shown on Mobile Only) */}
-        <motion.div variants={itemVariants} className="fixed bottom-6 right-6 flex flex-col space-y-3 z-10 md:hidden">
+        {/* Action Buttons */}
+        <motion.div variants={itemVariants} className="fixed bottom-6 right-6 flex flex-col space-y-3 z-10">
           <MotionButton
-            className="bg-blue-600 hover:bg-blue-500 text-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg"
+            className="bg-blue-600 hover:bg-blue-500 text-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg md:hidden"
             onClick={() => setShowNewGoalModal(true)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
             <Target className="h-6 w-6" />
           </MotionButton>
           
           <MotionButton
-            className="bg-green-600 hover:bg-green-500 text-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg"
+            className="bg-green-600 hover:bg-green-500 text-white rounded-full w-12 h-12 flex items-center justify-center shadow-lg md:hidden"
             onClick={() => setShowNewInvestmentModal(true)}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
           >
             <BarChart3 className="h-6 w-6" />
           </MotionButton>
+          
+          {/* Desktop only buttons */}
+          <div className="hidden md:flex md:space-x-3 fixed bottom-6 right-6 z-10">
+            <MotionButton
+              className="bg-blue-600 hover:bg-blue-500 text-white rounded-xl px-4 py-2 shadow-lg flex items-center"
+              onClick={() => setShowNewGoalModal(true)}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Target className="h-5 w-5 mr-2" />
+              Nova Meta
+            </MotionButton>
+            
+            <MotionButton
+              className="bg-green-600 hover:bg-green-500 text-white rounded-xl px-4 py-2 shadow-lg flex items-center"
+              onClick={() => setShowNewInvestmentModal(true)}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <BarChart3 className="h-5 w-5 mr-2" />
+              Novo Investimento
+            </MotionButton>
+          </div>
         </motion.div>
       </motion.div>
     </DashboardLayout>

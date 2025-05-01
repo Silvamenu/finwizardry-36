@@ -1,3 +1,4 @@
+
 import { useEffect, useState, useRef } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
@@ -12,6 +13,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { type Assistant, type Message, type ConversationHistory } from "@/types/assistant";
 import AssistantSelect from "@/components/assistant/AssistantSelect";
 import ChatMessage from "@/components/assistant/ChatMessage";
+import { useNavigate } from "react-router-dom";
 
 const assistants: Assistant[] = [
   {
@@ -118,7 +120,7 @@ const suggestedQuestions: Record<string, string[]> = {
     "Como negociar melhores condições em contratos?"
   ],
   "ai-analyst": [
-    "Qual minha projeç��o financeira para os próximos 5 anos?",
+    "Qual minha projeção financeira para os próximos 5 anos?",
     "Como otimizar minha alocação de ativos?",
     "Quais padrões de gasto posso melhorar?"
   ]
@@ -163,6 +165,8 @@ const sampleHistories: ConversationHistory[] = [
 ];
 
 const Assistente = () => {
+  const navigate = useNavigate();
+  
   useEffect(() => {
     document.title = "MoMoney | Assistente IA";
   }, []);
@@ -452,7 +456,7 @@ const Assistente = () => {
                 </div>
                 <div>
                   <CardTitle>{activeAssistant.name}</CardTitle>
-                  <CardDescription>{activeAssistant.description}</CardDescription>
+                  <CardDescription className="line-clamp-1">{activeAssistant.description}</CardDescription>
                 </div>
               </div>
             </CardHeader>
@@ -491,7 +495,7 @@ const Assistente = () => {
                       key={index}
                       variant="outline"
                       size="sm"
-                      className="text-xs bg-gradient-to-r from-white/50 to-white/30 hover:from-white/70 hover:to-white/50 dark:from-gray-700/50 dark:to-gray-800/30 dark:hover:from-gray-700/70 dark:hover:to-gray-800/50 border border-gray-200 dark:border-gray-700 transition-all"
+                      className="text-xs line-clamp-1 max-w-full sm:max-w-[250px] bg-gradient-to-r from-white/50 to-white/30 hover:from-white/70 hover:to-white/50 dark:from-gray-700/50 dark:to-gray-800/30 dark:hover:from-gray-700/70 dark:hover:to-gray-800/50 border border-gray-200 dark:border-gray-700 transition-all"
                       onClick={() => handleSuggestedQuestion(question)}
                     >
                       {question}
