@@ -85,7 +85,7 @@ const Metas = () => {
           csvRows.push(row.join(','));
         });
         
-        // Fixed: Use direct string concatenation, not String constructor
+        // Create CSV string by joining rows with newlines
         const csvString = csvRows.join('\n');
         const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement('a');
