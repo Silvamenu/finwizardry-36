@@ -85,7 +85,7 @@ const Metas = () => {
           csvRows.push(row.join(','));
         });
         
-        // Fix: Remove the String constructor and use template string directly
+        // Fixed: Use direct string concatenation, not String constructor
         const csvString = csvRows.join('\n');
         const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement('a');
