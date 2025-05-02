@@ -19,8 +19,17 @@ export function useFormatters() {
     }).format(new Date(date));
   };
 
+  const formatPercentage = (value: number) => {
+    return new Intl.NumberFormat(preferences.language, {
+      style: 'percent',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(value / 100);
+  };
+
   return {
     formatCurrency,
-    formatDate
+    formatDate,
+    formatPercentage
   };
 }

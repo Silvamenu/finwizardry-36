@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { TransactionFormData, useTransactions } from '@/hooks/useTransactions';
-import { useCategories, Category } from '@/hooks/useCategories';
+import { useCategories, Category, CategoryFormData } from '@/hooks/useCategories';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Calendar as CalendarIcon, Loader2 } from 'lucide-react';
@@ -17,6 +17,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useFinancialData } from '@/hooks/useFinancialData';
 import { toast } from 'sonner';
+import { CategoryForm } from './CategoryForm';
 
 const transactionSchema = z.object({
   description: z.string().min(3, { message: 'A descrição deve ter pelo menos 3 caracteres' }),

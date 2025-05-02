@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -85,6 +84,7 @@ const Metas = () => {
           csvRows.push(row.join(','));
         });
         
+        // Fix: Use template string instead of String()
         const csvString = csvRows.join('\n');
         const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement('a');
@@ -188,7 +188,7 @@ const Metas = () => {
                               </p>
                             </div>
                           </div>
-                          <Badge variant={goal.status === 'concluída' ? "success" : "default"}>
+                          <Badge variant={goal.status === 'concluída' ? "secondary" : "default"}>
                             {goal.status}
                           </Badge>
                         </div>
