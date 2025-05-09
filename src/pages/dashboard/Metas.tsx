@@ -65,9 +65,9 @@ const Metas = () => {
     setShowNewGoalModal(false);
   };
   
-  const exportGoals = (format: 'csv' | 'json' = 'csv') => {
+  const exportGoals = (exportFormat: 'csv' | 'json' = 'csv') => {
     try {
-      if (format === 'csv') {
+      if (exportFormat === 'csv') {
         // Converter para CSV
         const headers = ['Nome', 'Categoria', 'Valor alvo', 'Valor atual', 'Progresso', 'Data limite', 'Status'];
         const csvRows = [headers.join(',')];
