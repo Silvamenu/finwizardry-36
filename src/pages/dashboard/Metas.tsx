@@ -142,87 +142,185 @@ const Metas = () => {
       
       <div className="grid gap-6">
         <div className="flex flex-col md:flex-row gap-6 md:items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold mb-2">Metas Financeiras</h1>
+          <div className="animate-fade-in">
+            <h1 className="text-3xl font-bold mb-2 gradient-text">Metas Financeiras</h1>
             <p className="text-gray-500">Defina e acompanhe suas metas financeiras</p>
           </div>
-          <div className="flex gap-3">
-            <Button variant="outline" onClick={() => exportGoals('csv')}>
-              <Download className="h-4 w-4 mr-2" />
+          <div className="flex gap-3 animate-fade-in reveal-delay-1">
+            <Button variant="outline" onClick={() => exportGoals('csv')} className="minimalist-button group">
+              <Download className="h-4 w-4 mr-2 group-hover:scale-110 transition-transform" />
               Exportar
             </Button>
-            <Button onClick={() => setShowNewGoalModal(true)}>
+            <Button onClick={() => setShowNewGoalModal(true)} className="minimalist-button minimalist-button-primary">
               <Plus className="h-4 w-4 mr-2" />
               Nova Meta
             </Button>
           </div>
         </div>
 
-        <Card>
-          <CardHeader>
+        <Card className="minimalist-card overflow-hidden animate-fade-in reveal-delay-2">
+          <CardHeader className="bg-gradient-to-r from-blue-50 to-sky-50 dark:from-blue-900/20 dark:to-sky-900/20 border-b border-blue-100/50 dark:border-blue-800/50">
             <CardTitle className="flex items-center">
-              <Target className="h-5 w-5 mr-2 text-blue-600" />
+              <Target className="h-5 w-5 mr-2 text-blue-600 dark:text-blue-400" />
               Minhas Metas
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <Tabs defaultValue="all">
-              <TabsList>
-                <TabsTrigger value="all">Todas</TabsTrigger>
-                <TabsTrigger value="active">Em andamento</TabsTrigger>
-                <TabsTrigger value="completed">Concluídas</TabsTrigger>
+          <CardContent className="p-6">
+            <Tabs defaultValue="all" className="w-full">
+              <TabsList className="grid grid-cols-3 mb-6 w-full max-w-md mx-auto">
+                <TabsTrigger value="all" className="data-[state=active]:gradient-bg data-[state=active]:text-white">Todas</TabsTrigger>
+                <TabsTrigger value="active" className="data-[state=active]:gradient-bg data-[state=active]:text-white">Em andamento</TabsTrigger>
+                <TabsTrigger value="completed" className="data-[state=active]:gradient-bg data-[state=active]:text-white">Concluídas</TabsTrigger>
               </TabsList>
               
-              <TabsContent value="all" className="mt-4">
+              <TabsContent value="all" className="mt-4 space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {goals.map(goal => (
-                    <Card key={goal.id} className="overflow-hidden hover:shadow-md transition-shadow">
-                      <div className={`h-2 ${goal.status === 'concluída' ? 'bg-green-500' : 'bg-blue-500'}`}></div>
-                      <CardContent className="pt-6">
-                        <div className="flex items-start justify-between mb-4">
-                          <div className="flex items-center">
-                            <span className="text-3xl mr-3">{getCategoryIcon(goal.category)}</span>
-                            <div>
-                              <h3 className="font-medium">{goal.name}</h3>
-                              <p className="text-sm text-gray-500">
-                                Data limite: {format(goal.deadline, 'dd MMM yyyy', { locale: ptBR })}
-                              </p>
+                  {goals.map((goal, index) => (
+                    <div key={goal.id} 
+                      className="animate-fade-in"
+                      style={{ animationDelay: `${index * 0.1 + 0.3}s` }}
+                    >
+                      <Card className="card-hover-effect overflow-hidden h-full flex flex-col">
+                        <div className={`h-1.5 ${goal.status === 'concluída' ? 'bg-green-500' : 'gradient-bg'}`}></div>
+                        <CardContent className="pt-6 flex flex-col h-full">
+                          <div className="flex items-start justify-between mb-4">
+                            <div className="flex items-center">
+                              <span className="text-3xl mr-3 animate-pulse-soft">{getCategoryIcon(goal.category)}</span>
+                              <div>
+                                <h3 className="font-medium">{goal.name}</h3>
+                                <p className="text-sm text-gray-500">
+                                  Data limite: {format(goal.deadline, 'dd MMM yyyy', { locale: ptBR })}
+                                </p>
+                              </div>
+                            </div>
+                            <Badge variant={goal.status === 'concluída' ? "secondary" : "default"} className="animate-pulse-soft">
+                              {goal.status}
+                            </Badge>
+                          </div>
+                          
+                          <div className="mt-4 flex-grow">
+                            <div className="flex justify-between text-sm mb-2">
+                              <span className="font-medium">{formatCurrency(goal.currentAmount)}</span>
+                              <span className="text-gray-500">{formatCurrency(goal.targetAmount)}</span>
+                            </div>
+                            <Progress value={goal.progress} className="h-2 bg-gray-100 dark:bg-gray-800" />
+                            <div className="flex justify-between text-xs text-gray-500 mt-2">
+                              <span>Progresso: {goal.progress}%</span>
+                              <span>{goal.status === 'concluída' ? 
+                                <span className="flex items-center text-green-500">
+                                  <Check className="h-3 w-3 mr-1" /> Concluída
+                                </span> : 'Em andamento'}
+                              </span>
                             </div>
                           </div>
-                          <Badge variant={goal.status === 'concluída' ? "secondary" : "default"}>
-                            {goal.status}
-                          </Badge>
-                        </div>
-                        
-                        <div className="mt-4">
-                          <div className="flex justify-between text-sm mb-1">
-                            <span>{formatCurrency(goal.currentAmount)}</span>
-                            <span>{formatCurrency(goal.targetAmount)}</span>
-                          </div>
-                          <Progress value={goal.progress} className="h-2" />
-                          <div className="flex justify-between text-xs text-gray-500 mt-1">
-                            <span>Progresso: {goal.progress}%</span>
-                            <span>{goal.status === 'concluída' ? <Check className="h-3 w-3 text-green-500" /> : 'Em andamento'}</span>
-                          </div>
-                        </div>
-                        
-                        <Button variant="ghost" className="w-full mt-4 text-blue-600">
-                          <span>Detalhes</span>
-                          <ArrowRight className="h-4 w-4 ml-2" />
-                        </Button>
-                      </CardContent>
-                    </Card>
+                          
+                          <Button variant="ghost" className="w-full mt-6 text-blue-600 dark:text-blue-400 group">
+                            <span>Detalhes</span>
+                            <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    </div>
                   ))}
                 </div>
               </TabsContent>
               
-              {/* Outras abas serão filtradas por status */}
               <TabsContent value="active">
-                {/* Filtro por metas em andamento */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {goals.filter(goal => goal.status !== 'concluída').map((goal, index) => (
+                    <div key={goal.id} 
+                      className="animate-fade-in"
+                      style={{ animationDelay: `${index * 0.1 + 0.3}s` }}
+                    >
+                      <Card className="card-hover-effect overflow-hidden h-full flex flex-col">
+                        <div className="h-1.5 gradient-bg"></div>
+                        <CardContent className="pt-6 flex flex-col h-full">
+                          <div className="flex items-start justify-between mb-4">
+                            <div className="flex items-center">
+                              <span className="text-3xl mr-3 animate-pulse-soft">{getCategoryIcon(goal.category)}</span>
+                              <div>
+                                <h3 className="font-medium">{goal.name}</h3>
+                                <p className="text-sm text-gray-500">
+                                  Data limite: {format(goal.deadline, 'dd MMM yyyy', { locale: ptBR })}
+                                </p>
+                              </div>
+                            </div>
+                            <Badge variant="default" className="animate-pulse-soft">
+                              {goal.status}
+                            </Badge>
+                          </div>
+                          
+                          <div className="mt-4 flex-grow">
+                            <div className="flex justify-between text-sm mb-2">
+                              <span className="font-medium">{formatCurrency(goal.currentAmount)}</span>
+                              <span className="text-gray-500">{formatCurrency(goal.targetAmount)}</span>
+                            </div>
+                            <Progress value={goal.progress} className="h-2 bg-gray-100 dark:bg-gray-800" />
+                            <div className="flex justify-between text-xs text-gray-500 mt-2">
+                              <span>Progresso: {goal.progress}%</span>
+                              <span>Em andamento</span>
+                            </div>
+                          </div>
+                          
+                          <Button variant="ghost" className="w-full mt-6 text-blue-600 dark:text-blue-400 group">
+                            <span>Detalhes</span>
+                            <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  ))}
+                </div>
               </TabsContent>
               
               <TabsContent value="completed">
-                {/* Filtro por metas concluídas */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {goals.filter(goal => goal.status === 'concluída').map((goal, index) => (
+                    <div key={goal.id} 
+                      className="animate-fade-in"
+                      style={{ animationDelay: `${index * 0.1 + 0.3}s` }}
+                    >
+                      <Card className="card-hover-effect overflow-hidden h-full flex flex-col">
+                        <div className="h-1.5 bg-green-500"></div>
+                        <CardContent className="pt-6 flex flex-col h-full">
+                          <div className="flex items-start justify-between mb-4">
+                            <div className="flex items-center">
+                              <span className="text-3xl mr-3 animate-pulse-soft">{getCategoryIcon(goal.category)}</span>
+                              <div>
+                                <h3 className="font-medium">{goal.name}</h3>
+                                <p className="text-sm text-gray-500">
+                                  Data limite: {format(goal.deadline, 'dd MMM yyyy', { locale: ptBR })}
+                                </p>
+                              </div>
+                            </div>
+                            <Badge variant="secondary" className="animate-pulse-soft">
+                              {goal.status}
+                            </Badge>
+                          </div>
+                          
+                          <div className="mt-4 flex-grow">
+                            <div className="flex justify-between text-sm mb-2">
+                              <span className="font-medium">{formatCurrency(goal.currentAmount)}</span>
+                              <span className="text-gray-500">{formatCurrency(goal.targetAmount)}</span>
+                            </div>
+                            <Progress value={goal.progress} className="h-2 bg-gray-100 dark:bg-gray-800" />
+                            <div className="flex justify-between text-xs text-gray-500 mt-2">
+                              <span>Progresso: {goal.progress}%</span>
+                              <span className="flex items-center text-green-500">
+                                <Check className="h-3 w-3 mr-1" /> Concluída
+                              </span>
+                            </div>
+                          </div>
+                          
+                          <Button variant="ghost" className="w-full mt-6 text-blue-600 dark:text-blue-400 group">
+                            <span>Detalhes</span>
+                            <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                          </Button>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  ))}
+                </div>
               </TabsContent>
             </Tabs>
           </CardContent>

@@ -4,18 +4,45 @@
 @tailwind utilities;
 
 :root {
-  --border-radius: 0.75rem;
-  --font-family: ui-sans-serif, system-ui, sans-serif;
+  --border-radius: 1rem;
+  --font-family: 'Inter var', ui-sans-serif, system-ui, sans-serif;
+  --transition-standard: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Base styles */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-[#f9fafb] dark:bg-gray-900 text-gray-800 dark:text-gray-100 antialiased;
+    font-feature-settings: "ss01", "ss02", "cv01", "cv02", "cv03";
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-medium tracking-tight;
+  }
 }
 
 /* Glass card effect */
 .glass-card {
-  @apply bg-white/90 backdrop-blur-sm border border-gray-100/80 shadow-lg rounded-2xl;
+  @apply bg-white/90 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-100/80 dark:border-gray-700/50 shadow-lg rounded-xl;
 }
 
-/* Gradient text */
+/* Gradients */
 .gradient-text {
   @apply text-transparent bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text;
+}
+
+.gradient-bg {
+  @apply bg-gradient-to-r from-blue-600 to-blue-400;
+}
+
+.gradient-border {
+  background: linear-gradient(white, white) padding-box,
+              linear-gradient(to right, #3b82f6, #60a5fa) border-box;
+  border: 1px solid transparent;
 }
 
 /* Button effects */
@@ -31,7 +58,7 @@
 
 @keyframes pulse {
   0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.1); }
+  50% { transform: scale(1.05); }
 }
 
 @keyframes fade-in {
@@ -45,12 +72,23 @@
   }
 }
 
+@keyframes slide-in {
+  from {
+    transform: translateX(-30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
 .animate-float {
   animation: float 6s ease-in-out infinite;
 }
 
-.animate-pulse {
-  animation: pulse 2s ease-in-out infinite;
+.animate-pulse-soft {
+  animation: pulse 3s ease-in-out infinite;
 }
 
 .animate-fade-in {
@@ -58,20 +96,25 @@
   opacity: 0;
 }
 
+.animate-slide-in {
+  animation: slide-in 0.5s ease-out forwards;
+  opacity: 0;
+}
+
 .reveal-delay-1 {
-  animation-delay: 0.2s;
+  animation-delay: 0.1s;
 }
 
 .reveal-delay-2 {
-  animation-delay: 0.4s;
+  animation-delay: 0.2s;
 }
 
 .reveal-delay-3 {
-  animation-delay: 0.6s;
+  animation-delay: 0.3s;
 }
 
 .reveal-delay-4 {
-  animation-delay: 0.8s;
+  animation-delay: 0.4s;
 }
 
 /* Form styles */
@@ -82,37 +125,41 @@ button:focus {
   @apply outline-none ring-2 ring-blue-500 ring-offset-2 transition-shadow;
 }
 
-/* NovaFin styled components */
-.novafin-card {
-  @apply rounded-2xl border border-gray-100 bg-white shadow-sm hover:shadow-md transition-shadow duration-200;
+/* Card transitions */
+.card-hover-effect {
+  @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-1;
 }
 
-.novafin-input {
-  @apply rounded-xl border border-gray-200 focus:border-blue-500 shadow-sm transition-colors;
+/* Minimalist components */
+.minimalist-card {
+  @apply rounded-xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-shadow duration-200;
 }
 
-.novafin-button {
+.minimalist-input {
+  @apply rounded-xl border border-gray-200 dark:border-gray-700 focus:border-blue-500 shadow-sm transition-colors bg-white dark:bg-gray-800;
+}
+
+.minimalist-button {
   @apply rounded-xl font-medium shadow-sm hover:shadow transition-all duration-200;
 }
 
-.novafin-button-primary {
+.minimalist-button-primary {
   @apply bg-gradient-to-r from-blue-600 to-blue-500 text-white hover:from-blue-500 hover:to-blue-400;
 }
 
-/* Index page specific styles */
-.index-page {
-  background-color: #ffffff;
+/* Enhanced scrollbars */
+::-webkit-scrollbar {
+  @apply w-2 h-2;
 }
 
-.index-page-wrapper {
-  position: relative;
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
 }
 
-/* Modern Dialog/Modal Styles */
-.dialog-content {
-  @apply rounded-2xl border border-gray-100 bg-white;
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 dark:bg-gray-700 rounded-full;
 }
 
-.dialog-overlay {
-  @apply bg-black/50 backdrop-blur-sm;
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-gray-400 dark:bg-gray-600;
 }
