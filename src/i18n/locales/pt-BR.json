@@ -5,19 +5,19 @@
     "welcome_back": "Bem-vindo de volta",
     "overview": "Visão Geral",
     "current_balance": "Saldo Atual",
-    "monthly_expenses": "Despesas do Mês",
+    "monthly_expenses": "Despesas Mensais",
     "savings": "Economia",
     "since_last_month": "desde o mês passado",
     "of_current_balance": "do seu saldo atual",
     "ai_assistant": {
-      "title": "Novo! FinAI - Seu Consultor Financeiro Inteligente",
-      "description": "A FinAI é uma inteligência artificial avançada que funciona como um consultor financeiro digital personalizado.",
-      "features": "Conheça algumas das principais funcionalidades:",
+      "title": "Novo! FinAI - Seu Assistente Financeiro Inteligente",
+      "description": "FinAI é uma inteligência artificial avançada que funciona como seu assessor financeiro digital personalizado.",
+      "features": "Conheça algumas das principais características:",
       "spending_analysis": "Análise de Gastos",
       "smart_budget": "Orçamento Inteligente",
       "investment_suggestions": "Sugestões de Investimento",
       "risk_prediction": "Previsão de Riscos",
-      "learn_more": "Conhecer"
+      "learn_more": "Saiba mais"
     }
   },
   "sidebar": {
@@ -27,7 +27,7 @@
     "budget": "Orçamento",
     "investments": "Investimentos",
     "transactions": "Transações",
-    "goals": "Metas",
+    "goals": "Metas", 
     "assistant": "Assistente",
     "settings": "Configurações",
     "profile": "Perfil",
@@ -41,8 +41,8 @@
     "dark": "Escuro",
     "system": "Sistema",
     "show_balance": "Mostrar saldo",
-    "show_values": "Exibir valores",
-    "show_values_desc": "Mostrar ou ocultar os valores monetários na interface",
+    "show_values": "Mostrar valores",
+    "show_values_desc": "Mostrar ou ocultar valores monetários na interface",
     "localization": "Regionalização",
     "localization_desc": "Configure seu idioma e moeda preferidos",
     "language": "Idioma",
@@ -58,15 +58,15 @@
     "save_preferences": "Salvar preferências",
     "saving": "Salvando...",
     "restore_defaults": "Restaurar padrões",
-    "defaults_restored": "Configurações restauradas para o padrão",
-    "unsaved_changes": "Alterações não salvas",
+    "defaults_restored": "Configurações restauradas para valores padrão",
+    "unsaved_changes": "Mudanças não salvas",
     "unsaved_changes_desc": "Você fez alterações nas suas preferências. Clique em \"Salvar preferências\" para aplicá-las."
   },
   "categories": {
     "food": "Alimentação",
     "transport": "Transporte",
     "housing": "Moradia",
-    "entertainment": "Entretenimento", 
+    "entertainment": "Entretenimento",
     "others": "Outros"
   },
   "common": {
@@ -80,14 +80,27 @@
   },
   "onboarding": {
     "welcome_title": "Bem-vindo ao MoMoney",
-    "welcome_description": "O seu assistente financeiro pessoal inteligente. Vamos conhecer as principais funcionalidades.",
+    "welcome_description": "Seu assistente financeiro pessoal inteligente. Vamos explorar os principais recursos.",
     "dashboard_title": "Dashboard Personalizado",
-    "dashboard_description": "Visualize seus gastos, investimentos e finanças em um só lugar. Gráficos interativos facilitam o entendimento dos seus dados.",
-    "assistant_title": "Assistente de IA",
+    "dashboard_description": "Visualize suas despesas, investimentos e finanças em um só lugar. Gráficos interativos facilitam a compreensão dos seus dados.",
+    "assistant_title": "Assistente IA",
     "assistant_description": "Nossa IA analisa seus dados financeiros e oferece dicas personalizadas para economizar e investir melhor.",
     "planning_title": "Planejamento Financeiro",
     "planning_description": "Defina metas financeiras, acompanhe seu progresso e receba orientações para alcançá-las mais rapidamente.",
-    "customize_title": "Personalize sua Experiência",
-    "customize_description": "Ajuste as configurações nas opções do perfil para personalizar o MoMoney conforme suas necessidades."
+    "customize_title": "Personalize Sua Experiência",
+    "customize_description": "Ajuste as configurações nas opções de perfil para personalizar o MoMoney às suas necessidades."
+  },
+  "testimonials": {
+    "title": "Depoimentos",
+    "heading_start": "Veja o que nossos",
+    "heading_highlight": "usuários",
+    "heading_end": "dizem",
+    "description": "Milhares de pessoas já transformaram sua vida financeira com o MoMoney. Veja alguns relatos!",
+    "join_users": "Junte-se a milhares de usuários satisfeitos",
+    "tag_trust": "Confiança",
+    "tag_innovation": "Inovação",
+    "tag_accuracy": "Precisão",
+    "tag_security": "Segurança",
+    "tag_support": "Suporte 24/7"
   }
 }

@@ -1,6 +1,7 @@
 
 import { StarIcon } from "lucide-react";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 
 const testimonials = [
   {
@@ -43,6 +44,8 @@ const cardVariants = {
 };
 
 const Testimonials = () => {
+  const { t } = useTranslation();
+  
   return (
     <section id="testimonials" className="py-20 relative overflow-hidden">
       {/* Decorative elements */}
@@ -58,13 +61,15 @@ const Testimonials = () => {
           transition={{ duration: 0.6 }}
         >
           <div className="inline-flex items-center px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full mb-4">
-            <span className="text-sm font-medium">Depoimentos</span>
+            <span className="text-sm font-medium">{t('testimonials.title', 'Depoimentos')}</span>
           </div>
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Veja o que nossos <span className="gradient-text">usuários</span> dizem
+            {t('testimonials.heading_start', 'Veja o que nossos')}{' '}
+            <span className="gradient-text">{t('testimonials.heading_highlight', 'usuários')}</span>{' '}
+            {t('testimonials.heading_end', 'dizem')}
           </h2>
           <p className="text-lg text-gray-700 dark:text-gray-300">
-            Milhares de pessoas já transformaram sua vida financeira com o MoMoney. Veja alguns relatos!
+            {t('testimonials.description', 'Milhares de pessoas já transformaram sua vida financeira com o MoMoney. Veja alguns relatos!')}
           </p>
         </motion.div>
         
@@ -116,10 +121,16 @@ const Testimonials = () => {
           transition={{ delay: 0.6, duration: 0.6 }}
         >
           <p className="text-xl font-medium mb-4 gradient-text">
-            Junte-se a milhares de usuários satisfeitos
+            {t('testimonials.join_users', 'Junte-se a milhares de usuários satisfeitos')}
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            {["Confiança", "Inovação", "Precisão", "Segurança", "Suporte 24/7"].map((tag, i) => (
+            {[
+              t('testimonials.tag_trust', 'Confiança'), 
+              t('testimonials.tag_innovation', 'Inovação'), 
+              t('testimonials.tag_accuracy', 'Precisão'), 
+              t('testimonials.tag_security', 'Segurança'), 
+              t('testimonials.tag_support', 'Suporte 24/7')
+            ].map((tag, i) => (
               <span 
                 key={i} 
                 className="px-4 py-2 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium"

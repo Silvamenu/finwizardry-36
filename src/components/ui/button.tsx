@@ -58,7 +58,7 @@ export interface ButtonProps
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, isLoading, ...props }, ref) => {
+  ({ className, variant, size, asChild = false, isLoading, children, ...props }, ref) => {
     const Comp = asChild ? Slot : "button";
     
     return (
@@ -66,7 +66,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
         {...props}
-      />
+      >
+        {children as React.ReactNode}
+      </Comp>
     );
   }
 );
@@ -91,6 +93,7 @@ const MotionButton = React.forwardRef<HTMLButtonElement, MotionButtonProps>(
     animate = "initial", 
     initial = "initial", 
     isLoading, 
+    children,
     ...props 
   }, ref) => {
     const buttonClasses = cn(buttonVariants({ variant, size, className }));
@@ -106,7 +109,9 @@ const MotionButton = React.forwardRef<HTMLButtonElement, MotionButtonProps>(
         transition={transition}
         animate={animate}
         {...props}
-      />
+      >
+        {children as React.ReactNode}
+      </motion.button>
     );
   }
 );
