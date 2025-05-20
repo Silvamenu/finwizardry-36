@@ -7,11 +7,10 @@ import FinancialOverview from "@/components/dashboard/FinancialOverview";
 import RecentActivity from "@/components/dashboard/RecentActivity";
 import SpendingCategories from "@/components/dashboard/SpendingCategories";
 import UpcomingTransactions from "@/components/dashboard/UpcomingTransactions";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import SpendingAnalysis from "@/components/dashboard/SpendingAnalysis";
 import { MotionButton } from "@/components/ui/button";
 import { useProfile } from "@/hooks/useProfile";
-import { useFormatters } from "@/hooks/useFormatters";
-import { ArrowUp, ArrowDown, BadgeDollarSign, Clock, BarChart3, LineChart, Sparkles, Target } from "lucide-react";
+import { LineChart, BarChart3, Sparkles, Target } from "lucide-react";
 import { motion } from "framer-motion";
 import OnboardingDialog from "@/components/onboarding/OnboardingDialog";
 import NewGoalModal from "@/components/goals/NewGoalModal";
@@ -20,7 +19,6 @@ import NewInvestmentModal from "@/components/investments/NewInvestmentModal";
 const Dashboard = () => {
   const { t } = useTranslation();
   const { profile } = useProfile();
-  const { formatCurrency } = useFormatters();
   const navigate = useNavigate();
   const userName = profile?.name || t('dashboard.welcome');
   const [showNewGoalModal, setShowNewGoalModal] = useState(false);
@@ -46,18 +44,12 @@ const Dashboard = () => {
   };
 
   const handleAddGoal = (goal: any) => {
-    // Simula a adição de uma nova meta
-    // Em uma aplicação real, isso enviaria os dados para o backend
     console.log("Nova meta adicionada:", goal);
-    // Navegue para a página de metas após adicionar
     navigate("/dashboard/metas");
   };
 
   const handleAddInvestment = (investment: any) => {
-    // Simula a adição de um novo investimento
-    // Em uma aplicação real, isso enviaria os dados para o backend
     console.log("Novo investimento adicionado:", investment);
-    // Navegue para a página de investimentos após adicionar
     navigate("/dashboard/investimentos");
   };
 
@@ -84,157 +76,69 @@ const Dashboard = () => {
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-6"
+        className="grid grid-cols-1 gap-4 md:gap-6"
       >
-        {/* Welcome Card */}
-        <motion.div variants={itemVariants} className="lg:col-span-1">
-          <Card className="overflow-hidden border border-blue-100 dark:border-blue-900/30 rounded-2xl shadow-sm hover:shadow-md transition-all duration-300">
-            <CardContent className="pt-6">
-              <h2 className="text-2xl font-bold text-blue-900 dark:text-blue-50 truncate">
-                {t('dashboard.welcome')}, {userName}!
-              </h2>
-              <p className="text-gray-500 dark:text-gray-400 truncate">
-                {t('dashboard.welcome_back')}
-              </p>
-              <MotionButton 
-                variant="clean" 
-                className="mt-4 w-full flex items-center justify-center gap-2 truncate"
-              >
-                <LineChart size={16} />
-                {t('dashboard.overview')}
-              </MotionButton>
-            </CardContent>
-          </Card>
+        {/* Welcome Banner */}
+        <motion.div variants={itemVariants} className="mb-2">
+          <h2 className="text-2xl font-bold">
+            {t('dashboard.welcome')}, {userName}!
+          </h2>
+          <p className="text-gray-500 dark:text-gray-400">
+            {t('dashboard.welcome_back')}
+          </p>
         </motion.div>
 
-        {/* Financial Overview Banner */}
-        <motion.div variants={itemVariants} className="lg:col-span-3">
+        {/* Financial Overview Chart */}
+        <motion.div variants={itemVariants}>
           <FinancialOverview />
         </motion.div>
 
-        {/* Financial Cards Row */}
-        <motion.div variants={itemVariants} className="lg:col-span-4 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-          {/* Card 1 - Current Balance */}
-          <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border-blue-100 dark:border-blue-900/30 rounded-2xl overflow-hidden">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-blue-700 dark:text-blue-400">
-                {t('dashboard.current_balance')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between">
-                <h3 className="text-2xl font-bold text-blue-700 dark:text-blue-400 truncate">
-                  {formatCurrency(-67634.49)}
-                </h3>
-                <div className="p-2 bg-blue-200/50 dark:bg-blue-800/50 rounded-lg">
-                  <BadgeDollarSign className="h-6 w-6 text-blue-500 dark:text-blue-400" />
-                </div>
-              </div>
-              <p className="text-sm flex items-center mt-2 text-green-600 dark:text-green-400">
-                <ArrowUp className="h-4 w-4 mr-1 flex-shrink-0" /> <span className="truncate">100% {t('dashboard.since_last_month')}</span>
-              </p>
-            </CardContent>
-          </Card>
+        {/* Analytics Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+          {/* Spending Categories Chart */}
+          <motion.div variants={itemVariants}>
+            <SpendingCategories />
+          </motion.div>
 
-          {/* Card 2 - Monthly Expenses */}
-          <Card className="bg-gradient-to-br from-red-50 to-red-100 dark:from-red-900/20 dark:to-red-800/20 border-red-100 dark:border-red-900/30 rounded-2xl overflow-hidden">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-red-700 dark:text-red-400">
-                {t('dashboard.monthly_expenses')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between">
-                <h3 className="text-2xl font-bold text-red-700 dark:text-red-400 truncate">
-                  {formatCurrency(1124405.31)}
-                </h3>
-                <div className="p-2 bg-red-200/50 dark:bg-red-800/50 rounded-lg">
-                  <ArrowDown className="h-6 w-6 text-red-500 dark:text-red-400" />
-                </div>
-              </div>
-              <p className="text-sm flex items-center mt-2 text-gray-600 dark:text-gray-400">
-                <ArrowDown className="h-4 w-4 mr-1 flex-shrink-0" /> <span className="truncate">0% {t('dashboard.since_last_month')}</span>
-              </p>
-            </CardContent>
-          </Card>
+          {/* Spending Analysis Chart */}
+          <motion.div variants={itemVariants}>
+            <SpendingAnalysis />
+          </motion.div>
+        </div>
 
-          {/* Card 3 - Economy */}
-          <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 border-green-100 dark:border-green-900/30 rounded-2xl overflow-hidden">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-green-700 dark:text-green-400">
-                {t('dashboard.economy')}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center justify-between">
-                <h3 className="text-2xl font-bold text-green-700 dark:text-green-400 truncate">
-                  {formatCurrency(56220.27)}
-                </h3>
-                <div className="p-2 bg-green-200/50 dark:bg-green-800/50 rounded-lg">
-                  <BadgeDollarSign className="h-6 w-6 text-green-500 dark:text-green-400" />
-                </div>
-              </div>
-              <p className="text-sm flex items-center mt-2 text-red-600 dark:text-red-400">
-                <ArrowDown className="h-4 w-4 mr-1 flex-shrink-0" /> <span className="truncate">-83.1% {t('dashboard.of_current_balance')}</span>
-              </p>
-            </CardContent>
-          </Card>
-        </motion.div>
+        {/* Recent Activities and Upcoming Transactions */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+          <motion.div variants={itemVariants}>
+            <RecentActivity />
+          </motion.div>
+          <motion.div variants={itemVariants}>
+            <UpcomingTransactions />
+          </motion.div>
+        </div>
 
         {/* AI Assistant Card */}
-        <motion.div variants={itemVariants} className="lg:col-span-4">
-          <Card className="border-l-4 border-l-blue-500 mt-2 md:mt-4 bg-gradient-to-r from-blue-50/80 to-white dark:from-blue-900/10 dark:to-transparent shadow-sm hover:shadow-md transition-all rounded-2xl overflow-hidden">
-            <CardContent className="pt-6 pb-6">
-              <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-                <div>
-                  <h3 className="text-xl font-bold flex items-center">
-                    <Sparkles className="h-5 w-5 mr-2 text-blue-500" />
-                    {t('dashboard.ai_assistant.title')}
-                  </h3>
-                  <p className="mt-2 text-gray-600 dark:text-gray-400">
-                    {t('dashboard.ai_assistant.description')}
-                    {t('dashboard.ai_assistant.features')}
-                  </p>
-                  <div className="flex flex-wrap gap-2 mt-3">
-                    <MotionButton variant="outline" size="sm" className="rounded-full text-xs bg-white dark:bg-gray-800 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300">
-                      <BarChart3 className="h-3 w-3 mr-1" /> {t('dashboard.ai_assistant.spending_analysis')}
-                    </MotionButton>
-                    <MotionButton variant="outline" size="sm" className="rounded-full text-xs bg-white dark:bg-gray-800 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300">
-                      <LineChart className="h-3 w-3 mr-1" /> {t('dashboard.ai_assistant.smart_budget')}
-                    </MotionButton>
-                    <MotionButton variant="outline" size="sm" className="rounded-full text-xs bg-white dark:bg-gray-800 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300">
-                      <ArrowUp className="h-3 w-3 mr-1" /> {t('dashboard.ai_assistant.investment_suggestions')}
-                    </MotionButton>
-                    <MotionButton variant="outline" size="sm" className="rounded-full text-xs bg-white dark:bg-gray-800 border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-300">
-                      <Clock className="h-3 w-3 mr-1" /> {t('dashboard.ai_assistant.risk_prediction')}
-                    </MotionButton>
-                  </div>
-                </div>
-                <MotionButton 
-                  className="bg-blue-600 hover:bg-blue-500 text-white rounded-full px-6 py-2 whitespace-nowrap"
-                  onClick={() => navigate('/dashboard/assistente')}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  {t('dashboard.ai_assistant.learn_more')}
-                </MotionButton>
+        <motion.div variants={itemVariants}>
+          <div className="border-l-4 border-l-blue-500 mt-2 md:mt-4 bg-gradient-to-r from-blue-50/80 to-white dark:from-blue-900/10 dark:to-transparent shadow-sm hover:shadow-md transition-all rounded-2xl overflow-hidden p-6">
+            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+              <div>
+                <h3 className="text-xl font-bold flex items-center">
+                  <Sparkles className="h-5 w-5 mr-2 text-blue-500" />
+                  {t('dashboard.ai_assistant.title')}
+                </h3>
+                <p className="mt-2 text-gray-600 dark:text-gray-400">
+                  {t('dashboard.ai_assistant.description')}
+                </p>
               </div>
-            </CardContent>
-          </Card>
-        </motion.div>
-
-        {/* Recent Activities and Charts Layout */}
-        <motion.div variants={itemVariants} className="lg:col-span-2">
-          <RecentActivity />
-        </motion.div>
-
-        <motion.div variants={itemVariants} className="lg:col-span-2">
-          <SpendingCategories />
-        </motion.div>
-
-        {/* Upcoming Transactions */}
-        <motion.div variants={itemVariants} className="lg:col-span-4">
-          <UpcomingTransactions />
+              <MotionButton 
+                className="bg-blue-600 hover:bg-blue-500 text-white rounded-full px-6 py-2 whitespace-nowrap"
+                onClick={() => navigate('/dashboard/assistente')}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {t('dashboard.ai_assistant.learn_more')}
+              </MotionButton>
+            </div>
+          </div>
         </motion.div>
 
         {/* Action Buttons */}

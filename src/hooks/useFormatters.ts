@@ -1,35 +1,40 @@
 
-import { useUserPreferences } from './useUserPreferences';
+import { useUserPreferences } from "./useUserPreferences";
 
-export function useFormatters() {
+export const useFormatters = () => {
   const { preferences } = useUserPreferences();
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat(preferences.language, {
+  const currency = preferences.currency || "BRL";
+  
+  const formatCurrency = (value: number | string, options?: Intl.NumberFormatOptions) => {
+    const numValue = typeof value === 'string' ? parseFloat(value) : value;
+    
+    const defaultOptions: Intl.NumberFormatOptions = {
       style: 'currency',
-      currency: preferences.currency,
+      currency,
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
-    }).format(value);
+      ...options
+    };
+    
+    return new Intl.NumberFormat(preferences.language || 'pt-BR', defaultOptions).format(numValue);
   };
-
+  
   const formatDate = (date: Date | string) => {
-    return new Intl.DateTimeFormat(preferences.language, {
-      dateStyle: 'medium'
-    }).format(new Date(date));
+    const dateObj = typeof date === 'string' ? new Date(date) : date;
+    return new Intl.DateTimeFormat(preferences.language || 'pt-BR').format(dateObj);
   };
-
+  
   const formatPercentage = (value: number) => {
-    return new Intl.NumberFormat(preferences.language, {
+    return new Intl.NumberFormat(preferences.language || 'pt-BR', {
       style: 'percent',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1,
     }).format(value / 100);
   };
-
+  
   return {
     formatCurrency,
     formatDate,
-    formatPercentage
+    formatPercentage,
   };
-}
+};
