@@ -38,7 +38,13 @@ const FinancialOverview = () => {
                   tickFormatter={(value) => formatCurrency(value, { notation: 'compact' })}
                 />
                 <Tooltip 
-                  formatter={(value) => formatCurrency(value)}
+                  formatter={(value) => {
+                    // Ensure value is a single number or string before passing to formatCurrency
+                    if (typeof value === 'number' || typeof value === 'string') {
+                      return formatCurrency(value);
+                    }
+                    return value; // Return as-is if it's not a compatible type
+                  }}
                   labelFormatter={(label) => `${label}`}
                 />
                 <Legend />
