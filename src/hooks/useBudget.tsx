@@ -26,6 +26,27 @@ export const useBudget = () => {
   const [error, setError] = useState<string | null>(null);
   const { categories } = useCategories();
 
+  // Helper function to extract budget limit from color field
+  const extractBudgetLimit = (colorField: string | null): number => {
+    if (!colorField) return 1000; // Default limit
+    
+    const parts = colorField.split(':');
+    if (parts.length > 1) {
+      const limit = parseFloat(parts[1]);
+      return isNaN(limit) ? 1000 : limit;
+    }
+    
+    return 1000; // Default limit if no budget info in color
+  };
+
+  // Helper function to extract just the color
+  const extractColor = (colorField: string | null): string => {
+    if (!colorField) return '#3b82f6'; // Default color
+    
+    const parts = colorField.split(':');
+    return parts[0] || '#3b82f6';
+  };
+
   const fetchBudgetCategories = useCallback(async () => {
     if (!user) return;
 
@@ -56,8 +77,8 @@ export const useBudget = () => {
         const categoryTransactions = transactions ? transactions.filter(t => t.category_id === category.id) : [];
         const currentAmount = categoryTransactions.reduce((sum, t) => sum + Number(t.amount), 0);
         
-        // Default maximum amount if not set
-        const maxAmount = category.budget_limit || 1000;
+        // Extract maximum amount from the color field
+        const maxAmount = extractBudgetLimit(category.color);
         
         // Calculate percentage of budget used
         const percentage = Math.min(Math.round((currentAmount / maxAmount) * 100), 100);
@@ -70,7 +91,7 @@ export const useBudget = () => {
           max_amount: maxAmount,
           current_amount: currentAmount,
           percentage,
-          color: category.color || '#3b82f6',
+          color: extractColor(category.color) || '#3b82f6',
           period: 'monthly' as const,
           created_at: category.created_at,
           updated_at: category.updated_at
@@ -91,9 +112,25 @@ export const useBudget = () => {
     if (!user) return false;
 
     try {
+      // Get the current category data to preserve the color
+      const { data: categoryData, error: fetchError } = await supabase
+        .from('categories')
+        .select('color')
+        .eq('id', categoryId)
+        .eq('user_id', user.id)
+        .single();
+      
+      if (fetchError) throw fetchError;
+      
+      // Extract the current color value
+      const currentColor = extractColor(categoryData?.color);
+      
+      // Update with the new budget limit while preserving the color
       const { error } = await supabase
         .from('categories')
-        .update({ budget_limit: newLimit })
+        .update({ 
+          color: `${currentColor}:${newLimit}` 
+        })
         .eq('id', categoryId)
         .eq('user_id', user.id);
 
