@@ -3,15 +3,20 @@ import { useEffect, useState } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
-import BudgetProgress from "@/components/dashboard/BudgetProgress";
+import { Plus, BarChart } from "lucide-react";
 import { CategoryForm } from "@/components/transactions/CategoryForm"; 
 import { useCategories, CategoryFormData } from "@/hooks/useCategories";
+import { useBudget } from "@/hooks/useBudget";
 import { toast } from "sonner";
+import BudgetCategoryCard from "@/components/budget/BudgetCategoryCard";
+import BudgetChart from "@/components/budget/BudgetChart";
+import BudgetSummary from "@/components/budget/BudgetSummary";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Orcamento = () => {
   const [categoryFormOpen, setCategoryFormOpen] = useState(false);
   const { addCategory } = useCategories();
+  const { budgetCategories, loading, error, updateBudgetLimit } = useBudget();
   
   useEffect(() => {
     document.title = "MoMoney | Orçamento";
@@ -52,25 +57,75 @@ const Orcamento = () => {
           </div>
         </div>
 
+        {/* Main content grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="md:col-span-2">
-            <Card className="h-full">
-              <CardHeader>
-                <CardTitle>Visão Geral do Orçamento</CardTitle>
-              </CardHeader>
-              <CardContent>
-                {/* Conteúdo do orçamento */}
-                <div className="text-center text-gray-500 py-10">
-                  Implemente aqui suas categorias e limites de orçamento
-                </div>
-              </CardContent>
-            </Card>
+          {/* Budget summary card */}
+          <div className="md:col-span-1">
+            {loading ? (
+              <Card>
+                <CardContent className="pt-6">
+                  <Skeleton className="h-[200px] w-full" />
+                </CardContent>
+              </Card>
+            ) : (
+              <BudgetSummary budgetCategories={budgetCategories} />
+            )}
           </div>
           
-          <div>
-            <BudgetProgress />
+          {/* Budget chart card */}
+          <div className="md:col-span-2">
+            {loading ? (
+              <Card>
+                <CardContent className="pt-6">
+                  <Skeleton className="h-[300px] w-full" />
+                </CardContent>
+              </Card>
+            ) : (
+              <BudgetChart budgetCategories={budgetCategories} />
+            )}
           </div>
         </div>
+
+        {/* Budget categories grid */}
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="flex items-center">
+              <BarChart className="h-5 w-5 mr-2 text-blue-600 dark:text-blue-400" />
+              Categorias de Orçamento
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-6">
+            {loading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {[1, 2, 3, 4, 5, 6].map((i) => (
+                  <Skeleton key={i} className="h-[100px] w-full" />
+                ))}
+              </div>
+            ) : error ? (
+              <div className="text-center py-6 text-red-500">
+                Erro ao carregar categorias: {error}
+              </div>
+            ) : budgetCategories.length === 0 ? (
+              <div className="text-center py-10 text-gray-500">
+                <p className="mb-4">Você ainda não tem categorias de orçamento configuradas.</p>
+                <Button variant="outline" onClick={() => setCategoryFormOpen(true)}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Adicionar categoria
+                </Button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {budgetCategories.map((category) => (
+                  <BudgetCategoryCard 
+                    key={category.id} 
+                    category={category} 
+                    onUpdateLimit={updateBudgetLimit}
+                  />
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </DashboardLayout>
   );
