@@ -22,7 +22,7 @@ const FinancialOverview = () => {
   return (
     <Card className="w-full overflow-hidden">
       <CardContent className="p-6">
-        <h3 className="text-lg font-medium mb-4">{t('dashboard.financial_overview')}</h3>
+        <h3 className="text-lg font-medium mb-4">Financial Overview</h3>
         
         {loading ? (
           <div className="h-[300px] w-full flex items-center justify-center">

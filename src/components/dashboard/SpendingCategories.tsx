@@ -37,7 +37,7 @@ const SpendingCategories = () => {
   return (
     <Card className="h-full">
       <CardHeader>
-        <CardTitle>{t('dashboard.spending_categories')}</CardTitle>
+        <CardTitle>Spending Categories</CardTitle>
       </CardHeader>
       <CardContent className="h-[300px]">
         {loading ? (
