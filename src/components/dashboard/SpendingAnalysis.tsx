@@ -14,9 +14,12 @@ import { ArrowUpRight, Download, Filter, FileBarChart, Calendar } from "lucide-r
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { useFinancialData } from "@/hooks/useFinancialData";
+import { useFormatters } from "@/hooks/useFormatters";
 import { Skeleton } from "@/components/ui/skeleton";
 
 const CustomTooltip = ({ active, payload }: any) => {
+  const { formatCurrency } = useFormatters();
+  
   if (active && payload && payload.length) {
     return (
       <div className="chart-tooltip bg-white dark:bg-gray-800 p-3 rounded-lg shadow-md border border-gray-100 dark:border-gray-700">
@@ -34,18 +37,10 @@ const CustomTooltip = ({ active, payload }: any) => {
   return null;
 };
 
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('pt-BR', {
-    style: 'currency',
-    currency: 'BRL',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0
-  }).format(value);
-};
-
 const SpendingAnalysis = () => {
   const [tabView, setTabView] = useState<'categories' | 'merchants'>('categories');
   const { summary, loading } = useFinancialData();
+  const { formatCurrency } = useFormatters();
   
   // Default data for merchants since we don't have that in our database yet
   const defaultMerchantData = [
