@@ -9,9 +9,10 @@ interface ChatMessageProps {
   message: Message;
   assistantName: string;
   onFeedback: (positive: boolean) => void;
+  onSuggestionClick?: (suggestion: string) => void;
 }
 
-const ChatMessage = ({ message, assistantName, onFeedback }: ChatMessageProps) => {
+const ChatMessage = ({ message, assistantName, onFeedback, onSuggestionClick }: ChatMessageProps) => {
   return (
     <div
       className={cn(
@@ -53,6 +54,22 @@ const ChatMessage = ({ message, assistantName, onFeedback }: ChatMessageProps) =
           </span>
         </div>
         <p className="text-sm">{message.content}</p>
+        
+        {message.suggestions && message.suggestions.length > 0 && onSuggestionClick && (
+          <div className="mt-3 space-y-2">
+            {message.suggestions.map((suggestion, index) => (
+              <Button
+                key={index}
+                variant="outline"
+                size="sm"
+                className="w-full text-left justify-start text-xs h-auto py-2 bg-white/10 hover:bg-white/20 border-white/20"
+                onClick={() => onSuggestionClick(suggestion)}
+              >
+                {suggestion}
+              </Button>
+            ))}
+          </div>
+        )}
         
         {message.role === "assistant" && (
           <div className="flex justify-end mt-2 space-x-2">

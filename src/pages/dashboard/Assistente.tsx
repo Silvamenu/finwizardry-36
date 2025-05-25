@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from "react";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
@@ -6,161 +5,97 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Bot, Send, Info, Volume2, VolumeX, Brain, FileText, Cpu, ThumbsUp, ThumbsDown, Clock, Sparkles, ArrowUp, HelpCircle } from "lucide-react";
+import { Bot, Send, Info, Volume2, VolumeX, Brain, Sparkles, ArrowUp, HelpCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { type Assistant, type Message, type ConversationHistory } from "@/types/assistant";
 import AssistantSelect from "@/components/assistant/AssistantSelect";
 import ChatMessage from "@/components/assistant/ChatMessage";
+import { detectIntention } from "@/components/assistant/IntentionDetector";
 import { useNavigate } from "react-router-dom";
 
 const assistants: Assistant[] = [
   {
     id: "financial-advisor",
     name: "Consultor Financeiro",
-    description: "Tire dúvidas sobre investimentos, planejamento financeiro e economia",
+    description: "Transformo seus sonhos financeiros em planos reais e alcançáveis",
     icon: <Sparkles className="h-6 w-6 text-purple-500" />,
     gradient: "from-purple-500/20 to-purple-600/20"
   },
   {
     id: "budget-assistant",
-    name: "Assistente de Orçamento",
-    description: "Ajuda com orçamento pessoal, controle de gastos e dicas de economia",
+    name: "Organizador Financeiro",
+    description: "Te ajudo a organizar suas finanças e controlar seus gastos",
     icon: <ArrowUp className="h-6 w-6 text-green-500" />,
     gradient: "from-green-500/20 to-green-600/20"
   },
   {
     id: "help-center",
-    name: "Central de Ajuda",
-    description: "Tire dúvidas sobre como usar o MoMoney e suas funcionalidades",
+    name: "Suporte MoMoney",
+    description: "Tire dúvidas sobre como usar o MoMoney",
     icon: <HelpCircle className="h-6 w-6 text-blue-500" />,
     gradient: "from-blue-500/20 to-blue-600/20"
-  },
-  {
-    id: "economic-analyst",
-    name: "Analista Econômico",
-    description: "Análise de tendências econômicas e impactos no mercado financeiro",
-    icon: <Brain className="h-6 w-6 text-red-500" />,
-    gradient: "from-red-500/20 to-red-600/20"
-  },
-  {
-    id: "document-assistant",
-    name: "Assistente Documental",
-    description: "Ajuda com documentos financeiros, contratos e questões legais",
-    icon: <FileText className="h-6 w-6 text-amber-500" />,
-    gradient: "from-amber-500/20 to-amber-600/20"
-  },
-  {
-    id: "ai-analyst",
-    name: "Analista IA",
-    description: "Análise aprofundada dos seus dados financeiros com inteligência artificial",
-    icon: <Cpu className="h-6 w-6 text-cyan-500" />,
-    gradient: "from-cyan-500/20 to-cyan-600/20"
   }
 ];
 
 const predefinedResponses: Record<string, string[]> = {
   "financial-advisor": [
-    "Diversificar seus investimentos é uma estratégia importante para reduzir riscos. Considere uma combinação de renda fixa, ações e fundos imobiliários de acordo com seu perfil de risco.",
-    "Para começar a investir, primeiro estabeleça uma reserva de emergência com o equivalente a 6 meses de despesas. Depois, você pode explorar investimentos de maior rendimento de acordo com seus objetivos.",
-    "Os investimentos em renda fixa são mais seguros, mas tendem a ter retornos menores. Já as ações oferecem potencial de ganhos maiores, mas com riscos mais elevados. O ideal é ter um portfólio equilibrado conforme seu perfil."
+    "Vou te ajudar a criar um plano personalizado para alcançar seus objetivos financeiros. O primeiro passo é sempre entender sua situação atual e definir metas claras e realistas.",
+    "Excelente pergunta! Para investir com segurança, recomendo começar com uma reserva de emergência e depois diversificar entre renda fixa e variável conforme seu perfil de risco.",
+    "O segredo para construir patrimônio está na consistência. Mesmo pequenos valores investidos mensalmente podem se transformar em grandes fortunas com o tempo e os juros compostos."
   ],
   "budget-assistant": [
-    "Analisando seus gastos, percebi que você está gastando 35% acima da média em restaurantes. Que tal estabelecer um limite semanal para refeições fora e preparar mais refeições em casa?",
-    "Uma boa estratégia para economizar é a regra 50-30-20: destine 50% da sua renda para necessidades básicas, 30% para desejos e 20% para poupança e investimentos.",
-    "Identifiquei pequenas assinaturas mensais que somam R$ 156,90. Reveja serviços que você não usa com frequência para economizar esse valor todos os meses."
+    "Vou analisar seus padrões de gastos e te mostrar oportunidades de economia que você nem imaginava! Pequenos ajustes podem gerar grandes resultados.",
+    "A organização financeira começa com clareza sobre onde seu dinheiro está indo. Vamos criar um sistema simples e prático para você acompanhar tudo.",
+    "Que tal aplicarmos a regra 50-30-20? É um método comprovado para equilibrar necessidades, desejos e poupança de forma sustentável."
   ],
   "help-center": [
-    "Para adicionar uma nova transação, vá até a página 'Transações' e clique no botão '+Nova Transação' no canto superior direito da tela.",
-    "Você pode personalizar suas metas financeiras na seção 'Metas'. Lá você pode definir objetivos, prazos e acompanhar seu progresso.",
-    "Para exportar seus relatórios financeiros, acesse a página que deseja exportar e procure pelo botão 'Exportar' geralmente localizado na parte superior da página."
-  ],
-  "economic-analyst": [
-    "A recente decisão do Banco Central de manter a taxa Selic em 10.5% sugere uma postura cautelosa diante da inflação. Para seu portfólio, isso favorece investimentos em títulos pós-fixados e empresas com baixo endividamento.",
-    "O aumento do dólar em 3.2% este mês pode indicar uma oportunidade para diversificar com ETFs internacionais, mas mantenha exposição limitada a 15-20% do seu patrimônio para gerenciar a volatilidade cambial.",
-    "Com a recente aprovação da reforma tributária, setores como varejo e serviços tendem a se beneficiar no médio prazo. Considere aumentar sua exposição a estes setores nas próximas alocações."
-  ],
-  "document-assistant": [
-    "Analisei seu contrato de financiamento imobiliário e identifiquei que você pode solicitar a portabilidade para outro banco, potencialmente economizando R$ 32.500 ao longo do contrato com taxas mais competitivas.",
-    "Para sua declaração de Imposto de Renda, considere incluir os gastos com saúde que totalizaram R$ 7.800 no último ano. Isso pode aumentar sua restituição em aproximadamente R$ 1.950.",
-    "Verifiquei que seu seguro de vida tem cobertura limitada para doenças graves. Recomendo revisar e possivelmente complementar com um seguro específico, especialmente considerando seu histórico familiar."
-  ],
-  "ai-analyst": [
-    "Minha análise preditiva indica que mantendo seu padrão atual de investimentos, você atingirá sua meta de aposentadoria 3 anos antes do previsto. Considere aumentar sua contribuição mensal em R$ 300 para adiantar em mais 2 anos.",
-    "Detectei um padrão sazonal em seus gastos com lazer, com picos em janeiro e julho. Planejando antecipadamente para estes períodos, você poderia economizar cerca de 22% através de reservas antecipadas e promoções fora de temporada.",
-    "Baseado no seu histórico financeiro e objetivos, meu algoritmo calcula que sua alocação ideal seria: 45% em renda fixa, 30% em ações, 15% em fundos imobiliários e 10% em reserva de oportunidade. Isso otimizaria seu retorno ajustado ao risco."
+    "Estou aqui para te ajudar a aproveitar ao máximo o MoMoney! Qual funcionalidade você gostaria de conhecer melhor?",
+    "O MoMoney foi criado para simplificar sua vida financeira. Posso te mostrar como usar cada ferramenta de forma eficiente.",
+    "Fico feliz em ajudar! Com o MoMoney você pode organizar, planejar e acompanhar todas suas finanças em um só lugar."
   ]
 };
 
 const suggestedQuestions: Record<string, string[]> = {
   "financial-advisor": [
-    "Como devo começar a investir?",
-    "Qual a diferença entre renda fixa e variável?",
-    "Como diversificar minha carteira de investimentos?"
+    "Quero ficar rico, por onde começar?",
+    "Quero comprar uma casa, me ajude a planejar",
+    "Como posso fazer meu dinheiro render mais?"
   ],
   "budget-assistant": [
-    "Como posso economizar mais dinheiro?",
-    "Qual a melhor estratégia para organizar meu orçamento?",
-    "Como identificar gastos desnecessários?"
+    "Quero economizar mais dinheiro",
+    "Preciso organizar meus gastos",
+    "Como faço para não gastar mais do que ganho?"
   ],
   "help-center": [
-    "Como adicionar uma nova transação?",
-    "Como criar metas financeiras?",
-    "Como exportar meus relatórios?"
-  ],
-  "economic-analyst": [
-    "Como a taxa Selic afeta meus investimentos?",
-    "Quais setores da economia estão mais promissores?",
-    "Como proteger meu patrimônio da inflação?"
-  ],
-  "document-assistant": [
-    "Como otimizar minha declaração de IR?",
-    "Quais documentos devo guardar e por quanto tempo?",
-    "Como negociar melhores condições em contratos?"
-  ],
-  "ai-analyst": [
-    "Qual minha projeção financeira para os próximos 5 anos?",
-    "Como otimizar minha alocação de ativos?",
-    "Quais padrões de gasto posso melhorar?"
+    "Como adicionar minhas transações?",
+    "Como definir metas financeiras?",
+    "Como usar os relatórios do MoMoney?"
   ]
 };
 
 const sampleHistories: ConversationHistory[] = [
   {
     id: "hist-1",
-    title: "Planejamento para aposentadoria",
+    title: "Planejamento para casa própria",
     date: new Date(2023, 5, 15),
     assistantId: "financial-advisor",
-    preview: "Discussão sobre estratégias para planejamento de aposentadoria e FIRE"
+    preview: "Estratégias para juntar dinheiro e financiar a casa dos sonhos"
   },
   {
     id: "hist-2",
-    title: "Revisão de gastos mensais",
+    title: "Organização do orçamento familiar",
     date: new Date(2023, 6, 22),
     assistantId: "budget-assistant",
-    preview: "Análise detalhada de gastos recorrentes e oportunidades de economia"
+    preview: "Como organizar as finanças da família e economizar mais"
   },
   {
     id: "hist-3",
-    title: "Como configurar categorias",
+    title: "Usando o MoMoney",
     date: new Date(2023, 7, 3),
     assistantId: "help-center",
-    preview: "Tutorial sobre configuração de categorias personalizadas"
-  },
-  {
-    id: "hist-4",
-    title: "Impacto da taxa de juros",
-    date: new Date(2023, 8, 12),
-    assistantId: "economic-analyst",
-    preview: "Análise do impacto das variações na taxa de juros em diferentes investimentos"
-  },
-  {
-    id: "hist-5",
-    title: "Revisão de contrato imobiliário",
-    date: new Date(2023, 9, 18),
-    assistantId: "document-assistant",
-    preview: "Análise das cláusulas contratuais e recomendações de negociação"
+    preview: "Tutorial completo sobre as funcionalidades da plataforma"
   }
 ];
 
@@ -188,7 +123,7 @@ const Assistente = () => {
   useEffect(() => {
     const welcomeMessage = {
       id: `welcome-${Date.now()}`,
-      content: `Olá! Sou o assistente ${activeAssistant.name}. ${activeAssistant.description}. Como posso ajudar você hoje?`,
+      content: `Olá! Sou seu ${activeAssistant.name}. ${activeAssistant.description}. Me conte qual é seu objetivo ou sonho financeiro - não precisa ser uma pergunta, pode ser algo como "quero comprar uma casa" ou "quero ficar rico". Vou te ajudar a transformar isso em realidade!`,
       role: "assistant" as const,
       timestamp: new Date()
     };
@@ -207,25 +142,53 @@ const Assistente = () => {
     };
     
     setMessages(prev => [...prev, userMessage]);
+    const userInput = input;
     setInput("");
     setIsTyping(true);
     
     setTimeout(() => {
-      const assistantResponses = predefinedResponses[activeAssistant.id];
-      const randomResponse = assistantResponses[Math.floor(Math.random() * assistantResponses.length)];
+      // Detectar intenção primeiro
+      const intention = detectIntention(userInput, activeAssistant.id);
+      
+      let responseContent: string;
+      let suggestions: string[] = [];
+      
+      if (intention) {
+        responseContent = intention.response;
+        suggestions = intention.suggestions;
+      } else {
+        // Resposta padrão se não detectar intenção específica
+        const assistantResponses = predefinedResponses[activeAssistant.id];
+        responseContent = assistantResponses[Math.floor(Math.random() * assistantResponses.length)];
+      }
       
       const assistantMessage: Message = {
         id: `assistant-${Date.now()}`,
-        content: randomResponse,
+        content: responseContent,
         role: "assistant",
         timestamp: new Date()
       };
       
       setMessages(prev => [...prev, assistantMessage]);
+      
+      // Se há sugestões da detecção de intenção, adicionar como mensagem separada
+      if (suggestions.length > 0) {
+        setTimeout(() => {
+          const suggestionsMessage: Message = {
+            id: `suggestions-${Date.now()}`,
+            content: "Algumas perguntas que podem te ajudar:",
+            role: "assistant",
+            timestamp: new Date(),
+            suggestions: suggestions
+          };
+          setMessages(prev => [...prev, suggestionsMessage]);
+        }, 800);
+      }
+      
       setIsTyping(false);
 
       if (audioEnabled) {
-        speakMessage(randomResponse);
+        speakMessage(responseContent);
       }
     }, 1500);
   };
@@ -242,12 +205,21 @@ const Assistente = () => {
     setIsTyping(true);
     
     setTimeout(() => {
-      const assistantResponses = predefinedResponses[activeAssistant.id];
-      const randomResponse = assistantResponses[Math.floor(Math.random() * assistantResponses.length)];
+      // Detectar intenção para pergunta sugerida
+      const intention = detectIntention(question, activeAssistant.id);
+      
+      let responseContent: string;
+      
+      if (intention) {
+        responseContent = intention.response;
+      } else {
+        const assistantResponses = predefinedResponses[activeAssistant.id];
+        responseContent = assistantResponses[Math.floor(Math.random() * assistantResponses.length)];
+      }
       
       const assistantMessage: Message = {
         id: `assistant-${Date.now()}`,
-        content: randomResponse,
+        content: responseContent,
         role: "assistant",
         timestamp: new Date()
       };
@@ -256,7 +228,7 @@ const Assistente = () => {
       setIsTyping(false);
 
       if (audioEnabled) {
-        speakMessage(randomResponse);
+        speakMessage(responseContent);
       }
     }, 1500);
   };
@@ -264,7 +236,7 @@ const Assistente = () => {
   const handleFeedback = (positive: boolean) => {
     toast(positive ? "Feedback positivo enviado!" : "Feedback negativo enviado", {
       description: "Obrigado por nos ajudar a melhorar o assistente.",
-      icon: positive ? <ThumbsUp className="h-4 w-4" /> : <ThumbsDown className="h-4 w-4" />,
+      icon: positive ? <span>👍</span> : <span>👎</span>,
     });
   };
 
@@ -287,7 +259,7 @@ const Assistente = () => {
   const createNewConversation = () => {
     const welcomeMessage = {
       id: `welcome-${Date.now()}`,
-      content: `Olá! Sou o assistente ${activeAssistant.name}. ${activeAssistant.description}. Como posso ajudar você hoje?`,
+      content: `Olá! Sou seu ${activeAssistant.name}. ${activeAssistant.description}. Me conte qual é seu objetivo ou sonho financeiro - não precisa ser uma pergunta, pode ser algo como "quero comprar uma casa" ou "quero ficar rico". Vou te ajudar a transformar isso em realidade!`,
       role: "assistant" as const,
       timestamp: new Date()
     };
@@ -325,12 +297,12 @@ const Assistente = () => {
                 <Bot className="mr-2 h-5 w-5 text-momoney-500" />
                 Assistente IA
               </CardTitle>
-              <CardDescription>Seu parceiro financeiro inteligente</CardDescription>
+              <CardDescription>Seu parceiro para realizar sonhos financeiros</CardDescription>
               <div className="w-full mt-2">
                 <Tabs value={activeTab} onValueChange={setActiveTab}>
                   <TabsList className="w-full grid grid-cols-2">
                     <TabsTrigger value="chat">Assistentes</TabsTrigger>
-                    <TabsTrigger value="history">Histórico</TabsTrigger>
+                    <TabsTrigger value="history">Conversas</TabsTrigger>
                   </TabsList>
                   <TabsContent value="chat" className="space-y-4 mt-2 overflow-y-auto max-h-[calc(100vh-22rem)]">
                     <AssistantSelect
@@ -377,7 +349,7 @@ const Assistente = () => {
                             <div className="w-full flex flex-col items-start">
                               <div className="flex items-center w-full">
                                 <span className="font-medium line-clamp-1 text-sm">{convo.title}</span>
-                                <Clock className="h-3 w-3 ml-auto text-gray-400" />
+                                <span className="h-3 w-3 ml-auto text-gray-400">💬</span>
                               </div>
                               <p className="text-xs text-gray-500 line-clamp-1 text-left mt-1">{convo.preview}</p>
                               <div className="flex items-center w-full mt-1">
@@ -438,7 +410,7 @@ const Assistente = () => {
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>Nossa IA utiliza modelos avançados para analisar seus dados financeiros e fornecer recomendações personalizadas.</p>
+                      <p>Nossa IA entende suas intenções e oferece soluções personalizadas para seus objetivos financeiros.</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -468,6 +440,7 @@ const Assistente = () => {
                   message={message}
                   assistantName={activeAssistant.name}
                   onFeedback={handleFeedback}
+                  onSuggestionClick={handleSuggestedQuestion}
                 />
               ))}
               
@@ -488,7 +461,7 @@ const Assistente = () => {
             
             {messages.length <= 2 && (
               <div className="px-4 pb-4">
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Perguntas sugeridas:</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Comece me contando seu objetivo:</p>
                 <div className="flex flex-wrap gap-2">
                   {suggestedQuestions[activeAssistant.id].map((question, index) => (
                     <Button
@@ -515,7 +488,7 @@ const Assistente = () => {
               >
                 <Input
                   type="text"
-                  placeholder="Digite sua mensagem..."
+                  placeholder="Digite seu objetivo ou pergunta..."
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   className="flex-1"

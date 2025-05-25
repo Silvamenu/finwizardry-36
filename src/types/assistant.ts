@@ -1,19 +1,18 @@
 
-import { type ReactNode } from "react";
+export interface Assistant {
+  id: string;
+  name: string;
+  description: string;
+  icon: React.ReactNode;
+  gradient: string;
+}
 
 export interface Message {
   id: string;
   content: string;
   role: "user" | "assistant";
   timestamp: Date;
-}
-
-export interface Assistant {
-  id: string;
-  name: string;
-  description: string;
-  icon: ReactNode;
-  gradient: string;
+  suggestions?: string[];
 }
 
 export interface ConversationHistory {
