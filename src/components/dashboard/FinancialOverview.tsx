@@ -53,7 +53,7 @@ const FinancialOverview = () => {
                   dataKey="income" 
                   stroke="#22c55e" 
                   strokeWidth={2}
-                  name={t('dashboard.income')}
+                  name="Income"
                   activeDot={{ r: 8 }}
                 />
                 <Line 
@@ -61,14 +61,14 @@ const FinancialOverview = () => {
                   dataKey="expense" 
                   stroke="#ef4444" 
                   strokeWidth={2}
-                  name={t('dashboard.expenses')}
+                  name="Expenses"
                 />
                 <Line 
                   type="monotone" 
                   dataKey="balance" 
                   stroke="#3b82f6" 
                   strokeWidth={2}
-                  name={t('dashboard.balance')}
+                  name="Balance"
                 />
               </LineChart>
             </ResponsiveContainer>
