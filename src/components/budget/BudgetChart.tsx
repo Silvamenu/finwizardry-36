@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BudgetCategory } from '@/hooks/useBudget';
@@ -49,50 +48,7 @@ const BudgetChart: React.FC<BudgetChartProps> = ({ budgetCategories }) => {
       <CardHeader>
         <CardTitle className="text-lg">Distribuição de Gastos</CardTitle>
       </CardHeader>
-      <CardContent className="p-4 h-[300px]">
-        {chartData.length > 0 ? (
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={chartData}
-                cx="50%"
-                cy="50%"
-                innerRadius={60}
-                outerRadius={80}
-                paddingAngle={4}
-                dataKey="value"
-                nameKey="name"
-              >
-                {chartData.map((entry, index) => (
-                  <Cell 
-                    key={`cell-${index}`} 
-                    fill={entry.color} 
-                    stroke="transparent"
-                    className="hover:opacity-80 transition-opacity"
-                  />
-                ))}
-              </Pie>
-              <Tooltip content={<CustomTooltip />} />
-              <Legend 
-                layout="vertical" 
-                verticalAlign="middle" 
-                align="right"
-                iconType="circle"
-                iconSize={8}
-                formatter={(value) => (
-                  <span className="text-xs truncate">{value}</span>
-                )}
-              />
-            </PieChart>
-          </ResponsiveContainer>
-        ) : (
-          <div className="h-full flex items-center justify-center">
-            <p className="text-gray-500 text-center">
-              Adicione categorias e defina limites<br />
-              para visualizar seus gastos
-            </p>
-          </div>
-        )}
+      <CardContent>
       </CardContent>
     </Card>
   );
