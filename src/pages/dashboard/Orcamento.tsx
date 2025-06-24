@@ -10,6 +10,7 @@ import { useBudget } from "@/hooks/useBudget";
 import { toast } from "sonner";
 import BudgetCategoryCard from "@/components/budget/BudgetCategoryCard";
 import BudgetChart from "@/components/budget/BudgetChart";
+import BudgetPerformanceChart from "@/components/budget/BudgetPerformanceChart";
 import BudgetSummary from "@/components/budget/BudgetSummary";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -84,6 +85,19 @@ const Orcamento = () => {
               <BudgetChart budgetCategories={budgetCategories} />
             )}
           </div>
+        </div>
+
+        {/* New budget performance chart */}
+        <div className="grid grid-cols-1 gap-6">
+          {loading ? (
+            <Card>
+              <CardContent className="pt-6">
+                <Skeleton className="h-[350px] w-full" />
+              </CardContent>
+            </Card>
+          ) : (
+            <BudgetPerformanceChart budgetCategories={budgetCategories} />
+          )}
         </div>
 
         {/* Budget categories grid */}
