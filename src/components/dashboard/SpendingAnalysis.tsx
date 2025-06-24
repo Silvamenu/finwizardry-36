@@ -7,7 +7,7 @@ import {
   CardContent 
 } from "@/components/ui/card";
 import { ChartContainer } from "@/components/ui/chart";
-import { PieChart, Pie, ResponsiveContainer, Cell, Tooltip } from "recharts";
+import { PieChart, Pie, ResponsiveContainer, Cell, Tooltip, Legend } from "recharts";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ArrowUpRight, Download, Filter, FileBarChart, Calendar } from "lucide-react";
@@ -35,6 +35,27 @@ const CustomTooltip = ({ active, payload }: any) => {
     );
   }
   return null;
+};
+
+const CustomLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }: any) => {
+  const RADIAN = Math.PI / 180;
+  const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+  const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+  return percent > 0.05 ? (
+    <text 
+      x={x} 
+      y={y} 
+      fill="white" 
+      textAnchor={x > cx ? 'start' : 'end'} 
+      dominantBaseline="central"
+      fontSize={12}
+      fontWeight="bold"
+    >
+      {`${(percent * 100).toFixed(0)}%`}
+    </text>
+  ) : null;
 };
 
 const SpendingAnalysis = () => {
@@ -81,7 +102,7 @@ const SpendingAnalysis = () => {
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-lg font-medium flex items-center gap-2 truncate">
           <FileBarChart className="h-5 w-5 text-blue-500 flex-shrink-0" />
-          Análise de Gastos
+          Spending Analysis
         </CardTitle>
         <div className="flex items-center gap-2">
           <Tabs defaultValue="categories" className="w-[300px]" onValueChange={(value) => setTabView(value as 'categories' | 'merchants')}>
@@ -126,14 +147,15 @@ const SpendingAnalysis = () => {
         ) : (
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="w-full md:w-1/2 h-[300px] flex items-center justify-center">
-              <ChartContainer config={chartConfig} className="w-full max-w-[300px]">
+              <ChartContainer config={chartConfig} className="w-full h-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <defs>
                       {dataWithPercentage.map((entry, index) => (
-                        <filter key={`shadow-${index}`} id={`shadow-${index}`} x="-20%" y="-20%" width="140%" height="140%">
-                          <feDropShadow dx="0" dy="0" stdDeviation="3" floodColor={entry.color} floodOpacity="0.3" />
-                        </filter>
+                        <linearGradient key={`gradient-${index}`} id={`gradient-${index}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor={entry.color} stopOpacity={0.8} />
+                          <stop offset="100%" stopColor={entry.color} stopOpacity={1} />
+                        </linearGradient>
                       ))}
                     </defs>
                     <Pie 
@@ -141,29 +163,30 @@ const SpendingAnalysis = () => {
                       cx="50%" 
                       cy="50%" 
                       labelLine={false} 
-                      outerRadius={100} 
-                      innerRadius={60} 
+                      outerRadius={80} 
+                      innerRadius={40} 
                       fill="#8884d8" 
                       dataKey="value" 
                       nameKey="name" 
                       paddingAngle={2}
-                      label={({
-                        name,
-                        percent
-                      }) => `${(percent * 100).toFixed(0)}%`}
+                      label={CustomLabel}
                     >
                       {dataWithPercentage.map((entry, index) => (
                         <Cell 
                           key={`cell-${index}`} 
-                          fill={entry.color} 
+                          fill={`url(#gradient-${index})`}
                           stroke="#fff" 
                           strokeWidth={2}
-                          filter={`url(#shadow-${index})`}
-                          className="transition-all duration-300 hover:opacity-80"
+                          className="transition-all duration-300 hover:opacity-80 cursor-pointer"
                         />
                       ))}
                     </Pie>
                     <Tooltip content={<CustomTooltip />} />
+                    <Legend 
+                      verticalAlign="bottom" 
+                      height={36}
+                      formatter={(value) => <span className="text-sm">{value}</span>}
+                    />
                   </PieChart>
                 </ResponsiveContainer>
               </ChartContainer>
@@ -179,27 +202,27 @@ const SpendingAnalysis = () => {
               </div>
               <div className="space-y-3 overflow-hidden">
                 {dataWithPercentage.map((item, index) => (
-                  <div key={index} className="flex items-center justify-between p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors">
+                  <div key={index} className="flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors border border-gray-100 dark:border-gray-600">
                     <div className="flex items-center min-w-0">
                       <div 
-                        className="w-3 h-3 rounded-full mr-2 flex-shrink-0" 
+                        className="w-4 h-4 rounded-full mr-3 flex-shrink-0 border-2 border-white shadow-sm" 
                         style={{ backgroundColor: item.color }} 
                       />
-                      <span className="truncate">{item.name}</span>
+                      <span className="truncate font-medium">{item.name}</span>
                     </div>
                     <div className="flex flex-col items-end flex-shrink-0">
-                      <span className="font-medium whitespace-nowrap">{formatCurrency(item.value)}</span>
-                      <div className="flex items-center text-xs text-gray-500">
+                      <span className="font-bold whitespace-nowrap text-lg">{formatCurrency(item.value)}</span>
+                      <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
                         <span>{item.percentage}%</span>
-                        <ArrowUpRight className="h-3 w-3 ml-0.5 text-green-500" />
+                        <ArrowUpRight className="h-3 w-3 ml-1 text-green-500" />
                       </div>
                     </div>
                   </div>
                 ))}
-                <div className="pt-3 mt-3 border-t border-gray-200 dark:border-gray-700">
-                  <div className="flex items-center justify-between font-bold">
+                <div className="pt-4 mt-4 border-t border-gray-200 dark:border-gray-700">
+                  <div className="flex items-center justify-between font-bold text-lg bg-gray-50 dark:bg-gray-700 p-3 rounded-lg">
                     <span>Total</span>
-                    <span>{formatCurrency(total)}</span>
+                    <span className="text-blue-600 dark:text-blue-400">{formatCurrency(total)}</span>
                   </div>
                 </div>
               </div>
