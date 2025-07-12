@@ -14,6 +14,44 @@ export type Database = {
   }
   public: {
     Tables: {
+      alert_history: {
+        Row: {
+          alert_id: string
+          created_at: string
+          id: string
+          is_read: boolean
+          message: string
+          triggered_at: string
+          user_id: string
+        }
+        Insert: {
+          alert_id: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message: string
+          triggered_at?: string
+          user_id: string
+        }
+        Update: {
+          alert_id?: string
+          created_at?: string
+          id?: string
+          is_read?: boolean
+          message?: string
+          triggered_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alert_history_alert_id_fkey"
+            columns: ["alert_id"]
+            isOneToOne: false
+            referencedRelation: "user_alerts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       categories: {
         Row: {
           color: string | null
@@ -40,6 +78,42 @@ export type Database = {
           id?: string
           name?: string
           type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      categorization_rules: {
+        Row: {
+          category_id: string
+          created_at: string
+          id: string
+          is_active: boolean
+          keywords: string[]
+          priority: number
+          rule_name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category_id: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          keywords: string[]
+          priority?: number
+          rule_name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category_id?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          keywords?: string[]
+          priority?: number
+          rule_name?: string
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
@@ -209,6 +283,105 @@ export type Database = {
         }
         Relationships: []
       }
+      recurring_transactions: {
+        Row: {
+          amount: number
+          category_id: string | null
+          created_at: string
+          description: string
+          end_date: string | null
+          frequency: string
+          frequency_interval: number
+          id: string
+          is_active: boolean
+          next_execution_date: string
+          payment_method: string | null
+          start_date: string
+          template_name: string
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          category_id?: string | null
+          created_at?: string
+          description: string
+          end_date?: string | null
+          frequency: string
+          frequency_interval?: number
+          id?: string
+          is_active?: boolean
+          next_execution_date: string
+          payment_method?: string | null
+          start_date?: string
+          template_name: string
+          type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          category_id?: string | null
+          created_at?: string
+          description?: string
+          end_date?: string | null
+          frequency?: string
+          frequency_interval?: number
+          id?: string
+          is_active?: boolean
+          next_execution_date?: string
+          payment_method?: string | null
+          start_date?: string
+          template_name?: string
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      transaction_templates: {
+        Row: {
+          amount: number | null
+          category_id: string | null
+          created_at: string
+          description: string
+          id: string
+          name: string
+          payment_method: string | null
+          tags: string[] | null
+          type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number | null
+          category_id?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          name: string
+          payment_method?: string | null
+          tags?: string[] | null
+          type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number | null
+          category_id?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          name?: string
+          payment_method?: string | null
+          tags?: string[] | null
+          type?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       transactions: {
         Row: {
           amount: number
@@ -255,6 +428,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_alerts: {
+        Row: {
+          alert_type: string
+          category_id: string | null
+          created_at: string
+          frequency: string | null
+          id: string
+          is_active: boolean
+          last_triggered: string | null
+          message: string
+          threshold_value: number | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          alert_type: string
+          category_id?: string | null
+          created_at?: string
+          frequency?: string | null
+          id?: string
+          is_active?: boolean
+          last_triggered?: string | null
+          message: string
+          threshold_value?: number | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          alert_type?: string
+          category_id?: string | null
+          created_at?: string
+          frequency?: string | null
+          id?: string
+          is_active?: boolean
+          last_triggered?: string | null
+          message?: string
+          threshold_value?: number | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       user_onboarding: {
         Row: {

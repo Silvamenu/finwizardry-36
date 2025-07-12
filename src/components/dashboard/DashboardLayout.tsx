@@ -90,6 +90,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const navigationItems = [
     { title: t("sidebar.dashboard"), icon: Home, path: "/dashboard" },
     { title: "Analytics", icon: BarChart3, path: "/dashboard/analytics" },
+    { title: "Automação", icon: Settings, path: "/dashboard/automacao" },
     { title: t("sidebar.budget"), icon: PiggyBank, path: "/dashboard/orcamento" },
     { title: t("sidebar.investments"), icon: BarChart3, path: "/dashboard/investimentos" },
     { title: t("sidebar.transactions"), icon: ArrowLeftRight, path: "/dashboard/transacoes" },
