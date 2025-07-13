@@ -29,7 +29,9 @@ import {
   MessageSquarePlus,
   Settings,
   User,
-  Mail
+  Mail,
+  FileText,
+  Zap
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useTranslation } from "react-i18next";
@@ -90,7 +92,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const navigationItems = [
     { title: t("sidebar.dashboard"), icon: Home, path: "/dashboard" },
     { title: "Analytics", icon: BarChart3, path: "/dashboard/analytics" },
-    { title: "Automação", icon: Settings, path: "/dashboard/automacao" },
+    { title: "Automação", icon: Zap, path: "/dashboard/automacao" },
+    { title: "Relatórios", icon: FileText, path: "/dashboard/relatorios" },
     { title: t("sidebar.budget"), icon: PiggyBank, path: "/dashboard/orcamento" },
     { title: t("sidebar.investments"), icon: BarChart3, path: "/dashboard/investimentos" },
     { title: t("sidebar.transactions"), icon: ArrowLeftRight, path: "/dashboard/transacoes" },

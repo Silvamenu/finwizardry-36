@@ -340,6 +340,129 @@ export type Database = {
         }
         Relationships: []
       }
+      report_schedules: {
+        Row: {
+          created_at: string
+          filters: Json
+          frequency: string
+          id: string
+          is_active: boolean
+          last_run: string | null
+          name: string
+          next_run: string | null
+          schedule_config: Json
+          template_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          filters?: Json
+          frequency: string
+          id?: string
+          is_active?: boolean
+          last_run?: string | null
+          name: string
+          next_run?: string | null
+          schedule_config?: Json
+          template_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          filters?: Json
+          frequency?: string
+          id?: string
+          is_active?: boolean
+          last_run?: string | null
+          name?: string
+          next_run?: string | null
+          schedule_config?: Json
+          template_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      report_templates: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_public: boolean
+          name: string
+          template_config: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean
+          name: string
+          template_config?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_public?: boolean
+          name?: string
+          template_config?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      saved_reports: {
+        Row: {
+          created_at: string
+          data_snapshot: Json | null
+          description: string | null
+          file_url: string | null
+          filters: Json
+          format: string
+          id: string
+          name: string
+          status: string
+          template_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          data_snapshot?: Json | null
+          description?: string | null
+          file_url?: string | null
+          filters?: Json
+          format?: string
+          id?: string
+          name: string
+          status?: string
+          template_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          data_snapshot?: Json | null
+          description?: string | null
+          file_url?: string | null
+          filters?: Json
+          format?: string
+          id?: string
+          name?: string
+          status?: string
+          template_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       transaction_templates: {
         Row: {
           amount: number | null

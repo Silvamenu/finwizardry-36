@@ -23,6 +23,7 @@ import Metas from "@/pages/dashboard/Metas";
 import Assistente from "@/pages/dashboard/Assistente";
 import Analytics from "@/pages/dashboard/Analytics";
 import Automacao from "@/pages/dashboard/Automacao";
+import Relatorios from "@/pages/dashboard/Relatorios";
 import Configuracoes from "@/pages/dashboard/Configuracoes";
 import Perfil from "@/pages/dashboard/Perfil";
 import Mensagens from "@/pages/dashboard/Mensagens";
@@ -59,6 +60,7 @@ const AppRoutes = () => {
       <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       <Route path="/dashboard/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
       <Route path="/dashboard/automacao" element={<ProtectedRoute><Automacao /></ProtectedRoute>} />
+      <Route path="/dashboard/relatorios" element={<ProtectedRoute><Relatorios /></ProtectedRoute>} />
       <Route path="/dashboard/orcamento" element={<ProtectedRoute><Orcamento /></ProtectedRoute>} />
       <Route path="/dashboard/investimentos" element={<ProtectedRoute><Investimentos /></ProtectedRoute>} />
       <Route path="/dashboard/transacoes" element={<ProtectedRoute><Transacoes /></ProtectedRoute>} />
