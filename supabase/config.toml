@@ -1,0 +1,4 @@
+project_id = "outtmzncozzjixlpvfbv"
+
+[functions.assistente-geral]
+verify_jwt = true
