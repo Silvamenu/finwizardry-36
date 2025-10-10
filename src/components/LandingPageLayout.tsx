@@ -24,16 +24,13 @@ export default function LandingPageLayout({ children }: { children: React.ReactN
         className="absolute inset-0 w-full h-full"
         colors={gradientColors}
         speed={0.8} // Velocidade da animação. Ajuste se quiser mais rápido ou mais lento.
-        backgroundColor="#1C1A1C"
       />
       
-      {/* Opcional: Efeito "wireframe" por cima para dar uma textura tech (como no exemplo) */}
+      {/* Opcional: Efeito adicional com tons de cinza */}
       <MeshGradient
         className="absolute inset-0 w-full h-full opacity-50"
         colors={['#AAAAAA', '#444444']}
         speed={0.2}
-        wireframe={true}
-        backgroundColor="transparent"
       />
       
       {/* Aqui é onde o conteúdo da sua página (títulos, botões, etc.) vai aparecer */}

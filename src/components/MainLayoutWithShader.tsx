@@ -22,18 +22,15 @@ export function MainLayoutWithShader({ children }: { children: React.ReactNode }
             '#683FEA', // accent-end
             '#4A00E0', // Roxo mais escuro para profundidade
           ]}
-          backgroundColor="#1C1A1C"
           speed={1.5}
           className="opacity-70"
         />
       </div>
 
-      {/* Camada de Shader Secundária (Wireframe para textura) */}
+      {/* Camada de Shader Secundária para textura */}
       <div className="absolute inset-0 z-10">
         <MeshGradient
           colors={['#A47CF3', '#2A282A']}
-          backgroundColor="transparent"
-          wireframe={true}
           speed={2}
           className="opacity-30"
         />

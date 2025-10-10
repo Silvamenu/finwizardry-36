@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { useState } from 'react';
 
 const LoginPage = () => {
-  const { signIn, signInWithGoogle } = useAuth();
+  const { signIn } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSignIn = async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -34,13 +34,7 @@ const LoginPage = () => {
   };
 
   const handleGoogleSignIn = async () => {
-    try {
-      await signInWithGoogle();
-      toast.info("Você será redirecionado para a página de login do Google.");
-    } catch (error) {
-      toast.error("Ocorreu um erro ao tentar fazer login com o Google.");
-      console.error("Erro no login com Google:", error);
-    }
+    toast.info("Login com Google em desenvolvimento.");
   };
  
   const handleResetPassword = () => {

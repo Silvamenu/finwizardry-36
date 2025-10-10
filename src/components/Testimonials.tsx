@@ -32,15 +32,10 @@ const cardVariants = {
     opacity: 0,
     y: 50
   },
-  onscreen: (i: number) => ({
+  onscreen: {
     opacity: 1,
-    y: 0,
-    transition: {
-      delay: i * 0.2,
-      duration: 0.8,
-      ease: [0.4, 0.0, 0.2, 1]
-    }
-  })
+    y: 0
+  }
 };
 
 const Testimonials = () => {
@@ -77,11 +72,15 @@ const Testimonials = () => {
           {testimonials.map((testimonial, index) => (
             <motion.div 
               key={index}
-              custom={index}
               initial="offscreen"
               whileInView="onscreen"
               viewport={{ once: true, margin: "-50px" }}
               variants={cardVariants}
+              transition={{
+                delay: index * 0.2,
+                duration: 0.8,
+                ease: [0.4, 0.0, 0.2, 1]
+              }}
               whileHover={{ 
                 y: -10,
                 boxShadow: "0 20px 25px -5px rgba(104, 63, 234, 0.1), 0 10px 10px -5px rgba(104, 63, 234, 0.08)"
