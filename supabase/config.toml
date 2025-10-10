@@ -2,3 +2,6 @@ project_id = "outtmzncozzjixlpvfbv"
 
 [functions.assistente-geral]
 verify_jwt = true
+
+[functions.get-stock-quote]
+verify_jwt = true
