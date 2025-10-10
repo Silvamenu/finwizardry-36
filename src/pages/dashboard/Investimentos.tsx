@@ -1,5 +1,6 @@
 
 import { useEffect, useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,65 +9,120 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import NewInvestmentModal from "@/components/investments/NewInvestmentModal";
 import { toast } from "sonner";
 import { useFormatters } from "@/hooks/useFormatters";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { LoadingScreen } from "@/components/ui/loading-screen";
 
-const mockInvestments = [
-  {
-    id: 'inv-1',
-    name: 'PETR4',
-    type: 'stocks',
-    amount: 100,
-    purchasePrice: 25.50,
-    currentPrice: 28.75,
-    variation: 12.75,
-    totalValue: 2875
-  },
-  {
-    id: 'inv-2',
-    name: 'Tesouro Selic 2026',
-    type: 'treasury',
-    amount: 1,
-    purchasePrice: 10000,
-    currentPrice: 10320,
-    variation: 3.2,
-    totalValue: 10320
-  },
-  {
-    id: 'inv-3',
-    name: 'Bitcoin',
-    type: 'crypto',
-    amount: 0.05,
-    purchasePrice: 45000,
-    currentPrice: 42000,
-    variation: -6.67,
-    totalValue: 2100
-  }
-];
+// Tipo baseado no schema real da tabela investments
+type Investment = {
+  id: string;
+  user_id: string;
+  name: string;
+  type: string;
+  ticker: string | null;
+  quantity: number | null;
+  average_price: number;
+  purchase_date: string;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+};
 
 const Investimentos = () => {
   const [isNewInvestmentModalOpen, setIsNewInvestmentModalOpen] = useState(false);
   const { formatCurrency, formatPercentage } = useFormatters();
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
   
   useEffect(() => {
     document.title = "MoMoney | Investimentos";
   }, []);
 
+  // Buscar investimentos do usuário
+  const { data: investments, isLoading, error } = useQuery({
+    queryKey: ['investments'],
+    queryFn: async () => {
+      if (!user?.id) throw new Error("Usuário não autenticado");
+      
+      const { data, error } = await supabase
+        .from('investments')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      // Fazemos cast explícito porque o schema real tem average_price e ticker
+      return (data || []) as unknown as Investment[];
+    },
+    enabled: !!user?.id,
+  });
+
+  // Mutation para adicionar novo investimento
+  const addInvestmentMutation = useMutation({
+    mutationFn: async (newInvestment: {
+      name: string;
+      type: string;
+      ticker?: string | null;
+      quantity?: number | null;
+      average_price: number;
+      purchase_date: string;
+      notes?: string | null;
+    }) => {
+      if (!user?.id) throw new Error("Usuário não autenticado");
+      
+      // Fazemos cast do objeto para any para contornar o problema de tipos gerados
+      const { data, error } = await supabase
+        .from('investments')
+        .insert([{
+          name: newInvestment.name,
+          type: newInvestment.type,
+          ticker: newInvestment.ticker || null,
+          quantity: newInvestment.quantity || null,
+          average_price: newInvestment.average_price,
+          purchase_date: newInvestment.purchase_date,
+          notes: newInvestment.notes || null,
+          user_id: user.id,
+        } as any])
+        .select()
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      toast.success("Investimento adicionado com sucesso!");
+      queryClient.invalidateQueries({ queryKey: ['investments'] });
+      setIsNewInvestmentModalOpen(false);
+    },
+    onError: (error: Error) => {
+      toast.error(`Erro ao adicionar investimento: ${error.message}`);
+    },
+  });
+
   const handleAddInvestment = (investment: any) => {
-    console.log("Novo investimento adicionado:", investment);
-    // Em uma aplicação real, isso enviaria os dados para o backend
-    toast.success("Investimento adicionado com sucesso!");
+    addInvestmentMutation.mutate(investment);
   };
 
   // Calcular totais
-  const totalInvested = mockInvestments.reduce(
-    (sum, inv) => sum + (inv.amount * inv.purchasePrice), 0
+  const totalInvested = (investments || []).reduce(
+    (sum, inv) => sum + ((inv.quantity || 0) * inv.average_price), 0
   );
   
-  const currentValue = mockInvestments.reduce(
-    (sum, inv) => sum + (inv.amount * inv.currentPrice), 0
+  // Para valor atual, usamos o preço médio como aproximação (em produção, você buscaria cotações reais)
+  const currentValue = (investments || []).reduce(
+    (sum, inv) => sum + ((inv.quantity || 0) * inv.average_price), 0
   );
   
-  const totalVariation = ((currentValue - totalInvested) / totalInvested) * 100;
+  const totalVariation = totalInvested > 0 ? ((currentValue - totalInvested) / totalInvested) * 100 : 0;
   
+  if (isLoading) {
+    return <LoadingScreen message="Carregando investimentos..." />;
+  }
+
+  if (error) {
+    toast.error("Erro ao carregar investimentos");
+  }
+
   return (
     <DashboardLayout activePage="Investimentos">
       {/* Modal para adicionar novo investimento */}
@@ -153,63 +209,144 @@ const Investimentos = () => {
               
               <TabsContent value="all">
                 <div className="overflow-x-auto">
-                  <table className="w-full border-collapse">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="text-left py-3 px-4">Nome</th>
-                        <th className="text-left py-3 px-4">Tipo</th>
-                        <th className="text-right py-3 px-4">Quantidade</th>
-                        <th className="text-right py-3 px-4">Preço Médio</th>
-                        <th className="text-right py-3 px-4">Preço Atual</th>
-                        <th className="text-right py-3 px-4">Variação</th>
-                        <th className="text-right py-3 px-4">Total</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {mockInvestments.map((inv) => (
-                        <tr key={inv.id} className="border-b hover:bg-gray-50">
-                          <td className="py-3 px-4 font-medium">{inv.name}</td>
-                          <td className="py-3 px-4">{inv.type}</td>
-                          <td className="py-3 px-4 text-right">{inv.amount}</td>
-                          <td className="py-3 px-4 text-right">{formatCurrency(inv.purchasePrice)}</td>
-                          <td className="py-3 px-4 text-right">{formatCurrency(inv.currentPrice)}</td>
-                          <td className={`py-3 px-4 text-right ${inv.variation >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                            <span className="flex items-center justify-end">
-                              {inv.variation >= 0 ? (
-                                <ArrowUpRight className="h-4 w-4 mr-1" />
-                              ) : (
-                                <ArrowDownRight className="h-4 w-4 mr-1" />
-                              )}
-                              {formatPercentage(Math.abs(inv.variation))}
-                            </span>
-                          </td>
-                          <td className="py-3 px-4 text-right font-medium">{formatCurrency(inv.totalValue)}</td>
+                  {!investments || investments.length === 0 ? (
+                    <div className="text-center text-gray-500 py-10">
+                      Nenhum investimento cadastrado. Clique em "Novo Investimento" para começar!
+                    </div>
+                  ) : (
+                    <table className="w-full border-collapse">
+                      <thead>
+                        <tr className="border-b">
+                          <th className="text-left py-3 px-4">Nome</th>
+                          <th className="text-left py-3 px-4">Ticker</th>
+                          <th className="text-left py-3 px-4">Tipo</th>
+                          <th className="text-right py-3 px-4">Quantidade</th>
+                          <th className="text-right py-3 px-4">Preço Médio</th>
+                          <th className="text-right py-3 px-4">Total Investido</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        {investments.map((inv) => (
+                          <tr key={inv.id} className="border-b hover:bg-gray-50 dark:hover:bg-gray-800">
+                            <td className="py-3 px-4 font-medium">{inv.name}</td>
+                            <td className="py-3 px-4">{inv.ticker || '-'}</td>
+                            <td className="py-3 px-4 capitalize">{inv.type}</td>
+                            <td className="py-3 px-4 text-right">{inv.quantity || '-'}</td>
+                            <td className="py-3 px-4 text-right">{formatCurrency(inv.average_price)}</td>
+                            <td className="py-3 px-4 text-right font-medium">
+                              {formatCurrency((inv.quantity || 0) * inv.average_price)}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
                 </div>
               </TabsContent>
               
-              {/* Conteúdo das outras abas seria filtrado por tipo */}
+              {/* Conteúdo filtrado por tipo */}
               <TabsContent value="stocks">
-                {/* Conteúdo filtrado para ações */}
-                <div className="text-center text-gray-500 py-10">
-                  Filtro por ações
+                <div className="overflow-x-auto">
+                  {!investments || investments.filter(inv => inv.type === 'stocks').length === 0 ? (
+                    <div className="text-center text-gray-500 py-10">
+                      Nenhuma ação cadastrada
+                    </div>
+                  ) : (
+                    <table className="w-full border-collapse">
+                      <thead>
+                        <tr className="border-b">
+                          <th className="text-left py-3 px-4">Nome</th>
+                          <th className="text-left py-3 px-4">Ticker</th>
+                          <th className="text-right py-3 px-4">Quantidade</th>
+                          <th className="text-right py-3 px-4">Preço Médio</th>
+                          <th className="text-right py-3 px-4">Total Investido</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {investments.filter(inv => inv.type === 'stocks').map((inv) => (
+                          <tr key={inv.id} className="border-b hover:bg-gray-50 dark:hover:bg-gray-800">
+                            <td className="py-3 px-4 font-medium">{inv.name}</td>
+                            <td className="py-3 px-4">{inv.ticker || '-'}</td>
+                            <td className="py-3 px-4 text-right">{inv.quantity || '-'}</td>
+                            <td className="py-3 px-4 text-right">{formatCurrency(inv.average_price)}</td>
+                            <td className="py-3 px-4 text-right font-medium">
+                              {formatCurrency((inv.quantity || 0) * inv.average_price)}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
                 </div>
               </TabsContent>
               
               <TabsContent value="fixed_income">
-                {/* Conteúdo filtrado para renda fixa */}
-                <div className="text-center text-gray-500 py-10">
-                  Filtro por renda fixa
+                <div className="overflow-x-auto">
+                  {!investments || investments.filter(inv => inv.type === 'fixed_income').length === 0 ? (
+                    <div className="text-center text-gray-500 py-10">
+                      Nenhum investimento de renda fixa cadastrado
+                    </div>
+                  ) : (
+                    <table className="w-full border-collapse">
+                      <thead>
+                        <tr className="border-b">
+                          <th className="text-left py-3 px-4">Nome</th>
+                          <th className="text-left py-3 px-4">Tipo</th>
+                          <th className="text-right py-3 px-4">Quantidade</th>
+                          <th className="text-right py-3 px-4">Preço Médio</th>
+                          <th className="text-right py-3 px-4">Total Investido</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {investments.filter(inv => inv.type === 'fixed_income').map((inv) => (
+                          <tr key={inv.id} className="border-b hover:bg-gray-50 dark:hover:bg-gray-800">
+                            <td className="py-3 px-4 font-medium">{inv.name}</td>
+                            <td className="py-3 px-4 capitalize">{inv.type}</td>
+                            <td className="py-3 px-4 text-right">{inv.quantity || '-'}</td>
+                            <td className="py-3 px-4 text-right">{formatCurrency(inv.average_price)}</td>
+                            <td className="py-3 px-4 text-right font-medium">
+                              {formatCurrency((inv.quantity || 0) * inv.average_price)}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
                 </div>
               </TabsContent>
               
               <TabsContent value="crypto">
-                {/* Conteúdo filtrado para criptomoedas */}
-                <div className="text-center text-gray-500 py-10">
-                  Filtro por criptomoedas
+                <div className="overflow-x-auto">
+                  {!investments || investments.filter(inv => inv.type === 'crypto').length === 0 ? (
+                    <div className="text-center text-gray-500 py-10">
+                      Nenhuma criptomoeda cadastrada
+                    </div>
+                  ) : (
+                    <table className="w-full border-collapse">
+                      <thead>
+                        <tr className="border-b">
+                          <th className="text-left py-3 px-4">Nome</th>
+                          <th className="text-left py-3 px-4">Ticker</th>
+                          <th className="text-right py-3 px-4">Quantidade</th>
+                          <th className="text-right py-3 px-4">Preço Médio</th>
+                          <th className="text-right py-3 px-4">Total Investido</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {investments.filter(inv => inv.type === 'crypto').map((inv) => (
+                          <tr key={inv.id} className="border-b hover:bg-gray-50 dark:hover:bg-gray-800">
+                            <td className="py-3 px-4 font-medium">{inv.name}</td>
+                            <td className="py-3 px-4">{inv.ticker || '-'}</td>
+                            <td className="py-3 px-4 text-right">{inv.quantity || '-'}</td>
+                            <td className="py-3 px-4 text-right">{formatCurrency(inv.average_price)}</td>
+                            <td className="py-3 px-4 text-right font-medium">
+                              {formatCurrency((inv.quantity || 0) * inv.average_price)}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  )}
                 </div>
               </TabsContent>
             </Tabs>
