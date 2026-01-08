@@ -13,6 +13,7 @@ interface AuthContextType {
   signUp: (email: string, password: string, name: string) => Promise<void>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
+  signInWithGoogle: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -203,6 +204,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       toast.success('Email de recuperação enviado! Verifique sua caixa de entrada.');
     } catch (error: any) {
       toast.error(error.message || 'Erro ao enviar email de recuperação');
+      throw error;
+    }
+  };
+
+  const signInWithGoogle = async () => {
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth-callback`,
+        },
+      });
+      if (error) throw error;
+    } catch (error: any) {
+      toast.error(error.message || 'Erro ao fazer login com Google');
       throw error;
     }
   };
