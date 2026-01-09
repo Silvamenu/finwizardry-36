@@ -231,7 +231,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       signIn, 
       signUp, 
       signOut,
-      resetPassword 
+      resetPassword,
+      signInWithGoogle
     }}>
       {children}
     </AuthContext.Provider>

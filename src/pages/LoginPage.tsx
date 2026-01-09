@@ -5,14 +5,13 @@ import { toast } from 'sonner';
 import { useState } from 'react';
 
 const LoginPage = () => {
-  const { signIn } = useAuth();
+  const { signIn, signInWithGoogle } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSignIn = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     setIsLoading(true);
 
-    // Pega o formulário pai do botão para acessar os campos
     const form = (event.target as HTMLButtonElement).closest('form');
     if (!form) {
       toast.error("Ocorreu um erro inesperado. Formulário não encontrado.");
@@ -25,7 +24,6 @@ const LoginPage = () => {
 
     try {
       await signIn(email, password);
-      // O redirecionamento para /dashboard é feito dentro da função signIn no AuthContext
     } catch (error: any) {
       toast.error(error.message || "Falha no login. Verifique suas credenciais.");
     } finally {
@@ -34,7 +32,11 @@ const LoginPage = () => {
   };
 
   const handleGoogleSignIn = async () => {
-    toast.info("Login com Google em desenvolvimento.");
+    try {
+      await signInWithGoogle();
+    } catch (error: any) {
+      toast.error(error.message || "Erro ao fazer login com Google.");
+    }
   };
  
   const handleResetPassword = () => {
