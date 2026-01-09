@@ -70,7 +70,9 @@ const RecentActivity = () => {
   };
 
   const getIconColorClass = (amount: number) => {
-    return amount >= 0 ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600";
+    return amount >= 0 
+      ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400" 
+      : "bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400";
   };
 
   return (
@@ -83,7 +85,7 @@ const RecentActivity = () => {
           {transactions.map((transaction) => (
             <div 
               key={transaction.id} 
-              className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0"
+              className="flex items-center justify-between py-2 border-b border-border last:border-0"
             >
               <div className="flex items-center">
                 <div className={`p-2 rounded-full ${getIconColorClass(transaction.amount)} mr-3`}>
@@ -91,10 +93,10 @@ const RecentActivity = () => {
                 </div>
                 <div>
                   <p className="font-medium text-sm">{transaction.description}</p>
-                  <p className="text-xs text-gray-500">{transaction.date} • {transaction.category}</p>
+                  <p className="text-xs text-muted-foreground">{transaction.date} • {transaction.category}</p>
                 </div>
               </div>
-              <p className={`font-medium ${transaction.amount >= 0 ? "text-green-600" : "text-red-600"}`}>
+              <p className={`font-medium ${transaction.amount >= 0 ? "text-green-600 dark:text-green-400" : "text-red-600 dark:text-red-400"}`}>
                 {formatCurrency(transaction.amount)}
               </p>
             </div>

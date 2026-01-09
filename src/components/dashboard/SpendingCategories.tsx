@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTranslation } from "react-i18next";
@@ -8,12 +7,19 @@ import { useFinancialData } from '@/hooks/useFinancialData';
 import { useFormatters } from '@/hooks/useFormatters';
 import { Button } from "@/components/ui/button";
 import { PieChart as PieChartIcon, BarChart3 } from "lucide-react";
+import { useTheme } from "next-themes";
 
 const SpendingCategories = () => {
   const { t } = useTranslation();
   const { summary, loading } = useFinancialData();
   const { formatCurrency } = useFormatters();
   const [chartType, setChartType] = useState<'pie' | 'bar'>('pie');
+  const { resolvedTheme } = useTheme();
+  
+  const isDark = resolvedTheme === 'dark';
+  const gridColor = isDark ? '#444444' : '#e5e7eb';
+  const textColor = isDark ? '#AAAAAA' : '#374151';
+  const labelColor = isDark ? 'white' : '#1f2937';
   
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82ca9d', '#ffc658', '#8dd1e1', '#a4de6c', '#d0ed57'];
 
@@ -28,9 +34,9 @@ const SpendingCategories = () => {
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-white dark:bg-gray-800 px-4 py-2 rounded-lg shadow-lg border border-gray-100 dark:border-gray-700">
-          <p className="font-medium">{payload[0].name || payload[0].payload?.name}</p>
-          <p className="text-sm font-bold">{formatCurrency(payload[0].value)}</p>
+        <div className="bg-card px-4 py-2 rounded-lg shadow-lg border border-border">
+          <p className="font-medium text-card-foreground">{payload[0].name || payload[0].payload?.name}</p>
+          <p className="text-sm font-bold text-card-foreground">{formatCurrency(payload[0].value)}</p>
         </div>
       );
     }
@@ -65,6 +71,10 @@ const SpendingCategories = () => {
           <div className="flex items-center justify-center h-full">
             <Skeleton className="h-[200px] w-[200px] rounded-full" />
           </div>
+        ) : chartData.length === 0 ? (
+          <div className="flex items-center justify-center h-full text-muted-foreground">
+            Nenhum dado de categoria disponível
+          </div>
         ) : (
           <ResponsiveContainer width="100%" height="100%">
             {chartType === 'pie' ? (
@@ -83,7 +93,7 @@ const SpendingCategories = () => {
                     <Cell 
                       key={`cell-${index}`} 
                       fill={entry.color} 
-                      stroke="#fff"
+                      stroke={isDark ? '#1f2937' : '#fff'}
                       strokeWidth={2}
                     />
                   ))}
@@ -93,20 +103,23 @@ const SpendingCategories = () => {
                   layout="vertical" 
                   verticalAlign="middle" 
                   align="right"
+                  wrapperStyle={{ color: textColor }}
                 />
               </PieChart>
             ) : (
               <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" />
+                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
                 <XAxis 
                   dataKey="name" 
                   angle={-45}
                   textAnchor="end"
                   height={80}
                   fontSize={12}
+                  stroke={textColor}
                 />
                 <YAxis 
                   tickFormatter={(value) => formatCurrency(value, { notation: 'compact' })}
+                  stroke={textColor}
                 />
                 <Tooltip content={<CustomTooltip />} />
                 <Bar dataKey="value" radius={[4, 4, 0, 0]}>

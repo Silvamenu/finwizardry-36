@@ -108,40 +108,40 @@ const UpcomingTransactions = () => {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-gray-200">
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descrição</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Categoria</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Valor</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Método</th>
-                <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+              <tr className="border-b border-border">
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Descrição</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Categoria</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Data</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Valor</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Status</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">Método</th>
+                <th className="px-4 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">Ações</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="divide-y divide-border">
               {upcomingTransactions.map((transaction) => (
-                <tr key={transaction.id} className="hover:bg-gray-50">
+                <tr key={transaction.id} className="hover:bg-muted/50">
                   <td className="px-4 py-3 text-sm font-medium">
                     <div className="flex items-center">
-                      <transaction.icon className="mr-2 h-4 w-4 text-gray-400" />
+                      <transaction.icon className="mr-2 h-4 w-4 text-muted-foreground" />
                       {transaction.description}
                       {transaction.recurrent && (
-                        <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                        <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-primary/10 text-primary">
                           Recorrente
                         </span>
                       )}
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600">{transaction.category}</td>
-                  <td className="px-4 py-3 text-sm text-gray-600">{transaction.dueDate}</td>
-                  <td className="px-4 py-3 text-sm font-medium text-gray-900">{formatCurrency(transaction.amount)}</td>
+                  <td className="px-4 py-3 text-sm text-muted-foreground">{transaction.category}</td>
+                  <td className="px-4 py-3 text-sm text-muted-foreground">{transaction.dueDate}</td>
+                  <td className="px-4 py-3 text-sm font-medium">{formatCurrency(transaction.amount)}</td>
                   <td className="px-4 py-3 text-sm">
                     <div className="flex items-center">
                       {getStatusIcon(transaction.status)}
                       <span className="ml-1">{getStatusText(transaction.status)}</span>
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-600">{transaction.paymentMethod}</td>
+                  <td className="px-4 py-3 text-sm text-muted-foreground">{transaction.paymentMethod}</td>
                   <td className="px-4 py-3 text-sm text-right">
                     <Button variant="ghost" size="sm">Pagar</Button>
                   </td>
@@ -149,9 +149,9 @@ const UpcomingTransactions = () => {
               ))}
             </tbody>
             <tfoot>
-              <tr className="bg-gray-50">
-                <td colSpan={3} className="px-4 py-3 text-sm font-medium text-gray-900">Total</td>
-                <td className="px-4 py-3 text-sm font-bold text-gray-900">{formatCurrency(total)}</td>
+              <tr className="bg-muted/50">
+                <td colSpan={3} className="px-4 py-3 text-sm font-medium">Total</td>
+                <td className="px-4 py-3 text-sm font-bold">{formatCurrency(total)}</td>
                 <td colSpan={3}></td>
               </tr>
             </tfoot>
