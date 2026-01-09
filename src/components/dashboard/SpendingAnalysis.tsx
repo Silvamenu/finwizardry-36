@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { 
   Card, 
@@ -16,20 +15,21 @@ import { cn } from "@/lib/utils";
 import { useFinancialData } from "@/hooks/useFinancialData";
 import { useFormatters } from "@/hooks/useFormatters";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useTheme } from "next-themes";
 
 const CustomTooltip = ({ active, payload }: any) => {
   const { formatCurrency } = useFormatters();
   
   if (active && payload && payload.length) {
     return (
-      <div className="chart-tooltip bg-white dark:bg-gray-800 p-3 rounded-lg shadow-md border border-gray-100 dark:border-gray-700">
+      <div className="chart-tooltip bg-card p-3 rounded-lg shadow-md border border-border">
         <div className="flex items-center gap-2 mb-1">
           <div className="w-3 h-3 rounded-full" style={{ backgroundColor: payload[0].payload.color }}></div>
-          <span className="font-medium">{payload[0].payload.name}</span>
+          <span className="font-medium text-card-foreground">{payload[0].payload.name}</span>
         </div>
         <div className="flex flex-col">
-          <span className="font-bold">{formatCurrency(payload[0].value)}</span>
-          <span className="text-xs text-gray-500 dark:text-gray-400">{payload[0].payload.percentage}% do total</span>
+          <span className="font-bold text-card-foreground">{formatCurrency(payload[0].value)}</span>
+          <span className="text-xs text-muted-foreground">{payload[0].payload.percentage}% do total</span>
         </div>
       </div>
     );
@@ -106,16 +106,16 @@ const SpendingAnalysis = () => {
         </CardTitle>
         <div className="flex items-center gap-2">
           <Tabs defaultValue="categories" className="w-[300px]" onValueChange={(value) => setTabView(value as 'categories' | 'merchants')}>
-            <TabsList className="grid w-full grid-cols-2 rounded-lg dark:bg-gray-700">
+            <TabsList className="grid w-full grid-cols-2 rounded-lg bg-muted">
               <TabsTrigger 
                 value="categories" 
-                className="rounded-l-lg data-[state=active]:bg-blue-500 dark:data-[state=active]:bg-blue-600 dark:text-gray-300 dark:data-[state=active]:text-white"
+                className="rounded-l-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
               >
                 Categorias
               </TabsTrigger>
               <TabsTrigger 
                 value="merchants" 
-                className="rounded-r-lg data-[state=active]:bg-blue-500 dark:data-[state=active]:bg-blue-600 dark:text-gray-300 dark:data-[state=active]:text-white"
+                className="rounded-r-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
               >
                 Estabelecimentos
               </TabsTrigger>
@@ -126,15 +126,15 @@ const SpendingAnalysis = () => {
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon" className="h-8 w-8 dark:bg-gray-700 dark:border-gray-600">
+              <Button variant="outline" size="icon" className="h-8 w-8">
                 <Calendar className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="dark:bg-gray-800 dark:border-gray-700">
-              <DropdownMenuItem className="dark:text-gray-300 dark:focus:bg-gray-700">Mês atual</DropdownMenuItem>
-              <DropdownMenuItem className="dark:text-gray-300 dark:focus:bg-gray-700">Mês anterior</DropdownMenuItem>
-              <DropdownMenuItem className="dark:text-gray-300 dark:focus:bg-gray-700">Últimos 3 meses</DropdownMenuItem>
-              <DropdownMenuItem className="dark:text-gray-300 dark:focus:bg-gray-700">Este ano</DropdownMenuItem>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem>Mês atual</DropdownMenuItem>
+              <DropdownMenuItem>Mês anterior</DropdownMenuItem>
+              <DropdownMenuItem>Últimos 3 meses</DropdownMenuItem>
+              <DropdownMenuItem>Este ano</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
@@ -202,27 +202,27 @@ const SpendingAnalysis = () => {
               </div>
               <div className="space-y-3 overflow-hidden">
                 {dataWithPercentage.map((item, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-lg transition-colors border border-gray-100 dark:border-gray-600">
+                  <div key={index} className="flex items-center justify-between p-3 hover:bg-muted rounded-lg transition-colors border border-border">
                     <div className="flex items-center min-w-0">
                       <div 
-                        className="w-4 h-4 rounded-full mr-3 flex-shrink-0 border-2 border-white shadow-sm" 
+                        className="w-4 h-4 rounded-full mr-3 flex-shrink-0 border-2 border-background shadow-sm" 
                         style={{ backgroundColor: item.color }} 
                       />
                       <span className="truncate font-medium">{item.name}</span>
                     </div>
                     <div className="flex flex-col items-end flex-shrink-0">
                       <span className="font-bold whitespace-nowrap text-lg">{formatCurrency(item.value)}</span>
-                      <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
+                      <div className="flex items-center text-sm text-muted-foreground">
                         <span>{item.percentage}%</span>
                         <ArrowUpRight className="h-3 w-3 ml-1 text-green-500" />
                       </div>
                     </div>
                   </div>
                 ))}
-                <div className="pt-4 mt-4 border-t border-gray-200 dark:border-gray-700">
-                  <div className="flex items-center justify-between font-bold text-lg bg-gray-50 dark:bg-gray-700 p-3 rounded-lg">
+                <div className="pt-4 mt-4 border-t border-border">
+                  <div className="flex items-center justify-between font-bold text-lg bg-muted p-3 rounded-lg">
                     <span>Total</span>
-                    <span className="text-blue-600 dark:text-blue-400">{formatCurrency(total)}</span>
+                    <span className="text-primary">{formatCurrency(total)}</span>
                   </div>
                 </div>
               </div>

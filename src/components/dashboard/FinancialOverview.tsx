@@ -1,15 +1,20 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTranslation } from "react-i18next";
 import { useFinancialData } from "@/hooks/useFinancialData";
 import { useFormatters } from "@/hooks/useFormatters";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { Skeleton } from "@/components/ui/skeleton";
+import { useTheme } from "next-themes";
 
 const FinancialOverview = () => {
   const { t } = useTranslation();
   const { summary, loading } = useFinancialData();
   const { formatCurrency } = useFormatters();
+  const { resolvedTheme } = useTheme();
+  
+  const isDark = resolvedTheme === 'dark';
+  const gridColor = isDark ? '#444444' : '#e5e7eb';
+  const textColor = isDark ? '#AAAAAA' : '#6b7280';
   
   // Prepare data for the chart - use monthly data from summary
   const chartData = summary.monthlyData.map(item => ({
@@ -20,9 +25,9 @@ const FinancialOverview = () => {
   }));
 
   return (
-    <Card className="w-full overflow-hidden bg-background-card border-white/10">
+    <Card className="w-full overflow-hidden">
       <CardHeader>
-        <CardTitle className="text-lg font-medium text-text-highlight">Visão Geral Financeira</CardTitle>
+        <CardTitle className="text-lg font-medium">Visão Geral Financeira</CardTitle>
       </CardHeader>
       <CardContent className="p-6 pt-0">
         {loading ? (
@@ -33,32 +38,31 @@ const FinancialOverview = () => {
           <div className="h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#444444" />
-                <XAxis dataKey="name" stroke="#AAAAAA" fontSize={12} tickLine={false} axisLine={false} />
+                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+                <XAxis dataKey="name" stroke={textColor} fontSize={12} tickLine={false} axisLine={false} />
                 <YAxis 
                   tickFormatter={(value) => formatCurrency(value, { notation: 'compact' })}
-                  stroke="#AAAAAA"
+                  stroke={textColor}
                   fontSize={12}
                   tickLine={false}
                   axisLine={false}
                 />
                 <Tooltip 
                   contentStyle={{
-                    backgroundColor: 'hsl(var(--card))',
-                    borderColor: 'hsl(var(--border))',
-                    color: 'hsl(var(--card-foreground))',
-                    borderRadius: 'var(--radius)'
+                    backgroundColor: isDark ? 'hsl(222, 14%, 14%)' : 'white',
+                    borderColor: isDark ? 'hsl(222, 14%, 20%)' : '#e5e7eb',
+                    color: isDark ? 'white' : '#1f2937',
+                    borderRadius: '0.5rem'
                   }}
                   formatter={(value) => {
-                    // Ensure value is a single number or string before passing to formatCurrency
                     if (typeof value === 'number' || typeof value === 'string') {
                       return formatCurrency(value);
                     }
-                    return value; // Return as-is if it's not a compatible type
+                    return value;
                   }}
                   labelFormatter={(label) => `${label}`}
                 />
-                <Legend wrapperStyle={{ color: '#AAAAAA', fontSize: '12px' }} />
+                <Legend wrapperStyle={{ color: textColor, fontSize: '12px' }} />
                 <Line 
                   type="monotone" 
                   dataKey="income" 
