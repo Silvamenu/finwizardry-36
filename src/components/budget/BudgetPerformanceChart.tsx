@@ -25,8 +25,8 @@ const BudgetPerformanceChart: React.FC<BudgetPerformanceChartProps> = ({ budgetC
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-md border border-gray-100 dark:border-gray-700">
-          <p className="font-medium mb-2">{label}</p>
+        <div className="bg-card p-3 rounded-lg shadow-md border border-border">
+          <p className="font-medium mb-2 text-foreground">{label}</p>
           {payload.map((entry: any, index: number) => (
             <p key={index} className="text-sm" style={{ color: entry.color }}>
               <span className="font-medium">{entry.name}:</span> {formatCurrency(entry.value)}
@@ -85,7 +85,7 @@ const BudgetPerformanceChart: React.FC<BudgetPerformanceChartProps> = ({ budgetC
           </ResponsiveContainer>
         ) : (
           <div className="h-full flex items-center justify-center">
-            <p className="text-gray-500 text-center">
+            <p className="text-muted-foreground text-center">
               Adicione categorias e defina limites<br />
               para visualizar a performance do seu orçamento
             </p>

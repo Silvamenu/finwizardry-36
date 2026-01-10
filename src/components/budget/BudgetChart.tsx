@@ -26,14 +26,14 @@ const BudgetChart: React.FC<BudgetChartProps> = ({ budgetCategories }) => {
       const data = payload[0].payload;
       
       return (
-        <div className="bg-white dark:bg-gray-800 p-3 rounded-lg shadow-md border border-gray-100 dark:border-gray-700">
-          <p className="font-medium">{data.name}</p>
+        <div className="bg-card p-3 rounded-lg shadow-md border border-border">
+          <p className="font-medium text-foreground">{data.name}</p>
           <p className="text-sm">
             <span className="font-bold">{formatCurrency(data.value)}</span>
             {' '}/{' '}
-            <span className="text-gray-500">{formatCurrency(data.maxAmount)}</span>
+            <span className="text-muted-foreground">{formatCurrency(data.maxAmount)}</span>
           </p>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-muted-foreground">
             {data.percentage}% do limite utilizado
           </p>
         </div>

@@ -17,7 +17,7 @@ const Automacao = () => {
       <div className="container mx-auto px-4 space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold">Automação</h1>
+            <h1 className="text-2xl font-bold text-foreground">Automação</h1>
             <p className="text-muted-foreground">
               Configure automações para economizar tempo e melhorar sua gestão financeira
             </p>

@@ -233,8 +233,8 @@ const Transacoes = () => {
       <div className="grid gap-6">
         <div className="flex flex-col md:flex-row gap-6 md:items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Transações</h1>
-            <p className="text-gray-500">Visualize e gerencie todas as suas transações financeiras</p>
+            <h1 className="text-3xl font-bold mb-2 text-foreground">Transações</h1>
+            <p className="text-muted-foreground">Visualize e gerencie todas as suas transações financeiras</p>
           </div>
           <div className="flex gap-3">
             <Button variant="outline" onClick={handleExport}>
@@ -327,8 +327,8 @@ const Transacoes = () => {
                 {loadingTransactions ? (
                   <div className="flex justify-center py-10">
                     <div className="flex flex-col items-center">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-500"></div>
-                      <span className="mt-2 text-gray-500">Carregando transações...</span>
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                      <span className="mt-2 text-muted-foreground">Carregando transações...</span>
                     </div>
                   </div>
                 ) : sortedTransactions.length === 0 ? (

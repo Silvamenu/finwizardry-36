@@ -95,10 +95,10 @@ const ExecutiveDashboard = () => {
       {/* Header */}
       <motion.div variants={itemVariants} className="mb-6">
         <div className="flex items-center space-x-3 mb-2">
-          <BarChart3 className="h-6 w-6 text-blue-600" />
-          <h1 className="text-2xl font-bold">Dashboard Executivo</h1>
+          <BarChart3 className="h-6 w-6 text-primary" />
+          <h1 className="text-2xl font-bold text-foreground">Dashboard Executivo</h1>
         </div>
-        <p className="text-gray-600 dark:text-gray-400">
+        <p className="text-muted-foreground">
           Análise abrangente da sua situação financeira • {currentMonth}
         </p>
       </motion.div>
@@ -117,7 +117,7 @@ const ExecutiveDashboard = () => {
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div className="space-y-1">
-                      <p className="text-sm font-medium text-gray-600 dark:text-gray-400">
+                      <p className="text-sm font-medium text-muted-foreground">
                         {kpi.title}
                       </p>
                       <p className={`text-xl font-bold ${kpi.color}`}>
@@ -133,11 +133,11 @@ const ExecutiveDashboard = () => {
                           <span className={kpi.change > 0 ? "text-green-600" : "text-red-600"}>
                             {formatCurrency(Math.abs(kpi.change))}
                           </span>
-                          <span className="text-gray-500">vs mês anterior</span>
+                          <span className="text-muted-foreground">vs mês anterior</span>
                         </div>
                       )}
                     </div>
-                    <div className={`p-3 rounded-full bg-white dark:bg-gray-800 ${kpi.color}`}>
+                    <div className={`p-3 rounded-full bg-card ${kpi.color}`}>
                       <kpi.icon className="h-5 w-5" />
                     </div>
                   </div>

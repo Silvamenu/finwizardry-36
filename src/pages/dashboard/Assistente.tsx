@@ -192,11 +192,11 @@ const Assistente = () => {
             
             {isTyping && (
               <div className="flex justify-start animate-fade-in">
-                <div className="bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg p-4 max-w-[80%]">
+                <div className="bg-muted text-foreground rounded-lg p-4 max-w-[80%]">
                   <div className="flex space-x-2">
-                    <div className="h-2 w-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
-                    <div className="h-2 w-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
-                    <div className="h-2 w-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: "600ms" }}></div>
+                    <div className="h-2 w-2 bg-muted-foreground/50 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
+                    <div className="h-2 w-2 bg-muted-foreground/50 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
+                    <div className="h-2 w-2 bg-muted-foreground/50 rounded-full animate-bounce" style={{ animationDelay: "600ms" }}></div>
                   </div>
                 </div>
               </div>
@@ -207,14 +207,14 @@ const Assistente = () => {
           
           {messages.length <= 2 && (
             <div className="px-6 pb-4">
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">Comece me contando seu objetivo:</p>
+              <p className="text-sm text-muted-foreground mb-2">Comece me contando seu objetivo:</p>
               <div className="flex flex-wrap gap-2">
                 {suggestedQuestions.map((question, index) => (
                   <Button
                     key={index}
                     variant="outline"
                     size="sm"
-                    className="text-xs bg-gradient-to-r from-white/50 to-white/30 hover:from-white/70 hover:to-white/50 dark:from-gray-700/50 dark:to-gray-800/30 dark:hover:from-gray-700/70 dark:hover:to-gray-800/50 border border-gray-200 dark:border-gray-700 transition-all"
+                    className="text-xs bg-card/50 hover:bg-card border-border transition-all"
                     onClick={() => handleSuggestedQuestion(question)}
                   >
                     {question}

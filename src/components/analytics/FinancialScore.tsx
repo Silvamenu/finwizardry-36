@@ -105,7 +105,7 @@ const FinancialScore = () => {
                   stroke="currentColor"
                   strokeWidth="8"
                   fill="none"
-                  className="text-gray-200"
+                  className="text-muted"
                 />
                 {/* Progress circle */}
                 <motion.circle
@@ -134,7 +134,7 @@ const FinancialScore = () => {
                   >
                     {financialScore.overall}
                   </motion.div>
-                  <div className="text-sm text-gray-500">pontos</div>
+                  <div className="text-sm text-muted-foreground">pontos</div>
                 </div>
               </div>
             </motion.div>
@@ -146,7 +146,7 @@ const FinancialScore = () => {
               >
                 {getScoreLabel(financialScore.overall)}
               </Badge>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-muted-foreground">
                 Sua saúde financeira está {getScoreLabel(financialScore.overall).toLowerCase()}
               </p>
             </div>
@@ -154,7 +154,7 @@ const FinancialScore = () => {
 
           {/* Score Breakdown */}
           <div className="space-y-4">
-            <h4 className="font-semibold text-gray-700">Detalhamento do Score</h4>
+            <h4 className="font-semibold text-foreground">Detalhamento do Score</h4>
             <div className="space-y-3">
               {scoreMetrics.map((metric, index) => (
                 <motion.div

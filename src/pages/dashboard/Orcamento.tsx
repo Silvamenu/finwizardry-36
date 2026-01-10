@@ -47,8 +47,8 @@ const Orcamento = () => {
       <div className="grid gap-6">
         <div className="flex flex-col md:flex-row gap-6 md:items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Orçamento</h1>
-            <p className="text-gray-500">Acompanhe e gerencie seus gastos mensais</p>
+            <h1 className="text-3xl font-bold mb-2 text-foreground">Orçamento</h1>
+            <p className="text-muted-foreground">Acompanhe e gerencie seus gastos mensais</p>
           </div>
           <div className="flex gap-3">
             <Button onClick={() => setCategoryFormOpen(true)}>
@@ -120,7 +120,7 @@ const Orcamento = () => {
                 Erro ao carregar categorias: {error}
               </div>
             ) : budgetCategories.length === 0 ? (
-              <div className="text-center py-10 text-gray-500">
+              <div className="text-center py-10 text-muted-foreground">
                 <p className="mb-4">Você ainda não tem categorias de orçamento configuradas.</p>
                 <Button variant="outline" onClick={() => setCategoryFormOpen(true)}>
                   <Plus className="h-4 w-4 mr-2" />

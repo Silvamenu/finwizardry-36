@@ -76,13 +76,13 @@ const PredictiveAnalysis = () => {
         {/* Confidence Indicator */}
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
-            <span className="font-medium">Nível de Confiança</span>
+            <span className="font-medium text-foreground">Nível de Confiança</span>
             <span className={`font-bold ${getConfidenceColor(predictiveAnalysis.confidence)}`}>
               {predictiveAnalysis.confidence}%
             </span>
           </div>
           <Progress value={predictiveAnalysis.confidence} className="h-2" />
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-muted-foreground">
             Baseado nos últimos 3 meses de dados financeiros
           </p>
         </div>
@@ -105,14 +105,14 @@ const PredictiveAnalysis = () => {
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className={`p-2 rounded-full bg-white dark:bg-gray-800 ${prediction.color}`}>
+                    <div className={`p-2 rounded-full bg-card ${prediction.color}`}>
                       <prediction.icon className="h-4 w-4" />
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900 dark:text-gray-100">
+                      <p className="font-medium text-foreground">
                         {prediction.label}
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-muted-foreground">
                         {prediction.label === "Poupança Projetada" ? 
                           (prediction.value >= 0 ? "Economia esperada" : "Déficit previsto") :
                           "Baseado no histórico recente"

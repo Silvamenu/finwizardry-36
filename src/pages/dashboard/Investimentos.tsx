@@ -144,7 +144,7 @@ const Investimentos = () => {
       <div className="grid gap-6">
         <div className="flex flex-col md:flex-row gap-6 md:items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Investimentos</h1>
+            <h1 className="text-3xl font-bold mb-2 text-foreground">Investimentos</h1>
             <p className="text-muted-foreground">Acompanhe o desempenho da sua carteira</p>
           </div>
           <div className="flex gap-3">
