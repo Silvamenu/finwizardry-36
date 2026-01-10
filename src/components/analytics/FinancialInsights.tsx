@@ -61,7 +61,7 @@ const FinancialInsights = () => {
       case 'down':
         return 'text-red-600';
       default:
-        return 'text-gray-600';
+        return 'text-muted-foreground';
     }
   };
 
@@ -81,16 +81,16 @@ const FinancialInsights = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-center p-4 rounded-lg border"
+              className="text-center p-4 rounded-lg border bg-card"
             >
               <div className="flex items-center justify-center space-x-2 mb-2">
                 {getTrendIcon(trendAnalysis.income.trend)}
-                <span className="font-medium">Receitas</span>
+                <span className="font-medium text-foreground">Receitas</span>
               </div>
               <div className={`text-2xl font-bold ${getTrendColor(trendAnalysis.income.trend)}`}>
                 {trendAnalysis.income.percentage}%
               </div>
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-muted-foreground">
                 {trendAnalysis.income.trend === 'up' ? 'Crescimento' : 
                  trendAnalysis.income.trend === 'down' ? 'Redução' : 'Estável'}
               </div>
@@ -100,16 +100,16 @@ const FinancialInsights = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-center p-4 rounded-lg border"
+              className="text-center p-4 rounded-lg border bg-card"
             >
               <div className="flex items-center justify-center space-x-2 mb-2">
                 {getTrendIcon(trendAnalysis.expenses.trend)}
-                <span className="font-medium">Gastos</span>
+                <span className="font-medium text-foreground">Gastos</span>
               </div>
               <div className={`text-2xl font-bold ${getTrendColor(trendAnalysis.expenses.trend)}`}>
                 {trendAnalysis.expenses.percentage}%
               </div>
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-muted-foreground">
                 {trendAnalysis.expenses.trend === 'up' ? 'Aumento' : 
                  trendAnalysis.expenses.trend === 'down' ? 'Redução' : 'Estável'}
               </div>
@@ -119,16 +119,16 @@ const FinancialInsights = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="text-center p-4 rounded-lg border"
+              className="text-center p-4 rounded-lg border bg-card"
             >
               <div className="flex items-center justify-center space-x-2 mb-2">
                 {getTrendIcon(trendAnalysis.savings.trend)}
-                <span className="font-medium">Poupança</span>
+                <span className="font-medium text-foreground">Poupança</span>
               </div>
               <div className={`text-2xl font-bold ${getTrendColor(trendAnalysis.savings.trend)}`}>
                 {trendAnalysis.savings.percentage}%
               </div>
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-muted-foreground">
                 {trendAnalysis.savings.trend === 'up' ? 'Crescimento' : 
                  trendAnalysis.savings.trend === 'down' ? 'Redução' : 'Estável'}
               </div>
@@ -148,8 +148,8 @@ const FinancialInsights = () => {
         <CardContent>
           {insights.length === 0 ? (
             <div className="text-center py-8">
-              <Lightbulb className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">
+              <Lightbulb className="h-12 w-12 text-muted mx-auto mb-4" />
+              <p className="text-muted-foreground">
                 Adicione mais transações para receber insights personalizados
               </p>
             </div>

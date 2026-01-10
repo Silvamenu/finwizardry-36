@@ -29,24 +29,24 @@ const BudgetSummary: React.FC<BudgetSummaryProps> = ({ budgetCategories }) => {
           {/* Total Budget */}
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <span className="text-sm font-medium">Orçamento Total</span>
-              <span className="text-sm text-gray-500">
+              <span className="text-sm font-medium text-foreground">Orçamento Total</span>
+              <span className="text-sm text-muted-foreground">
                 {formatCurrency(totalBudgetUsed)} / {formatCurrency(totalBudgetMax)}
               </span>
             </div>
             <Progress 
               value={totalPercentUsed} 
-              className="h-3 bg-gray-100 dark:bg-gray-800"
+              className="h-3 bg-muted"
             />
-            <div className="flex justify-between text-xs text-gray-500">
+            <div className="flex justify-between text-xs text-muted-foreground">
               <span>Utilizado: {totalPercentUsed}%</span>
               <span>Restante: {formatCurrency(totalBudgetMax - totalBudgetUsed)}</span>
             </div>
           </div>
 
           {/* Status */}
-          <div className="bg-gray-50 dark:bg-gray-800/50 p-3 rounded-lg">
-            <h4 className="text-sm font-medium mb-2">Status do Orçamento</h4>
+          <div className="bg-muted/50 p-3 rounded-lg">
+            <h4 className="text-sm font-medium mb-2 text-foreground">Status do Orçamento</h4>
             {totalPercentUsed < 50 ? (
               <p className="text-xs text-green-600 dark:text-green-400">
                 Excelente! Você está controlando bem seus gastos.

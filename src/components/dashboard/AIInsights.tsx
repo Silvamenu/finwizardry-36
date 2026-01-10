@@ -91,12 +91,12 @@ const AIInsights = () => {
 
   const getColorClass = (color: string) => {
     switch (color) {
-      case 'red': return 'bg-red-100 text-red-700';
-      case 'green': return 'bg-green-100 text-green-700';
-      case 'blue': return 'bg-blue-100 text-blue-700';
-      case 'amber': return 'bg-amber-100 text-amber-700';
-      case 'orange': return 'bg-orange-100 text-orange-700';
-      default: return 'bg-gray-100 text-gray-700';
+      case 'red': return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400';
+      case 'green': return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400';
+      case 'blue': return 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400';
+      case 'amber': return 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400';
+      case 'orange': return 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400';
+      default: return 'bg-muted text-muted-foreground';
     }
   };
 
@@ -117,7 +117,7 @@ const AIInsights = () => {
           {currentInsights.map((insight) => (
             <div 
               key={insight.id} 
-              className="p-4 border rounded-lg hover:shadow-md transition-shadow"
+              className="p-4 border rounded-lg hover:shadow-md transition-shadow bg-card"
             >
               <div className="flex items-start">
                 <div className={`p-2 rounded-full ${getColorClass(insight.color)} mr-3`}>
@@ -125,15 +125,15 @@ const AIInsights = () => {
                 </div>
                 <div>
                   <div className="flex items-center mb-1">
-                    <h3 className="font-medium">{insight.title}</h3>
+                    <h3 className="font-medium text-foreground">{insight.title}</h3>
                     <Badge 
                       variant="outline" 
                       className={`ml-2 ${
                         insight.type === 'alert' 
-                          ? 'border-red-300 text-red-700' 
+                          ? 'border-red-300 text-red-700 dark:border-red-800 dark:text-red-400' 
                           : insight.type === 'opportunity' 
-                            ? 'border-green-300 text-green-700' 
-                            : 'border-amber-300 text-amber-700'
+                            ? 'border-green-300 text-green-700 dark:border-green-800 dark:text-green-400' 
+                            : 'border-amber-300 text-amber-700 dark:border-amber-800 dark:text-amber-400'
                       }`}
                     >
                       {insight.type === 'alert' 
@@ -143,7 +143,7 @@ const AIInsights = () => {
                           : 'Economia'}
                     </Badge>
                   </div>
-                  <p className="text-sm text-gray-600">{insight.description}</p>
+                  <p className="text-sm text-muted-foreground">{insight.description}</p>
                 </div>
               </div>
             </div>

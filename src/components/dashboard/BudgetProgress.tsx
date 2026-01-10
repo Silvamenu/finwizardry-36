@@ -82,8 +82,8 @@ const BudgetProgress = () => {
       <CardContent className="space-y-6">
         <div className="space-y-2">
           <div className="flex justify-between items-center">
-            <span className="text-sm font-medium">Orçamento Total</span>
-            <span className="text-sm text-gray-500">
+            <span className="text-sm font-medium text-foreground">Orçamento Total</span>
+            <span className="text-sm text-muted-foreground">
               {formatCurrency(totalSpent)} / {formatCurrency(totalBudget)}
             </span>
           </div>
@@ -91,7 +91,7 @@ const BudgetProgress = () => {
             value={totalPercentUsed} 
             className="h-3"
           />
-          <div className="flex justify-between text-xs text-gray-500">
+          <div className="flex justify-between text-xs text-muted-foreground">
             <span>Utilizado: {totalPercentUsed}%</span>
             <span>Restante: {formatCurrency(totalBudget - totalSpent)}</span>
           </div>
@@ -102,7 +102,7 @@ const BudgetProgress = () => {
             <div key={index} className="space-y-1">
               <div className="flex justify-between items-center">
                 <div className="flex items-center">
-                  <span className="text-sm font-medium">{category.name}</span>
+                  <span className="text-sm font-medium text-foreground">{category.name}</span>
                   {category.trend === "up" ? (
                     <ArrowUpRight className="ml-1 h-4 w-4 text-red-500" />
                   ) : (
@@ -112,7 +112,7 @@ const BudgetProgress = () => {
                     {category.trend === "up" ? "+" : "-"}{category.trendPercentage}%
                   </span>
                 </div>
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-muted-foreground">
                   {formatCurrency(category.current)} / {formatCurrency(category.max)}
                 </span>
               </div>
