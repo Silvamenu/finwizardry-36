@@ -48,64 +48,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setLoading(true);
       
-      // Admin special case
-      if (email === 'loginparasites02@gmail.com' && password === '123456') {
-        const { data, error } = await supabase.auth.signInWithPassword({ 
-          email, 
-          password 
-        });
-        
-        if (error) throw error;
-        
-        if (data?.user) {
-          toast.success('Login realizado com sucesso!');
-          
-          // Create a smooth transition effect
-          const transitionOverlay = document.createElement('div');
-          transitionOverlay.className = 'login-transition';
-          
-          const loadingSpinner = document.createElement('div');
-          loadingSpinner.className = 'login-spinner';
-          
-          const centerContainer = document.createElement('div');
-          centerContainer.className = 'flex items-center justify-center h-full';
-          centerContainer.appendChild(loadingSpinner);
-          
-          transitionOverlay.appendChild(centerContainer);
-          document.body.appendChild(transitionOverlay);
-          
-          // Fade in
-          setTimeout(() => {
-            transitionOverlay.classList.add('active');
-          }, 50);
-          
-          // Navigate after animation
-          setTimeout(() => {
-            // Ensure we navigate to the dashboard
-            window.location.href = '/#/dashboard';
-            
-            // Fade out after navigation
-            setTimeout(() => {
-              transitionOverlay.classList.remove('active');
-              
-              // Remove element after fade out
-              setTimeout(() => {
-                document.body.removeChild(transitionOverlay);
-              }, 500);
-            }, 300);
-          }, 800);
-          
-          return;
-        }
-      }
-      
-      // Regular flow for other users
       const { error, data } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
       
       toast.success('Login realizado com sucesso!');
       
-      // Create a smooth transition effect for regular users too
+      // Create a smooth transition effect
       const transitionOverlay = document.createElement('div');
       transitionOverlay.className = 'login-transition';
       
@@ -126,7 +74,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       // Navigate to dashboard directly
       setTimeout(() => {
-        // Use window.location.href to ensure a full navigation to dashboard
         window.location.href = '/#/dashboard';
         
         // Fade out after navigation
@@ -150,13 +97,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signUp = async (email: string, password: string, name: string) => {
     try {
       setLoading(true);
-      // Prevent admin email from being used for signup
-      if (email === 'loginparasites02@gmail.com') {
-        toast.error('Este email não pode ser utilizado para cadastro');
-        return;
-      }
       
-      // Update signup options to skip email confirmation
       const { error, data } = await supabase.auth.signUp({ 
         email, 
         password,
