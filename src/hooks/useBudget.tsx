@@ -66,21 +66,16 @@ export const useBudget = () => {
         .select('*')
         .eq('user_id', user.id)
         .eq('type', 'expense')
-        .gte('date', new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString()) // Current month
-        .lte('date', new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).toISOString()); // End of current month
+        .gte('date', new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString())
+        .lte('date', new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).toISOString());
 
       if (transactionsError) throw transactionsError;
 
       // Process budget data
       const processedBudgetData = (data as any[] || []).map(category => {
-        // Calculate current amount spent for this category
         const categoryTransactions = transactions ? transactions.filter(t => t.category_id === category.id) : [];
         const currentAmount = categoryTransactions.reduce((sum, t) => sum + Number(t.amount), 0);
-        
-        // Extract maximum amount from the color field
         const maxAmount = extractBudgetLimit(category.color);
-        
-        // Calculate percentage of budget used
         const percentage = Math.min(Math.round((currentAmount / maxAmount) * 100), 100);
 
         return {
@@ -111,8 +106,25 @@ export const useBudget = () => {
   const updateBudgetLimit = async (categoryId: string, newLimit: number) => {
     if (!user) return false;
 
+    // Store previous state for rollback
+    const previousBudgetCategories = [...budgetCategories];
+
+    // Optimistic update
+    setBudgetCategories(prev =>
+      prev.map(bc => {
+        if (bc.id === categoryId) {
+          const percentage = Math.min(Math.round((bc.current_amount / newLimit) * 100), 100);
+          return {
+            ...bc,
+            max_amount: newLimit,
+            percentage
+          };
+        }
+        return bc;
+      })
+    );
+
     try {
-      // Get the current category data to preserve the color
       const { data: categoryData, error: fetchError } = await supabase
         .from('categories')
         .select('color')
@@ -122,10 +134,8 @@ export const useBudget = () => {
       
       if (fetchError) throw fetchError;
       
-      // Extract the current color value
       const currentColor = extractColor(categoryData?.color);
       
-      // Update with the new budget limit while preserving the color
       const { error } = await supabase
         .from('categories')
         .update({ 
@@ -136,11 +146,11 @@ export const useBudget = () => {
 
       if (error) throw error;
 
-      // Refresh budget data
-      await fetchBudgetCategories();
       toast.success('Limite de orçamento atualizado com sucesso!');
       return true;
     } catch (err: any) {
+      // Rollback on error
+      setBudgetCategories(previousBudgetCategories);
       console.error('Erro ao atualizar limite de orçamento:', err);
       toast.error('Erro ao atualizar limite de orçamento');
       return false;

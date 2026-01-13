@@ -3,7 +3,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
-import { Database } from '@/integrations/supabase/types';
 
 export interface Category {
   id: string;
@@ -40,7 +39,6 @@ export function useCategories() {
 
       if (error) throw error;
 
-      // Use type assertion with as unknown first to avoid direct type conversion errors
       setCategories((data as unknown as Category[]) || []);
     } catch (err: any) {
       console.error('Erro ao buscar categorias:', err);
@@ -58,8 +56,25 @@ export function useCategories() {
   const addCategory = async (categoryData: CategoryFormData) => {
     if (!user) return null;
     
+    // Create optimistic category with temporary ID
+    const tempId = `temp-${Date.now()}`;
+    const optimisticCategory: Category = {
+      id: tempId,
+      name: categoryData.name,
+      type: categoryData.type,
+      color: categoryData.color || null,
+      icon: categoryData.icon || null,
+      user_id: user.id,
+      created_at: new Date().toISOString()
+    };
+
+    // Optimistic update - add immediately to UI
+    setCategories(prev => {
+      const updated = [...prev, optimisticCategory];
+      return updated.sort((a, b) => a.name.localeCompare(b.name));
+    });
+
     try {
-      // Create object that matches the Supabase table schema
       const newCategory = {
         name: categoryData.name,
         type: categoryData.type,
@@ -68,7 +83,6 @@ export function useCategories() {
         user_id: user.id
       };
 
-      // Use array syntax for insert
       const { data, error } = await supabase
         .from('categories')
         .insert([newCategory] as any)
@@ -76,10 +90,17 @@ export function useCategories() {
 
       if (error) throw error;
       
+      // Replace optimistic category with real one
+      const realCategory = data[0] as unknown as Category;
+      setCategories(prev => 
+        prev.map(c => c.id === tempId ? realCategory : c)
+      );
+
       toast.success('Categoria criada com sucesso!');
-      await fetchCategories();
-      return (data[0] as unknown as Category);
+      return realCategory;
     } catch (err: any) {
+      // Rollback optimistic update on error
+      setCategories(prev => prev.filter(c => c.id !== tempId));
       console.error('Erro ao adicionar categoria:', err);
       toast.error('Erro ao criar categoria');
       return null;
@@ -89,8 +110,26 @@ export function useCategories() {
   const updateCategory = async (id: string, categoryData: Partial<CategoryFormData>) => {
     if (!user) return false;
     
+    // Store previous state for rollback
+    const previousCategories = [...categories];
+    
+    // Optimistic update
+    setCategories(prev => 
+      prev.map(c => {
+        if (c.id === id) {
+          return {
+            ...c,
+            ...(categoryData.name !== undefined && { name: categoryData.name }),
+            ...(categoryData.type !== undefined && { type: categoryData.type }),
+            ...(categoryData.color !== undefined && { color: categoryData.color }),
+            ...(categoryData.icon !== undefined && { icon: categoryData.icon }),
+          };
+        }
+        return c;
+      }).sort((a, b) => a.name.localeCompare(b.name))
+    );
+
     try {
-      // Create update object that matches the Supabase table schema
       const updateData: { 
         name?: string; 
         type?: string; 
@@ -111,9 +150,10 @@ export function useCategories() {
       if (error) throw error;
       
       toast.success('Categoria atualizada com sucesso!');
-      await fetchCategories();
       return true;
     } catch (err: any) {
+      // Rollback on error
+      setCategories(previousCategories);
       console.error('Erro ao atualizar categoria:', err);
       toast.error('Erro ao atualizar categoria');
       return false;
@@ -123,6 +163,12 @@ export function useCategories() {
   const deleteCategory = async (id: string) => {
     if (!user) return false;
     
+    // Store previous state for rollback
+    const previousCategories = [...categories];
+    
+    // Optimistic update - remove immediately
+    setCategories(prev => prev.filter(c => c.id !== id));
+
     try {
       const { error } = await supabase
         .from('categories')
@@ -132,9 +178,10 @@ export function useCategories() {
       if (error) throw error;
       
       toast.success('Categoria excluída com sucesso!');
-      await fetchCategories();
       return true;
     } catch (err: any) {
+      // Rollback on error
+      setCategories(previousCategories);
       console.error('Erro ao excluir categoria:', err);
       toast.error('Erro ao excluir categoria');
       return false;
