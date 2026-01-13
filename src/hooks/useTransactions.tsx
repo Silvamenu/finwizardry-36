@@ -18,7 +18,7 @@ export interface Transaction {
 }
 
 export interface TransactionFormData {
-  id?: string; // Added optional id field
+  id?: string;
   description: string;
   amount: number;
   category_id: string | null;
@@ -46,7 +46,6 @@ export function useTransactions() {
 
       if (error) throw error;
 
-      // Use type assertion with as unknown first to avoid direct type conversion errors
       setTransactions((data as unknown as Transaction[]) || []);
     } catch (err: any) {
       console.error('Erro ao buscar transações:', err);
@@ -64,8 +63,29 @@ export function useTransactions() {
   const addTransaction = async (transactionData: TransactionFormData) => {
     if (!user) return null;
     
+    // Create optimistic transaction with temporary ID
+    const tempId = `temp-${Date.now()}`;
+    const optimisticTransaction: Transaction = {
+      id: tempId,
+      description: transactionData.description,
+      amount: transactionData.amount,
+      category_id: transactionData.category_id,
+      type: transactionData.type,
+      date: transactionData.date,
+      payment_method: transactionData.payment_method,
+      status: transactionData.status,
+      user_id: user.id,
+      created_at: new Date().toISOString()
+    };
+
+    // Optimistic update - add immediately to UI
+    setTransactions(prev => {
+      const updated = [optimisticTransaction, ...prev];
+      // Sort by date descending
+      return updated.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    });
+
     try {
-      // Create object that matches the Supabase table schema
       const newTransaction = {
         description: transactionData.description,
         amount: transactionData.amount,
@@ -77,7 +97,6 @@ export function useTransactions() {
         user_id: user.id
       };
 
-      // Use array syntax for insert
       const { data, error } = await supabase
         .from('transactions')
         .insert([newTransaction] as any)
@@ -85,10 +104,17 @@ export function useTransactions() {
 
       if (error) throw error;
       
+      // Replace optimistic transaction with real one
+      const realTransaction = data[0] as unknown as Transaction;
+      setTransactions(prev => 
+        prev.map(t => t.id === tempId ? realTransaction : t)
+      );
+
       toast.success('Transação criada com sucesso!');
-      await fetchTransactions();
-      return (data[0] as unknown as Transaction);
+      return realTransaction;
     } catch (err: any) {
+      // Rollback optimistic update on error
+      setTransactions(prev => prev.filter(t => t.id !== tempId));
       console.error('Erro ao adicionar transação:', err);
       toast.error('Erro ao criar transação');
       return null;
@@ -98,8 +124,29 @@ export function useTransactions() {
   const updateTransaction = async (id: string, transactionData: Partial<TransactionFormData>) => {
     if (!user) return false;
     
+    // Store previous state for rollback
+    const previousTransactions = [...transactions];
+    
+    // Optimistic update
+    setTransactions(prev => 
+      prev.map(t => {
+        if (t.id === id) {
+          return {
+            ...t,
+            ...(transactionData.description !== undefined && { description: transactionData.description }),
+            ...(transactionData.amount !== undefined && { amount: transactionData.amount }),
+            ...(transactionData.category_id !== undefined && { category_id: transactionData.category_id }),
+            ...(transactionData.type !== undefined && { type: transactionData.type }),
+            ...(transactionData.date !== undefined && { date: transactionData.date }),
+            ...(transactionData.payment_method !== undefined && { payment_method: transactionData.payment_method }),
+            ...(transactionData.status !== undefined && { status: transactionData.status }),
+          };
+        }
+        return t;
+      }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    );
+
     try {
-      // Create update object that matches the Supabase table schema
       const updateData: { 
         description?: string;
         amount?: number;
@@ -126,9 +173,10 @@ export function useTransactions() {
       if (error) throw error;
       
       toast.success('Transação atualizada com sucesso!');
-      await fetchTransactions();
       return true;
     } catch (err: any) {
+      // Rollback on error
+      setTransactions(previousTransactions);
       console.error('Erro ao atualizar transação:', err);
       toast.error('Erro ao atualizar transação');
       return false;
@@ -138,6 +186,12 @@ export function useTransactions() {
   const deleteTransaction = async (id: string) => {
     if (!user) return false;
     
+    // Store previous state for rollback
+    const previousTransactions = [...transactions];
+    
+    // Optimistic update - remove immediately
+    setTransactions(prev => prev.filter(t => t.id !== id));
+
     try {
       const { error } = await supabase
         .from('transactions')
@@ -147,9 +201,10 @@ export function useTransactions() {
       if (error) throw error;
       
       toast.success('Transação excluída com sucesso!');
-      await fetchTransactions();
       return true;
     } catch (err: any) {
+      // Rollback on error
+      setTransactions(previousTransactions);
       console.error('Erro ao excluir transação:', err);
       toast.error('Erro ao excluir transação');
       return false;
@@ -164,7 +219,6 @@ export function useTransactions() {
 
     try {
       if (format === 'csv') {
-        // Converter para CSV
         const headers = ['Data', 'Descrição', 'Valor', 'Categoria', 'Tipo', 'Status', 'Método de Pagamento'];
         const csvRows = [headers.join(',')];
         
@@ -194,7 +248,6 @@ export function useTransactions() {
         document.body.removeChild(link);
         toast.success('Transações exportadas com sucesso!');
       } else {
-        // JSON
         const dataStr = JSON.stringify(transactions, null, 2);
         const blob = new Blob([dataStr], { type: 'application/json' });
         const link = document.createElement('a');
