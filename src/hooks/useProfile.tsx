@@ -70,8 +70,9 @@ export function useProfile() {
     if (!user?.id) throw new Error('User not authenticated');
 
     const fileExt = file.name.split('.').pop();
-    const fileName = `${user.id}-${Math.random()}.${fileExt}`;
-    const filePath = `avatars/${fileName}`;
+    const fileName = `${Date.now()}.${fileExt}`;
+    // Use folder-based path: {user_id}/{filename} for RLS policy enforcement
+    const filePath = `${user.id}/${fileName}`;
 
     const { data: buckets } = await supabase.storage.listBuckets();
     if (!buckets?.find(bucket => bucket.name === 'avatars')) {
