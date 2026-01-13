@@ -63,28 +63,16 @@ const SpendingAnalysis = () => {
   const { summary, loading } = useFinancialData();
   const { formatCurrency } = useFormatters();
   
-  // Default data for merchants since we don't have that in our database yet
-  const defaultMerchantData = [
-    { name: 'Supermercado', value: 850, color: '#0ea5e9' },
-    { name: 'Aluguel', value: 1500, color: '#22c55e' },
-    { name: 'Restaurantes', value: 450, color: '#f59e0b' },
-    { name: 'Streaming', value: 120, color: '#8b5cf6' },
-    { name: 'Farmácia', value: 180, color: '#ef4444' },
-    { name: 'Outros', value: 720, color: '#6b7280' }
-  ];
-
-  // Use real spending data or default merchants data
-  const rawData = tabView === 'categories' ? summary.spendingByCategory : defaultMerchantData;
+  // Use real spending data from transactions
+  const data = tabView === 'categories' ? summary.spendingByCategory : [];
   
-  // Fallback to sample data if we have no transactions
-  const data = rawData.length > 0 ? rawData : defaultMerchantData;
+  const hasData = data.length > 0;
+  const total = hasData ? data.reduce((sum, item) => sum + item.value, 0) : 0;
   
-  const total = data.reduce((sum, item) => sum + item.value, 0);
-  
-  const dataWithPercentage = data.map(item => ({
+  const dataWithPercentage = hasData ? data.map(item => ({
     ...item,
     percentage: parseFloat(((item.value / total) * 100).toFixed(1))
-  }));
+  })) : [];
 
   const chartConfig = dataWithPercentage.reduce((config, item) => {
     config[item.name] = {
@@ -143,6 +131,16 @@ const SpendingAnalysis = () => {
         {loading ? (
           <div className="flex items-center justify-center h-[300px]">
             <Skeleton className="h-[200px] w-[200px] rounded-full" />
+          </div>
+        ) : !hasData ? (
+          <div className="flex flex-col items-center justify-center h-[300px] text-center">
+            <div className="w-24 h-24 rounded-full bg-muted flex items-center justify-center mb-4">
+              <FileBarChart className="h-10 w-10 text-muted-foreground" />
+            </div>
+            <h3 className="text-lg font-medium text-foreground mb-2">Nenhum dado disponível</h3>
+            <p className="text-sm text-muted-foreground max-w-sm">
+              Adicione transações de despesa na aba de Transações para visualizar a análise de gastos por categoria.
+            </p>
           </div>
         ) : (
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
