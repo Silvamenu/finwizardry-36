@@ -5,3 +5,6 @@ verify_jwt = true
 
 [functions.get-stock-quote]
 verify_jwt = true
+
+[functions.parse-bank-statement]
+verify_jwt = false
