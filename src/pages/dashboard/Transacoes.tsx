@@ -9,11 +9,13 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { TransactionForm } from "@/components/transactions/TransactionForm";
 import { CategoryForm } from "@/components/transactions/CategoryForm";
 import { ImportCSV } from "@/components/transactions/ImportCSV";
+import { ImportPDF } from "@/components/transactions/ImportPDF";
 import { 
   ArrowDownUp, 
   Calendar, 
   Download,
   Upload,
+  FileText,
   Filter, 
   Plus, 
   Search, 
@@ -26,7 +28,8 @@ import {
   Briefcase, 
   Trash2,
   Pencil,
-  AlertCircle
+  AlertCircle,
+  Sparkles
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { format, parseISO } from "date-fns";
@@ -67,6 +70,7 @@ const Transacoes = () => {
   const [transactionFormOpen, setTransactionFormOpen] = useState(false);
   const [categoryFormOpen, setCategoryFormOpen] = useState(false);
   const [importCsvOpen, setImportCsvOpen] = useState(false);
+  const [importPdfOpen, setImportPdfOpen] = useState(false);
   const [editingTransaction, setEditingTransaction] = useState<TransactionType | null>(null);
 
   // Filtragem de transações
@@ -236,7 +240,7 @@ const Transacoes = () => {
             <h1 className="text-3xl font-bold mb-2 text-foreground">Transações</h1>
             <p className="text-muted-foreground">Visualize e gerencie todas as suas transações financeiras</p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
             <Button variant="outline" onClick={handleExport}>
               <Download className="h-4 w-4 mr-2" />
               Exportar
@@ -244,6 +248,10 @@ const Transacoes = () => {
             <Button variant="outline" onClick={() => setImportCsvOpen(true)}>
               <Upload className="h-4 w-4 mr-2" />
               Importar CSV
+            </Button>
+            <Button variant="default" className="bg-gradient-to-r from-primary to-primary/80" onClick={() => setImportPdfOpen(true)}>
+              <Sparkles className="h-4 w-4 mr-2" />
+              Importar PDF com IA
             </Button>
             <Button variant="outline" onClick={() => setCategoryFormOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
@@ -678,6 +686,12 @@ const Transacoes = () => {
       <ImportCSV
         open={importCsvOpen}
         onOpenChange={setImportCsvOpen}
+        onImport={handleImportTransactions}
+      />
+
+      <ImportPDF
+        open={importPdfOpen}
+        onOpenChange={setImportPdfOpen}
         onImport={handleImportTransactions}
       />
     </DashboardLayout>
