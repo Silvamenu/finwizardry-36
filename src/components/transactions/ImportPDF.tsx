@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Upload, FileText, Check, X, Loader2, Sparkles, AlertCircle } from 'lucide-react';
+import { Upload, FileText, Check, Loader2, Sparkles, AlertCircle } from 'lucide-react';
 import { TransactionFormData } from '@/hooks/useTransactions';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from 'sonner';
@@ -34,53 +34,32 @@ export function ImportPDF({ onImport, open, onOpenChange }: ImportPDFProps) {
   const [analyzing, setAnalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [step, setStep] = useState<'upload' | 'analyzing' | 'preview'>('upload');
+  const [rawText, setRawText] = useState<string | null>(null);
   const [summary, setSummary] = useState<{
     total_income: number;
     total_expenses: number;
     transaction_count: number;
   } | null>(null);
 
-  const readPDFAsText = async (file: File): Promise<string> => {
-    // For PDF files, we'll read them as base64 and let the AI extract text
+  // Convert file to base64 for reliable transmission
+  const fileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onload = async (e) => {
-        try {
-          const arrayBuffer = e.target?.result as ArrayBuffer;
-          const uint8Array = new Uint8Array(arrayBuffer);
-          
-          // Convert to text - PDFs contain readable text sections
-          let text = '';
-          for (let i = 0; i < uint8Array.length; i++) {
-            const char = uint8Array[i];
-            // Only include printable ASCII and common extended characters
-            if ((char >= 32 && char <= 126) || char === 10 || char === 13) {
-              text += String.fromCharCode(char);
-            } else if (char >= 128) {
-              // Skip non-printable characters but add space to maintain structure
-              text += ' ';
-            }
-          }
-          
-          // Clean up the extracted text
-          text = text
-            .replace(/\s+/g, ' ')
-            .replace(/[^\w\s\d.,\-\/R$€£¥:()]/g, ' ')
-            .trim();
-          
-          resolve(text);
-        } catch (err) {
-          reject(err);
-        }
+      reader.onload = () => {
+        const result = reader.result as string;
+        // Remove data URL prefix to get pure base64
+        const base64 = result.split(',')[1];
+        resolve(base64);
       };
       reader.onerror = reject;
-      reader.readAsArrayBuffer(file);
+      reader.readAsDataURL(file);
     });
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     setError(null);
+    setRawText(null);
 
     if (!selectedFile) return;
 
@@ -99,14 +78,14 @@ export function ImportPDF({ onImport, open, onOpenChange }: ImportPDFProps) {
     setAnalyzing(true);
 
     try {
-      const pdfText = await readPDFAsText(selectedFile);
-      
-      if (pdfText.length < 100) {
-        throw new Error('O PDF parece estar vazio ou protegido. Tente um arquivo diferente.');
-      }
+      // Convert PDF to base64 for reliable transmission
+      const pdfBase64 = await fileToBase64(selectedFile);
 
       const { data, error: fnError } = await supabase.functions.invoke('parse-bank-statement', {
-        body: { pdfContent: pdfText }
+        body: { 
+          pdfBase64,
+          fileName: selectedFile.name 
+        }
       });
 
       if (fnError) {
@@ -119,6 +98,11 @@ export function ImportPDF({ onImport, open, onOpenChange }: ImportPDFProps) {
 
       if (!data.transactions || data.transactions.length === 0) {
         throw new Error('Nenhuma transação encontrada no extrato. Verifique se o PDF contém dados de transações.');
+      }
+
+      // Store the raw extracted text for transparency
+      if (data.rawText) {
+        setRawText(data.rawText);
       }
 
       const transactionsWithSelection = data.transactions.map((t: ExtractedTransaction) => ({
@@ -188,6 +172,7 @@ export function ImportPDF({ onImport, open, onOpenChange }: ImportPDFProps) {
     setStep('upload');
     setError(null);
     setSummary(null);
+    setRawText(null);
   };
 
   const formatCurrency = (value: number) => {
@@ -198,6 +183,7 @@ export function ImportPDF({ onImport, open, onOpenChange }: ImportPDFProps) {
   };
 
   const selectedCount = extractedTransactions.filter(t => t.selected).length;
+  const [showRawText, setShowRawText] = useState(false);
 
   return (
     <Dialog open={open} onOpenChange={(open) => {
@@ -259,7 +245,7 @@ export function ImportPDF({ onImport, open, onOpenChange }: ImportPDFProps) {
             <div className="text-center">
               <h3 className="text-lg font-medium">Analisando seu extrato...</h3>
               <p className="text-sm text-muted-foreground">
-                A IA está identificando suas transações. Isso pode levar alguns segundos.
+                Extraindo texto do PDF e identificando transações. Isso pode levar alguns segundos.
               </p>
             </div>
           </div>
@@ -275,8 +261,19 @@ export function ImportPDF({ onImport, open, onOpenChange }: ImportPDFProps) {
                 <Button variant="ghost" size="sm" onClick={resetState}>
                   Alterar arquivo
                 </Button>
+                {rawText && (
+                  <Button variant="ghost" size="sm" onClick={() => setShowRawText(!showRawText)}>
+                    {showRawText ? 'Ocultar texto extraído' : 'Ver texto extraído'}
+                  </Button>
+                )}
               </div>
             </div>
+
+            {showRawText && rawText && (
+              <div className="mb-4 p-3 bg-muted rounded-lg max-h-32 overflow-auto">
+                <p className="text-xs font-mono whitespace-pre-wrap">{rawText.slice(0, 2000)}...</p>
+              </div>
+            )}
 
             {summary && (
               <div className="grid grid-cols-3 gap-4 mb-4">
