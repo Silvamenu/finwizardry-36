@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.1';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -12,12 +13,43 @@ serve(async (req) => {
   }
 
   try {
+    // Verify authentication
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      console.error('Authorization header missing');
+      return new Response(
+        JSON.stringify({ error: 'Autenticação necessária' }),
+        { 
+          status: 401, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+
+    const supabase = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_ANON_KEY')!,
+      { global: { headers: { Authorization: authHeader } } }
+    );
+
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+      console.error('Authentication error:', authError);
+      return new Response(
+        JSON.stringify({ error: 'Usuário não autenticado' }),
+        { 
+          status: 401, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+
     const ALPHA_VANTAGE_API_KEY = Deno.env.get('ALPHA_VANTAGE_API_KEY');
     
     if (!ALPHA_VANTAGE_API_KEY) {
       console.error('ALPHA_VANTAGE_API_KEY não configurada');
       return new Response(
-        JSON.stringify({ error: 'Chave da API não configurada' }),
+        JSON.stringify({ error: 'Serviço temporariamente indisponível' }),
         { 
           status: 500, 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
@@ -78,8 +110,7 @@ serve(async (req) => {
       console.error('Limite de requisições da API atingido:', data['Note']);
       return new Response(
         JSON.stringify({ 
-          error: 'Limite de requisições atingido. Tente novamente em alguns minutos.',
-          details: data['Note']
+          error: 'Limite de requisições atingido. Tente novamente em alguns minutos.'
         }),
         { 
           status: 429, 
@@ -91,8 +122,7 @@ serve(async (req) => {
       console.error('Erro ao buscar cotação:', data);
       return new Response(
         JSON.stringify({ 
-          error: 'Não foi possível obter a cotação para este símbolo',
-          details: data
+          error: 'Não foi possível obter a cotação para este símbolo'
         }),
         { 
           status: 404, 
@@ -105,8 +135,7 @@ serve(async (req) => {
     console.error('Erro na função get-stock-quote:', error);
     return new Response(
       JSON.stringify({ 
-        error: 'Erro interno do servidor',
-        message: error.message 
+        error: 'Erro interno do servidor. Tente novamente.'
       }),
       { 
         status: 500, 
