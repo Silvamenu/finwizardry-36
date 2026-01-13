@@ -161,6 +161,48 @@ export const useBudget = () => {
     fetchBudgetCategories();
   }, [fetchBudgetCategories]);
 
+  // Real-time subscription for cross-tab sync - listen to both categories and transactions
+  useEffect(() => {
+    if (!user) return;
+
+    const categoriesChannel = supabase
+      .channel('budget-categories-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'categories',
+          filter: `user_id=eq.${user.id}`
+        },
+        () => {
+          fetchBudgetCategories();
+        }
+      )
+      .subscribe();
+
+    const transactionsChannel = supabase
+      .channel('budget-transactions-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'transactions',
+          filter: `user_id=eq.${user.id}`
+        },
+        () => {
+          fetchBudgetCategories();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(categoriesChannel);
+      supabase.removeChannel(transactionsChannel);
+    };
+  }, [user, fetchBudgetCategories]);
+
   return {
     budgetCategories,
     loading,

@@ -53,6 +53,47 @@ export function useCategories() {
     fetchCategories();
   }, [fetchCategories]);
 
+  // Real-time subscription for cross-tab sync
+  useEffect(() => {
+    if (!user) return;
+
+    const channel = supabase
+      .channel('categories-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'categories',
+          filter: `user_id=eq.${user.id}`
+        },
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            const newCategory = payload.new as Category;
+            setCategories(prev => {
+              if (prev.some(c => c.id === newCategory.id)) return prev;
+              const updated = [...prev, newCategory];
+              return updated.sort((a, b) => a.name.localeCompare(b.name));
+            });
+          } else if (payload.eventType === 'UPDATE') {
+            const updatedCategory = payload.new as Category;
+            setCategories(prev =>
+              prev.map(c => c.id === updatedCategory.id ? updatedCategory : c)
+                .sort((a, b) => a.name.localeCompare(b.name))
+            );
+          } else if (payload.eventType === 'DELETE') {
+            const deletedId = payload.old.id;
+            setCategories(prev => prev.filter(c => c.id !== deletedId));
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user]);
+
   const addCategory = async (categoryData: CategoryFormData) => {
     if (!user) return null;
     

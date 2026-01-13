@@ -60,6 +60,48 @@ export function useTransactions() {
     fetchTransactions();
   }, [fetchTransactions]);
 
+  // Real-time subscription for cross-tab sync
+  useEffect(() => {
+    if (!user) return;
+
+    const channel = supabase
+      .channel('transactions-changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'transactions',
+          filter: `user_id=eq.${user.id}`
+        },
+        (payload) => {
+          if (payload.eventType === 'INSERT') {
+            const newTransaction = payload.new as Transaction;
+            setTransactions(prev => {
+              // Check if already exists (from optimistic update)
+              if (prev.some(t => t.id === newTransaction.id)) return prev;
+              const updated = [newTransaction, ...prev];
+              return updated.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+            });
+          } else if (payload.eventType === 'UPDATE') {
+            const updatedTransaction = payload.new as Transaction;
+            setTransactions(prev =>
+              prev.map(t => t.id === updatedTransaction.id ? updatedTransaction : t)
+                .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+            );
+          } else if (payload.eventType === 'DELETE') {
+            const deletedId = payload.old.id;
+            setTransactions(prev => prev.filter(t => t.id !== deletedId));
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [user]);
+
   const addTransaction = async (transactionData: TransactionFormData) => {
     if (!user) return null;
     
