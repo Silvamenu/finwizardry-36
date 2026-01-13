@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Upload, FileText, Check, Loader2, Sparkles, AlertCircle } from 'lucide-react';
+import { Upload, FileText, Check, Loader2, Sparkles, AlertCircle, Eye } from 'lucide-react';
 import { TransactionFormData } from '@/hooks/useTransactions';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { toast } from 'sonner';
@@ -12,6 +12,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
+import * as pdfjsLib from 'pdfjs-dist';
+
+// Set up PDF.js worker
+pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
 
 interface ExtractedTransaction {
   date: string;
@@ -35,6 +39,7 @@ export function ImportPDF({ onImport, open, onOpenChange }: ImportPDFProps) {
   const [error, setError] = useState<string | null>(null);
   const [step, setStep] = useState<'upload' | 'analyzing' | 'preview'>('upload');
   const [rawText, setRawText] = useState<string | null>(null);
+  const [analysisMode, setAnalysisMode] = useState<'text' | 'ocr' | null>(null);
   const [summary, setSummary] = useState<{
     total_income: number;
     total_expenses: number;
@@ -47,7 +52,6 @@ export function ImportPDF({ onImport, open, onOpenChange }: ImportPDFProps) {
       const reader = new FileReader();
       reader.onload = () => {
         const result = reader.result as string;
-        // Remove data URL prefix to get pure base64
         const base64 = result.split(',')[1];
         resolve(base64);
       };
@@ -56,10 +60,66 @@ export function ImportPDF({ onImport, open, onOpenChange }: ImportPDFProps) {
     });
   };
 
+  // Convert PDF pages to images for OCR
+  const convertPDFToImages = async (file: File, maxPages: number = 5): Promise<string[]> => {
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    const images: string[] = [];
+    
+    const numPages = Math.min(pdf.numPages, maxPages);
+    
+    for (let i = 1; i <= numPages; i++) {
+      const page = await pdf.getPage(i);
+      const scale = 2; // Higher scale for better OCR
+      const viewport = page.getViewport({ scale });
+      
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d')!;
+      canvas.width = viewport.width;
+      canvas.height = viewport.height;
+      
+      await page.render({
+        canvasContext: context,
+        viewport: viewport
+      }).promise;
+      
+      // Convert to base64 JPEG (smaller than PNG)
+      const imageData = canvas.toDataURL('image/jpeg', 0.9);
+      const base64 = imageData.split(',')[1];
+      images.push(base64);
+    }
+    
+    return images;
+  };
+
+  // Extract text from PDF using pdf.js
+  const extractTextFromPDF = async (file: File): Promise<string> => {
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      let fullText = '';
+      
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
+        const pageText = textContent.items
+          .map((item: any) => item.str)
+          .join(' ');
+        fullText += pageText + '\n';
+      }
+      
+      return fullText.trim();
+    } catch (err) {
+      console.error('Error extracting text from PDF:', err);
+      return '';
+    }
+  };
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     setError(null);
     setRawText(null);
+    setAnalysisMode(null);
 
     if (!selectedFile) return;
 
@@ -78,14 +138,40 @@ export function ImportPDF({ onImport, open, onOpenChange }: ImportPDFProps) {
     setAnalyzing(true);
 
     try {
-      // Convert PDF to base64 for reliable transmission
-      const pdfBase64 = await fileToBase64(selectedFile);
+      // First, try to extract text directly from PDF
+      const extractedText = await extractTextFromPDF(selectedFile);
+      const cleanedText = extractedText.replace(/\s+/g, ' ').trim();
+      
+      // Check if we got enough meaningful text
+      const hasEnoughText = cleanedText.length > 200;
+      const hasTransactionPatterns = /\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4}/.test(cleanedText) && 
+                                     /\d+[,\.]\d{2}/.test(cleanedText);
+      
+      let requestBody: any = {};
+      
+      if (hasEnoughText && hasTransactionPatterns) {
+        // Use text extraction mode
+        setAnalysisMode('text');
+        requestBody = {
+          mode: 'text',
+          textContent: cleanedText,
+          fileName: selectedFile.name
+        };
+      } else {
+        // Fall back to OCR mode - convert PDF pages to images
+        setAnalysisMode('ocr');
+        toast.info('PDF parece ser escaneado. Usando OCR para extrair texto...');
+        
+        const pageImages = await convertPDFToImages(selectedFile, 5);
+        requestBody = {
+          mode: 'ocr',
+          images: pageImages,
+          fileName: selectedFile.name
+        };
+      }
 
       const { data, error: fnError } = await supabase.functions.invoke('parse-bank-statement', {
-        body: { 
-          pdfBase64,
-          fileName: selectedFile.name 
-        }
+        body: requestBody
       });
 
       if (fnError) {
@@ -100,7 +186,6 @@ export function ImportPDF({ onImport, open, onOpenChange }: ImportPDFProps) {
         throw new Error('Nenhuma transação encontrada no extrato. Verifique se o PDF contém dados de transações.');
       }
 
-      // Store the raw extracted text for transparency
       if (data.rawText) {
         setRawText(data.rawText);
       }
@@ -113,7 +198,9 @@ export function ImportPDF({ onImport, open, onOpenChange }: ImportPDFProps) {
       setExtractedTransactions(transactionsWithSelection);
       setSummary(data.summary);
       setStep('preview');
-      toast.success(`${data.transactions.length} transações identificadas!`);
+      
+      const modeText = analysisMode === 'ocr' ? ' (via OCR)' : '';
+      toast.success(`${data.transactions.length} transações identificadas${modeText}!`);
     } catch (err: any) {
       console.error('Error analyzing PDF:', err);
       setError(err.message || 'Erro ao processar o arquivo PDF.');
@@ -173,6 +260,7 @@ export function ImportPDF({ onImport, open, onOpenChange }: ImportPDFProps) {
     setError(null);
     setSummary(null);
     setRawText(null);
+    setAnalysisMode(null);
   };
 
   const formatCurrency = (value: number) => {
@@ -197,7 +285,7 @@ export function ImportPDF({ onImport, open, onOpenChange }: ImportPDFProps) {
             Importar Extrato Bancário com IA
           </DialogTitle>
           <DialogDescription>
-            Faça upload do seu extrato bancário em PDF e a IA irá identificar automaticamente suas transações.
+            Faça upload do seu extrato bancário em PDF. Suporta PDFs digitais e escaneados (OCR).
           </DialogDescription>
         </DialogHeader>
 
@@ -213,8 +301,12 @@ export function ImportPDF({ onImport, open, onOpenChange }: ImportPDFProps) {
             <div className="border-2 border-dashed rounded-lg p-10 text-center hover:border-primary/50 transition-colors">
               <FileText className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
               <h3 className="text-lg font-medium mb-2">Arraste seu extrato PDF ou clique para selecionar</h3>
-              <p className="text-sm text-muted-foreground mb-4">
+              <p className="text-sm text-muted-foreground mb-2">
                 Suportamos extratos da maioria dos bancos brasileiros. Tamanho máximo: 10MB.
+              </p>
+              <p className="text-xs text-muted-foreground mb-4">
+                <Eye className="inline h-3 w-3 mr-1" />
+                PDFs escaneados são processados automaticamente via OCR
               </p>
               <input
                 type="file"
@@ -243,9 +335,13 @@ export function ImportPDF({ onImport, open, onOpenChange }: ImportPDFProps) {
               <Sparkles className="h-5 w-5 text-primary absolute -top-1 -right-1 animate-pulse" />
             </div>
             <div className="text-center">
-              <h3 className="text-lg font-medium">Analisando seu extrato...</h3>
+              <h3 className="text-lg font-medium">
+                {analysisMode === 'ocr' ? 'Processando imagens com OCR...' : 'Analisando seu extrato...'}
+              </h3>
               <p className="text-sm text-muted-foreground">
-                Extraindo texto do PDF e identificando transações. Isso pode levar alguns segundos.
+                {analysisMode === 'ocr' 
+                  ? 'Extraindo texto das imagens do PDF. Isso pode levar um pouco mais de tempo.'
+                  : 'Extraindo texto do PDF e identificando transações.'}
               </p>
             </div>
           </div>
@@ -254,10 +350,15 @@ export function ImportPDF({ onImport, open, onOpenChange }: ImportPDFProps) {
         {step === 'preview' && (
           <>
             <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-4 flex-wrap">
                 <p className="text-sm text-muted-foreground">
                   Arquivo: <span className="font-medium text-foreground">{file?.name}</span>
                 </p>
+                {analysisMode && (
+                  <Badge variant={analysisMode === 'ocr' ? 'secondary' : 'outline'}>
+                    {analysisMode === 'ocr' ? 'OCR' : 'Texto'}
+                  </Badge>
+                )}
                 <Button variant="ghost" size="sm" onClick={resetState}>
                   Alterar arquivo
                 </Button>
