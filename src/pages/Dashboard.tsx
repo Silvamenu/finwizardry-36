@@ -1,5 +1,5 @@
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import DashboardLayout from "@/components/dashboard/DashboardLayout";
@@ -10,19 +10,15 @@ import UpcomingTransactions from "@/components/dashboard/UpcomingTransactions";
 import SpendingAnalysis from "@/components/dashboard/SpendingAnalysis";
 import { MotionButton } from "@/components/ui/button";
 import { useProfile } from "@/hooks/useProfile";
-import { LineChart, BarChart3, Sparkles, Target } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
 import OnboardingDialog from "@/components/onboarding/OnboardingDialog";
-import NewGoalModal from "@/components/goals/NewGoalModal";
-import NewInvestmentModal from "@/components/investments/NewInvestmentModal";
 
 const Dashboard = () => {
   const { t } = useTranslation();
   const { profile } = useProfile();
   const navigate = useNavigate();
   const userName = profile?.name || t('dashboard.welcome');
-  const [showNewGoalModal, setShowNewGoalModal] = useState(false);
-  const [showNewInvestmentModal, setShowNewInvestmentModal] = useState(false);
 
   useEffect(() => {
     document.title = "MoMoney | Dashboard";
@@ -43,34 +39,12 @@ const Dashboard = () => {
     visible: { opacity: 1, y: 0 }
   };
 
-  const handleAddGoal = (goal: any) => {
-    console.log("Nova meta adicionada:", goal);
-    navigate("/dashboard/metas");
-  };
-
-  const handleAddInvestment = (investment: any) => {
-    console.log("Novo investimento adicionado:", investment);
-    navigate("/dashboard/investimentos");
-  };
 
   return (
     <DashboardLayout activePage="Dashboard">
       {/* Onboarding Dialog */}
       <OnboardingDialog />
       
-      {/* New Goal Modal */}
-      <NewGoalModal 
-        open={showNewGoalModal} 
-        onOpenChange={setShowNewGoalModal}
-        onAddGoal={handleAddGoal}
-      />
-
-      {/* New Investment Modal */}
-      <NewInvestmentModal 
-        open={showNewInvestmentModal} 
-        onOpenChange={setShowNewInvestmentModal}
-        onAddInvestment={handleAddInvestment}
-      />
       
       <motion.div
         variants={containerVariants}
@@ -141,49 +115,6 @@ const Dashboard = () => {
           </div>
         </motion.div>
 
-        {/* Action Buttons */}
-        <motion.div variants={itemVariants} className="fixed bottom-6 right-6 flex flex-col space-y-3 z-10">
-          <MotionButton
-            className="bg-gradient-to-r from-accent-start to-accent-end text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg shadow-accent-start/30 md:hidden"
-            onClick={() => setShowNewGoalModal(true)}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <Target className="h-6 w-6" />
-          </MotionButton>
-          
-          <MotionButton
-            className="bg-gradient-to-r from-accent-start to-accent-end text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg shadow-accent-start/30 md:hidden"
-            onClick={() => setShowNewInvestmentModal(true)}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <BarChart3 className="h-6 w-6" />
-          </MotionButton>
-          
-          {/* Desktop only buttons */}
-          <div className="hidden md:flex md:space-x-3 fixed bottom-6 right-6 z-10">
-            <MotionButton
-              className="bg-gradient-to-r from-accent-start to-accent-end text-white rounded-xl px-4 py-2 shadow-lg shadow-accent-start/20 hover:opacity-90 flex items-center"
-              onClick={() => setShowNewGoalModal(true)}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <Target className="h-5 w-5 mr-2" />
-              Nova Meta
-            </MotionButton>
-            
-            <MotionButton
-              className="bg-gradient-to-r from-accent-start to-accent-end text-white rounded-xl px-4 py-2 shadow-lg shadow-accent-start/20 hover:opacity-90 flex items-center"
-              onClick={() => setShowNewInvestmentModal(true)}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <BarChart3 className="h-5 w-5 mr-2" />
-              Novo Investimento
-            </MotionButton>
-          </div>
-        </motion.div>
       </motion.div>
     </DashboardLayout>
   );
