@@ -1,6 +1,6 @@
 import React, { ReactNode, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronLeft, ChevronRight, Menu, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, ChevronDown, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useAuth } from "@/contexts/AuthContext";
@@ -9,9 +9,7 @@ import {
   SidebarProvider,
   SidebarContent,
   SidebarFooter,
-  SidebarGroup,
-  SidebarGroupLabel,
-  SidebarGroupContent,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
@@ -19,7 +17,7 @@ import {
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { AvatarDropdown } from "@/components/ui/avatar-dropdown";
 import { MotionButton } from "@/components/ui/button";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { 
   Home,
   PiggyBank,
@@ -29,16 +27,31 @@ import {
   MessageSquarePlus,
   Settings,
   User,
-  Mail,
   FileText,
-  Zap
+  Zap,
+  Shield,
+  Wallet
 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
 import { useTranslation } from "react-i18next";
+import ascendLogo from "@/assets/ascend-logo.png";
 
 interface DashboardLayoutProps {
   children: ReactNode;
   activePage?: string;
+}
+
+// Types for navigation items
+interface NavChildItem {
+  title: string;
+  path: string;
+  color: string; // Dot color
+}
+
+interface NavItem {
+  title: string;
+  icon: React.ComponentType<{ className?: string }>;
+  path?: string;
+  children?: NavChildItem[];
 }
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({
@@ -51,6 +64,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [expandedMenus, setExpandedMenus] = useState<string[]>(["Financeiro"]);
   
   // Load sidebar state from localStorage on mount
   useEffect(() => {
@@ -60,7 +74,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       setIsCollapsed(isCollapsedValue);
       setSidebarOpen(!isCollapsedValue);
     } else if (isMobile) {
-      // Default for mobile is collapsed
       setIsCollapsed(true);
       setSidebarOpen(false);
     }
@@ -88,23 +101,66 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     }
   };
 
-  // Navigation items for the sidebar with translations
-  const navigationItems = [
-    { title: t("sidebar.dashboard"), icon: Home, path: "/dashboard" },
-    { title: "Automação", icon: Zap, path: "/dashboard/automacao" },
-    { title: "Relatórios", icon: FileText, path: "/dashboard/relatorios" },
-    { title: t("sidebar.budget"), icon: PiggyBank, path: "/dashboard/orcamento" },
-    { title: t("sidebar.investments"), icon: BarChart3, path: "/dashboard/investimentos" },
-    { title: t("sidebar.transactions"), icon: ArrowLeftRight, path: "/dashboard/transacoes" },
-    { title: t("sidebar.goals"), icon: Target, path: "/dashboard/metas" },
-    { title: t("sidebar.assistant"), icon: MessageSquarePlus, path: "/dashboard/assistente" },
+  const toggleMenu = (menuTitle: string) => {
+    setExpandedMenus(prev => 
+      prev.includes(menuTitle) 
+        ? prev.filter(m => m !== menuTitle)
+        : [...prev, menuTitle]
+    );
+  };
+
+  // Navigation structure with collapsible menus
+  const navigationItems: NavItem[] = [
+    { 
+      title: t("sidebar.dashboard"), 
+      icon: Home, 
+      path: "/dashboard" 
+    },
+    { 
+      title: "Financeiro", 
+      icon: Wallet, 
+      children: [
+        { title: t("sidebar.transactions"), path: "/dashboard/transacoes", color: "#3B82F6" },
+        { title: t("sidebar.budget"), path: "/dashboard/orcamento", color: "#10B981" },
+        { title: t("sidebar.investments"), path: "/dashboard/investimentos", color: "#8B5CF6" },
+        { title: t("sidebar.goals"), path: "/dashboard/metas", color: "#F59E0B" },
+      ]
+    },
+    { 
+      title: "Automação", 
+      icon: Zap, 
+      path: "/dashboard/automacao" 
+    },
+    { 
+      title: "Relatórios", 
+      icon: FileText, 
+      path: "/dashboard/relatorios" 
+    },
+    { 
+      title: t("sidebar.assistant"), 
+      icon: MessageSquarePlus, 
+      path: "/dashboard/assistente" 
+    },
+    { 
+      title: t("sidebar.settings"), 
+      icon: Settings, 
+      children: [
+        { title: t("sidebar.profile"), path: "/dashboard/perfil", color: "#EC4899" },
+        { title: "Geral", path: "/dashboard/configuracoes", color: "#6366F1" },
+        { title: "Segurança", path: "/dashboard/configuracoes", color: "#EF4444" },
+      ]
+    },
   ];
 
-  // User-related items
-  const userItems = [
-    { title: t("sidebar.settings"), icon: Settings, path: "/dashboard/configuracoes" },
-    { title: t("sidebar.profile"), icon: User, path: "/dashboard/perfil" },
-  ];
+  const handleNavigate = (path: string) => {
+    navigate(path);
+    if (isMobile) setSidebarOpen(false);
+  };
+
+  const isChildActive = (children?: NavChildItem[]) => {
+    if (!children) return false;
+    return children.some(child => activePage === child.title);
+  };
 
   return (
     <SidebarProvider defaultOpen={!isMobile && !isCollapsed}>
@@ -135,79 +191,106 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             !isMobile && isCollapsed ? "w-[4.5rem]" : "w-64"
           )}
         >
-          <SidebarContent className="bg-sidebar border-0">
-            {/* Main Navigation */}
-            <SidebarGroup>
-              <SidebarGroupLabel className="text-sidebar-foreground/60">{t("sidebar.navigation")}</SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {navigationItems.map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton 
-                        tooltip={isCollapsed ? item.title : undefined}
-                        isActive={activePage === item.title}
-                        asChild
-                        className="text-sidebar-foreground/80 hover:text-sidebar-foreground hover:bg-sidebar-accent/10 data-[active=true]:bg-primary data-[active=true]:text-primary-foreground"
-                      >
-                        <a href={item.path} onClick={(e) => {
-                          e.preventDefault();
-                          navigate(item.path);
-                          if (isMobile) setSidebarOpen(false);
-                        }}
-                        className="flex items-center">
-                          <item.icon className="h-5 w-5 flex-shrink-0" />
-                          <span className={cn(
-                            "ml-3 transition-opacity duration-300",
-                            isCollapsed && !isMobile ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
-                          )}>{item.title}</span>
-                        </a>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
+          {/* Logo Header */}
+          <SidebarHeader className="bg-sidebar border-0 px-4 py-5">
+            <div className={cn(
+              "flex items-center transition-all duration-300",
+              isCollapsed && !isMobile ? "justify-center" : "justify-start"
+            )}>
+              <img 
+                src={ascendLogo} 
+                alt="Ascend Logo" 
+                className={cn(
+                  "transition-all duration-300",
+                  isCollapsed && !isMobile ? "h-8 w-8 object-contain" : "h-10 max-w-[160px] object-contain"
+                )}
+              />
+            </div>
+          </SidebarHeader>
 
-            {/* User Section */}
-            <SidebarGroup>
-              <SidebarGroupLabel className="text-sidebar-foreground/60">{t("sidebar.user")}</SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu>
-                  {userItems.map((item) => (
-                    <SidebarMenuItem key={item.title}>
-                      <SidebarMenuButton 
-                        tooltip={isCollapsed ? item.title : undefined}
-                        isActive={activePage === item.title}
-                        asChild
-                        className="text-sidebar-foreground/80 hover:text-sidebar-foreground hover:bg-sidebar-accent/10 data-[active=true]:bg-primary data-[active=true]:text-primary-foreground"
-                      >
-                        <a href={item.path} onClick={(e) => {
-                          e.preventDefault();
-                          navigate(item.path);
-                          if (isMobile) setSidebarOpen(false);
-                        }}
-                        className="flex items-center">
-                          <item.icon className="h-5 w-5 flex-shrink-0" />
-                          <span className={cn(
-                            "ml-3 transition-opacity duration-300",
-                            isCollapsed && !isMobile ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
-                          )}>{item.title}</span>
-                        </a>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  ))}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
+          <SidebarContent className="bg-sidebar border-0 px-3">
+            <SidebarMenu className="space-y-1">
+              {navigationItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  {/* Parent Item */}
+                  <SidebarMenuButton 
+                    tooltip={isCollapsed ? item.title : undefined}
+                    isActive={item.path ? activePage === item.title : isChildActive(item.children)}
+                    onClick={() => {
+                      if (item.children && !isCollapsed) {
+                        toggleMenu(item.title);
+                      } else if (item.path) {
+                        handleNavigate(item.path);
+                      }
+                    }}
+                    className={cn(
+                      "w-full justify-between rounded-xl transition-all duration-200",
+                      (item.path ? activePage === item.title : isChildActive(item.children))
+                        ? "bg-[rgba(59,130,246,0.15)] text-[#60A5FA]"
+                        : "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/10"
+                    )}
+                  >
+                    <span className="flex items-center">
+                      <item.icon className="h-5 w-5 flex-shrink-0" />
+                      <span className={cn(
+                        "ml-3 transition-opacity duration-300 font-medium",
+                        isCollapsed && !isMobile ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
+                      )}>{item.title}</span>
+                    </span>
+                    {item.children && !isCollapsed && !isMobile && (
+                      <ChevronDown className={cn(
+                        "h-4 w-4 transition-transform duration-200",
+                        expandedMenus.includes(item.title) ? "rotate-0" : "-rotate-90"
+                      )} />
+                    )}
+                  </SidebarMenuButton>
+
+                  {/* Child Items with Animation */}
+                  {item.children && !isCollapsed && !isMobile && (
+                    <AnimatePresence>
+                      {expandedMenus.includes(item.title) && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.2, ease: "easeInOut" }}
+                          className="overflow-hidden"
+                        >
+                          <div className="ml-4 mt-1 space-y-1 border-l border-sidebar-foreground/10 pl-3">
+                            {item.children.map((child) => (
+                              <button
+                                key={child.path + child.title}
+                                onClick={() => handleNavigate(child.path)}
+                                className={cn(
+                                  "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-all duration-200",
+                                  activePage === child.title
+                                    ? "text-white bg-sidebar-accent/10"
+                                    : "text-[#94A3B8] hover:text-white hover:bg-sidebar-accent/5"
+                                )}
+                              >
+                                {/* Colored Dot */}
+                                <span 
+                                  className="w-2 h-2 rounded-full flex-shrink-0"
+                                  style={{ backgroundColor: child.color }}
+                                />
+                                <span className="truncate">{child.title}</span>
+                              </button>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  )}
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
           </SidebarContent>
 
-          <SidebarFooter className="bg-sidebar border-0">
-            <SidebarGroup>
-              <div className="flex items-center justify-between px-2">
-                <AvatarDropdown />
-                <ThemeToggle />
-              </div>
-            </SidebarGroup>
+          <SidebarFooter className="bg-sidebar border-0 px-3 py-4">
+            <div className="flex items-center justify-between">
+              <AvatarDropdown />
+              <ThemeToggle />
+            </div>
           </SidebarFooter>
         </Sidebar>
         
