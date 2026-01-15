@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useTranslation } from "react-i18next";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, BarChart, Bar, XAxis, YAxis } from 'recharts';
 import { Skeleton } from "@/components/ui/skeleton";
 import { useFinancialData } from '@/hooks/useFinancialData';
 import { useFormatters } from '@/hooks/useFormatters';
@@ -17,26 +17,24 @@ const SpendingCategories = () => {
   const { resolvedTheme } = useTheme();
   
   const isDark = resolvedTheme === 'dark';
-  const gridColor = isDark ? '#444444' : '#e5e7eb';
-  const textColor = isDark ? '#AAAAAA' : '#374151';
-  const labelColor = isDark ? 'white' : '#1f2937';
+  const textColor = isDark ? 'hsl(215, 20%, 65%)' : 'hsl(215, 16%, 47%)';
   
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8', '#82ca9d', '#ffc658', '#8dd1e1', '#a4de6c', '#d0ed57'];
+  const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#f97316', '#84cc16', '#ec4899', '#6366f1'];
 
   // Format data for the chart
-  const chartData = summary.spendingByCategory.map(item => ({
+  const chartData = summary.spendingByCategory.map((item, index) => ({
     name: item.name,
     value: item.value,
-    color: item.color || COLORS[summary.spendingByCategory.indexOf(item) % COLORS.length]
+    color: COLORS[index % COLORS.length]
   }));
 
   // Custom tooltip for both charts
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-card px-4 py-2 rounded-lg shadow-lg border border-border">
+        <div className="bg-card px-4 py-3 rounded-xl shadow-lg border border-border">
           <p className="font-medium text-card-foreground">{payload[0].name || payload[0].payload?.name}</p>
-          <p className="text-sm font-bold text-card-foreground">{formatCurrency(payload[0].value)}</p>
+          <p className="text-sm font-bold text-primary">{formatCurrency(payload[0].value)}</p>
         </div>
       );
     }
@@ -45,14 +43,14 @@ const SpendingCategories = () => {
 
   return (
     <Card className="h-full">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>Spending Categories</CardTitle>
-        <div className="flex gap-2">
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <CardTitle className="text-lg font-semibold text-foreground">Spending Categories</CardTitle>
+        <div className="flex gap-1">
           <Button
             variant={chartType === 'pie' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setChartType('pie')}
-            className="h-8 w-8 p-0"
+            className="h-8 w-8 p-0 rounded-lg"
           >
             <PieChartIcon className="h-4 w-4" />
           </Button>
@@ -60,13 +58,13 @@ const SpendingCategories = () => {
             variant={chartType === 'bar' ? 'default' : 'outline'}
             size="sm"
             onClick={() => setChartType('bar')}
-            className="h-8 w-8 p-0"
+            className="h-8 w-8 p-0 rounded-lg"
           >
             <BarChart3 className="h-4 w-4" />
           </Button>
         </div>
       </CardHeader>
-      <CardContent className="h-[300px]">
+      <CardContent className="h-[300px] pt-0">
         {loading ? (
           <div className="flex items-center justify-center h-full">
             <Skeleton className="h-[200px] w-[200px] rounded-full" />
@@ -79,21 +77,31 @@ const SpendingCategories = () => {
           <ResponsiveContainer width="100%" height="100%">
             {chartType === 'pie' ? (
               <PieChart>
+                <defs>
+                  {chartData.map((entry, index) => (
+                    <linearGradient key={`pieGradient-${index}`} id={`pieGradient-${index}`} x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor={entry.color} stopOpacity={0.9}/>
+                      <stop offset="100%" stopColor={entry.color} stopOpacity={1}/>
+                    </linearGradient>
+                  ))}
+                </defs>
                 <Pie
                   data={chartData}
                   cx="50%"
                   cy="50%"
                   labelLine={false}
                   outerRadius={80}
+                  innerRadius={40}
                   fill="#8884d8"
                   dataKey="value"
-                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                  paddingAngle={2}
+                  label={({ name, percent }) => `${(percent * 100).toFixed(0)}%`}
                 >
                   {chartData.map((entry, index) => (
                     <Cell 
                       key={`cell-${index}`} 
-                      fill={entry.color} 
-                      stroke={isDark ? '#1f2937' : '#fff'}
+                      fill={`url(#pieGradient-${index})`}
+                      stroke={isDark ? 'hsl(217, 33%, 17%)' : '#fff'}
                       strokeWidth={2}
                     />
                   ))}
@@ -103,28 +111,42 @@ const SpendingCategories = () => {
                   layout="vertical" 
                   verticalAlign="middle" 
                   align="right"
-                  wrapperStyle={{ color: textColor }}
+                  wrapperStyle={{ color: textColor, fontSize: '12px' }}
+                  iconType="circle"
+                  iconSize={8}
                 />
               </PieChart>
             ) : (
-              <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
+              <BarChart data={chartData} margin={{ top: 20, right: 20, left: 0, bottom: 5 }}>
+                <defs>
+                  {chartData.map((entry, index) => (
+                    <linearGradient key={`barGradient-${index}`} id={`barGradient-${index}`} x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor={entry.color} stopOpacity={1}/>
+                      <stop offset="100%" stopColor={entry.color} stopOpacity={0.7}/>
+                    </linearGradient>
+                  ))}
+                </defs>
                 <XAxis 
                   dataKey="name" 
                   angle={-45}
                   textAnchor="end"
                   height={80}
-                  fontSize={12}
+                  fontSize={11}
                   stroke={textColor}
+                  tickLine={false}
+                  axisLine={false}
                 />
                 <YAxis 
                   tickFormatter={(value) => formatCurrency(value, { notation: 'compact' })}
                   stroke={textColor}
+                  fontSize={11}
+                  tickLine={false}
+                  axisLine={false}
                 />
                 <Tooltip content={<CustomTooltip />} />
-                <Bar dataKey="value" radius={[4, 4, 0, 0]}>
+                <Bar dataKey="value" radius={[8, 8, 0, 0]}>
                   {chartData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
+                    <Cell key={`cell-${index}`} fill={`url(#barGradient-${index})`} />
                   ))}
                 </Bar>
               </BarChart>
