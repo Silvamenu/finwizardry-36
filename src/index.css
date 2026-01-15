@@ -36,14 +36,14 @@
   --chart-grid: 214 32% 91%;
   --chart-text: 215 16% 47%;
   
-  /* Sidebar */
-  --sidebar-background: 222 47% 11%; /* Slate-900: #0F172A */
-  --sidebar-foreground: 0 0% 100%;
+  /* Sidebar - Deep Navy */
+  --sidebar-background: 222 47% 11%; /* #0F172A */
+  --sidebar-foreground: 210 40% 98%;
   --sidebar-primary: 217 91% 60%;
   --sidebar-primary-foreground: 0 0% 100%;
   --sidebar-accent: 217 91% 60%;
   --sidebar-accent-foreground: 0 0% 100%;
-  --sidebar-border: 215 28% 17%;
+  --sidebar-border: 222 47% 11%; /* Same as background - no visible border */
   --sidebar-ring: 217 91% 60%;
   
   /* Gradients */
@@ -52,8 +52,8 @@
 }
 
 .dark {
-  /* Dark Mode Colors - Slate Theme */
-  --background: 222 47% 11%; /* Slate-900: #0F172A */
+  /* Dark Mode Colors - Deep Slate Theme */
+  --background: 222 65% 4%; /* #020617 - Slate-950 */
   --foreground: 210 40% 98%; /* Slate-50 */
   --card: 217 33% 17%; /* Slate-800: #1E293B */
   --card-foreground: 210 40% 98%;
@@ -77,14 +77,14 @@
   --chart-grid: 217 33% 25%;
   --chart-text: 215 20% 65%;
   
-  /* Sidebar in dark mode */
-  --sidebar-background: 222 47% 11%;
+  /* Sidebar in dark mode - Same Navy, creates contrast with darker content */
+  --sidebar-background: 222 47% 11%; /* #0F172A */
   --sidebar-foreground: 210 40% 98%;
   --sidebar-primary: 217 91% 60%;
   --sidebar-primary-foreground: 0 0% 100%;
   --sidebar-accent: 217 91% 60%;
   --sidebar-accent-foreground: 0 0% 100%;
-  --sidebar-border: 217 33% 25%;
+  --sidebar-border: 222 47% 11%; /* Same as background - no visible border */
   --sidebar-ring: 217 91% 60%;
 }
 

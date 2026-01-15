@@ -126,16 +126,16 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           />
         )}
         
-        {/* Enhanced Sidebar - Dark Slate */}
+        {/* Enhanced Sidebar - Deep Navy, No Borders */}
         <Sidebar 
           variant="floating"
           className={cn(
-            "rounded-2xl overflow-hidden shadow-lg border-0 transition-all duration-300 ease-in-out bg-sidebar",
-            isMobile ? (sidebarOpen ? "translate-x-0 z-50" : "-translate-x-full") : "",
+            "overflow-hidden transition-all duration-300 ease-in-out bg-sidebar shadow-xl border-0",
+            isMobile ? (sidebarOpen ? "translate-x-0 z-50 rounded-r-2xl" : "-translate-x-full") : "rounded-none",
             !isMobile && isCollapsed ? "w-[4.5rem]" : "w-64"
           )}
         >
-          <SidebarContent className="bg-sidebar">
+          <SidebarContent className="bg-sidebar border-0">
             {/* Main Navigation */}
             <SidebarGroup>
               <SidebarGroupLabel className="text-sidebar-foreground/60">{t("sidebar.navigation")}</SidebarGroupLabel>
@@ -201,7 +201,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             </SidebarGroup>
           </SidebarContent>
 
-          <SidebarFooter className="bg-sidebar border-t border-sidebar-border">
+          <SidebarFooter className="bg-sidebar border-0">
             <SidebarGroup>
               <div className="flex items-center justify-between px-2">
                 <AvatarDropdown />
