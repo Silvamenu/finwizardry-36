@@ -91,7 +91,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   // Navigation items for the sidebar with translations
   const navigationItems = [
     { title: t("sidebar.dashboard"), icon: Home, path: "/dashboard" },
-    { title: "Analytics", icon: BarChart3, path: "/dashboard/analytics" },
     { title: "Automação", icon: Zap, path: "/dashboard/automacao" },
     { title: "Relatórios", icon: FileText, path: "/dashboard/relatorios" },
     { title: t("sidebar.budget"), icon: PiggyBank, path: "/dashboard/orcamento" },
@@ -105,7 +104,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const userItems = [
     { title: t("sidebar.settings"), icon: Settings, path: "/dashboard/configuracoes" },
     { title: t("sidebar.profile"), icon: User, path: "/dashboard/perfil" },
-    { title: t("sidebar.messages"), icon: Mail, path: "/dashboard/mensagens" },
   ];
 
   return (
