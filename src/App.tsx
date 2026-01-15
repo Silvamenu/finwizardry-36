@@ -29,6 +29,7 @@ import Perfil from "@/pages/dashboard/Perfil";
 import Mensagens from "@/pages/dashboard/Mensagens";
 import MFAVerify from "@/pages/MFAVerify";
 import NotFound from "@/pages/NotFound";
+import SpaceLanding from "@/pages/SpaceLanding";
 
 import "./sidebar-theme.css";
 
@@ -55,6 +56,7 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Index />} />
+      <Route path="/space" element={<SpaceLanding />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/auth-callback" element={<AuthCallback />} />
       <Route path="/mfa-verify" element={<MFAVerify />} />
