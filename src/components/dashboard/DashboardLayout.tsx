@@ -109,15 +109,15 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   return (
     <SidebarProvider defaultOpen={!isMobile && !isCollapsed}>
       <motion.div 
-        className="min-h-screen bg-white dark:bg-gray-900 flex w-full transition-colors duration-500"
+        className="min-h-screen bg-background flex w-full transition-colors duration-300"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
+        transition={{ duration: 0.4 }}
       >
         {/* Mobile sidebar backdrop */}
         {isMobile && sidebarOpen && (
           <motion.div 
-            className="fixed inset-0 z-20 bg-black/30 backdrop-blur-sm"
+            className="fixed inset-0 z-20 bg-black/40 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -126,19 +126,19 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           />
         )}
         
-        {/* Enhanced Sidebar */}
+        {/* Enhanced Sidebar - Dark Slate */}
         <Sidebar 
           variant="floating"
           className={cn(
-            "rounded-2xl overflow-hidden shadow-lg border border-blue-50 dark:border-blue-900/30 transition-all duration-300 ease-in-out",
+            "rounded-2xl overflow-hidden shadow-lg border-0 transition-all duration-300 ease-in-out bg-sidebar",
             isMobile ? (sidebarOpen ? "translate-x-0 z-50" : "-translate-x-full") : "",
             !isMobile && isCollapsed ? "w-[4.5rem]" : "w-64"
           )}
         >
-          <SidebarContent>
+          <SidebarContent className="bg-sidebar">
             {/* Main Navigation */}
             <SidebarGroup>
-              <SidebarGroupLabel>{t("sidebar.navigation")}</SidebarGroupLabel>
+              <SidebarGroupLabel className="text-sidebar-foreground/60">{t("sidebar.navigation")}</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   {navigationItems.map((item) => (
@@ -147,6 +147,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                         tooltip={isCollapsed ? item.title : undefined}
                         isActive={activePage === item.title}
                         asChild
+                        className="text-sidebar-foreground/80 hover:text-sidebar-foreground hover:bg-sidebar-accent/10 data-[active=true]:bg-primary data-[active=true]:text-primary-foreground"
                       >
                         <a href={item.path} onClick={(e) => {
                           e.preventDefault();
@@ -169,7 +170,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
             {/* User Section */}
             <SidebarGroup>
-              <SidebarGroupLabel>{t("sidebar.user")}</SidebarGroupLabel>
+              <SidebarGroupLabel className="text-sidebar-foreground/60">{t("sidebar.user")}</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   {userItems.map((item) => (
@@ -178,6 +179,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                         tooltip={isCollapsed ? item.title : undefined}
                         isActive={activePage === item.title}
                         asChild
+                        className="text-sidebar-foreground/80 hover:text-sidebar-foreground hover:bg-sidebar-accent/10 data-[active=true]:bg-primary data-[active=true]:text-primary-foreground"
                       >
                         <a href={item.path} onClick={(e) => {
                           e.preventDefault();
@@ -199,7 +201,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             </SidebarGroup>
           </SidebarContent>
 
-          <SidebarFooter>
+          <SidebarFooter className="bg-sidebar border-t border-sidebar-border">
             <SidebarGroup>
               <div className="flex items-center justify-between px-2">
                 <AvatarDropdown />
@@ -211,16 +213,16 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         
         <div className="flex-1 min-w-0 flex flex-col">
           <motion.header 
-            className="bg-white dark:bg-gray-800 shadow-sm z-10 flex justify-between items-center p-4 transition-colors duration-500 border-b border-blue-50 dark:border-blue-900/30 rounded-b-3xl"
+            className="bg-card shadow-sm z-10 flex justify-between items-center p-4 transition-colors duration-300 border-b border-border"
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2, duration: 0.4 }}
+            transition={{ delay: 0.15, duration: 0.3 }}
           >
             <div className="flex items-center">
               <MotionButton
                 variant="ghost"
                 size="icon"
-                className="mr-2 text-blue-600 dark:text-blue-400 rounded-full"
+                className="mr-3 text-primary hover:bg-primary/10 rounded-xl"
                 onClick={toggleSidebar}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -231,21 +233,21 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 }
               </MotionButton>
               <motion.h1 
-                className="text-xl md:text-2xl font-bold text-blue-900 dark:text-blue-50 transition-colors duration-500"
+                className="text-xl md:text-2xl font-semibold text-foreground transition-colors duration-300"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 }}
+                transition={{ delay: 0.2 }}
               >
                 {activePage}
               </motion.h1>
             </div>
           </motion.header>
           
-          <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-blue-50/30 dark:bg-gray-900 transition-colors duration-500">
+          <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 bg-background transition-colors duration-300">
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.5 }}
+              transition={{ delay: 0.25, duration: 0.3 }}
               className="h-full"
             >
               {children}

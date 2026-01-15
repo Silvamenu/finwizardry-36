@@ -22,13 +22,13 @@ const CustomTooltip = ({ active, payload }: any) => {
   
   if (active && payload && payload.length) {
     return (
-      <div className="chart-tooltip bg-card p-3 rounded-lg shadow-md border border-border">
-        <div className="flex items-center gap-2 mb-1">
+      <div className="bg-card p-4 rounded-xl shadow-lg border border-border">
+        <div className="flex items-center gap-2 mb-2">
           <div className="w-3 h-3 rounded-full" style={{ backgroundColor: payload[0].payload.color }}></div>
-          <span className="font-medium text-card-foreground">{payload[0].payload.name}</span>
+          <span className="font-semibold text-card-foreground">{payload[0].payload.name}</span>
         </div>
         <div className="flex flex-col">
-          <span className="font-bold text-card-foreground">{formatCurrency(payload[0].value)}</span>
+          <span className="font-bold text-primary text-lg">{formatCurrency(payload[0].value)}</span>
           <span className="text-xs text-muted-foreground">{payload[0].payload.percentage}% do total</span>
         </div>
       </div>
@@ -86,24 +86,24 @@ const SpendingAnalysis = () => {
   }>);
 
   return (
-    <Card className="h-full animate-fade-in reveal-delay-1">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="text-lg font-medium flex items-center gap-2 truncate">
-          <FileBarChart className="h-5 w-5 text-blue-500 flex-shrink-0" />
+    <Card className="h-full">
+      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <CardTitle className="text-lg font-semibold flex items-center gap-2 truncate text-foreground">
+          <FileBarChart className="h-5 w-5 text-primary flex-shrink-0" />
           Spending Analysis
         </CardTitle>
         <div className="flex items-center gap-2">
-          <Tabs defaultValue="categories" className="w-[300px]" onValueChange={(value) => setTabView(value as 'categories' | 'merchants')}>
-            <TabsList className="grid w-full grid-cols-2 rounded-lg bg-muted">
+          <Tabs defaultValue="categories" className="w-[280px]" onValueChange={(value) => setTabView(value as 'categories' | 'merchants')}>
+            <TabsList className="grid w-full grid-cols-2 rounded-xl bg-muted p-1">
               <TabsTrigger 
                 value="categories" 
-                className="rounded-l-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                className="rounded-lg text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
               >
                 Categorias
               </TabsTrigger>
               <TabsTrigger 
                 value="merchants" 
-                className="rounded-r-lg data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                className="rounded-lg text-sm data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
               >
                 Estabelecimentos
               </TabsTrigger>
@@ -114,11 +114,11 @@ const SpendingAnalysis = () => {
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon" className="h-8 w-8">
+              <Button variant="outline" size="icon" className="h-9 w-9 rounded-xl border-border">
                 <Calendar className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="rounded-xl">
               <DropdownMenuItem>Mês atual</DropdownMenuItem>
               <DropdownMenuItem>Mês anterior</DropdownMenuItem>
               <DropdownMenuItem>Últimos 3 meses</DropdownMenuItem>
@@ -192,34 +192,34 @@ const SpendingAnalysis = () => {
             
             <div className="w-full md:w-1/2">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-medium truncate">Detalhes</h3>
-                <Button variant="outline" size="sm" className="h-8 gap-1 rounded-lg">
+                <h3 className="text-lg font-semibold text-foreground truncate">Detalhes</h3>
+                <Button variant="outline" size="sm" className="h-8 gap-1.5 rounded-xl border-border">
                   <Filter className="h-3.5 w-3.5" />
                   <span className="text-xs">Filtrar</span>
                 </Button>
               </div>
-              <div className="space-y-3 overflow-hidden">
+              <div className="space-y-2.5 overflow-hidden">
                 {dataWithPercentage.map((item, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 hover:bg-muted rounded-lg transition-colors border border-border">
+                  <div key={index} className="flex items-center justify-between p-4 hover:bg-muted/50 rounded-xl transition-colors border border-border">
                     <div className="flex items-center min-w-0">
                       <div 
-                        className="w-4 h-4 rounded-full mr-3 flex-shrink-0 border-2 border-background shadow-sm" 
+                        className="w-3.5 h-3.5 rounded-full mr-3 flex-shrink-0 shadow-sm" 
                         style={{ backgroundColor: item.color }} 
                       />
-                      <span className="truncate font-medium">{item.name}</span>
+                      <span className="truncate font-medium text-foreground">{item.name}</span>
                     </div>
                     <div className="flex flex-col items-end flex-shrink-0">
-                      <span className="font-bold whitespace-nowrap text-lg">{formatCurrency(item.value)}</span>
+                      <span className="font-bold whitespace-nowrap text-lg text-foreground">{formatCurrency(item.value)}</span>
                       <div className="flex items-center text-sm text-muted-foreground">
                         <span>{item.percentage}%</span>
-                        <ArrowUpRight className="h-3 w-3 ml-1 text-green-500" />
+                        <ArrowUpRight className="h-3 w-3 ml-1 text-emerald-500" />
                       </div>
                     </div>
                   </div>
                 ))}
-                <div className="pt-4 mt-4 border-t border-border">
-                  <div className="flex items-center justify-between font-bold text-lg bg-muted p-3 rounded-lg">
-                    <span>Total</span>
+                <div className="pt-3 mt-3 border-t border-border">
+                  <div className="flex items-center justify-between font-bold text-lg bg-primary/5 p-4 rounded-xl">
+                    <span className="text-foreground">Total</span>
                     <span className="text-primary">{formatCurrency(total)}</span>
                   </div>
                 </div>

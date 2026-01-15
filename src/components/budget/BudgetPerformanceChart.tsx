@@ -2,8 +2,9 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { BudgetCategory } from '@/hooks/useBudget';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { useFormatters } from '@/hooks/useFormatters';
+import { useTheme } from 'next-themes';
 
 interface BudgetPerformanceChartProps {
   budgetCategories: BudgetCategory[];
@@ -11,6 +12,10 @@ interface BudgetPerformanceChartProps {
 
 const BudgetPerformanceChart: React.FC<BudgetPerformanceChartProps> = ({ budgetCategories }) => {
   const { formatCurrency } = useFormatters();
+  const { resolvedTheme } = useTheme();
+  
+  const isDark = resolvedTheme === 'dark';
+  const textColor = isDark ? 'hsl(215, 20%, 65%)' : 'hsl(215, 16%, 47%)';
   
   // Prepare data for bar chart comparing current spending vs budget limit
   const chartData = budgetCategories.map(category => ({
@@ -25,8 +30,8 @@ const BudgetPerformanceChart: React.FC<BudgetPerformanceChartProps> = ({ budgetC
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
-        <div className="bg-card p-3 rounded-lg shadow-md border border-border">
-          <p className="font-medium mb-2 text-foreground">{label}</p>
+        <div className="bg-card p-4 rounded-xl shadow-lg border border-border">
+          <p className="font-semibold mb-2 text-foreground">{label}</p>
           {payload.map((entry: any, index: number) => (
             <p key={index} className="text-sm" style={{ color: entry.color }}>
               <span className="font-medium">{entry.name}:</span> {formatCurrency(entry.value)}
@@ -40,46 +45,65 @@ const BudgetPerformanceChart: React.FC<BudgetPerformanceChartProps> = ({ budgetC
 
   return (
     <Card className="h-full">
-      <CardHeader>
-        <CardTitle className="text-lg">Performance por Categoria</CardTitle>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-lg font-semibold text-foreground">Performance por Categoria</CardTitle>
       </CardHeader>
-      <CardContent className="p-4 h-[350px]">
+      <CardContent className="p-6 pt-0 h-[350px]">
         {chartData.length > 0 ? (
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={chartData}
               margin={{
                 top: 20,
-                right: 30,
-                left: 20,
+                right: 20,
+                left: 0,
                 bottom: 5,
               }}
             >
-              <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+              <defs>
+                <linearGradient id="gastoGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#ef4444" stopOpacity={1}/>
+                  <stop offset="100%" stopColor="#ef4444" stopOpacity={0.7}/>
+                </linearGradient>
+                <linearGradient id="disponivelGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#22c55e" stopOpacity={1}/>
+                  <stop offset="100%" stopColor="#22c55e" stopOpacity={0.7}/>
+                </linearGradient>
+              </defs>
               <XAxis 
                 dataKey="name" 
-                fontSize={12}
+                fontSize={11}
                 angle={-45}
                 textAnchor="end"
                 height={80}
+                stroke={textColor}
+                tickLine={false}
+                axisLine={false}
               />
               <YAxis 
-                fontSize={12}
+                fontSize={11}
                 tickFormatter={(value) => formatCurrency(value, { notation: 'compact' })}
+                stroke={textColor}
+                tickLine={false}
+                axisLine={false}
               />
               <Tooltip content={<CustomTooltip />} />
-              <Legend />
+              <Legend 
+                wrapperStyle={{ paddingTop: '16px', fontSize: '12px' }}
+                iconType="circle"
+                iconSize={8}
+              />
               <Bar 
                 dataKey="gasto" 
                 name="Gasto Atual"
-                fill="#ef4444" 
-                radius={[2, 2, 0, 0]}
+                fill="url(#gastoGradient)" 
+                radius={[8, 8, 0, 0]}
               />
               <Bar 
                 dataKey="disponivel" 
                 name="Disponível"
-                fill="#22c55e" 
-                radius={[2, 2, 0, 0]}
+                fill="url(#disponivelGradient)" 
+                radius={[8, 8, 0, 0]}
               />
             </BarChart>
           </ResponsiveContainer>
