@@ -64,7 +64,69 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [expandedMenus, setExpandedMenus] = useState<string[]>(["Financeiro"]);
+  const [expandedMenus, setExpandedMenus] = useState<string[]>([]);
+  
+  // Navigation structure with collapsible menus (defined early for use in effects)
+  const navigationItems: NavItem[] = [
+    { 
+      title: t("sidebar.dashboard"), 
+      icon: Home, 
+      path: "/dashboard" 
+    },
+    { 
+      title: "Financeiro", 
+      icon: Wallet, 
+      children: [
+        { title: t("sidebar.transactions"), path: "/dashboard/transacoes", color: "#3B82F6" },
+        { title: t("sidebar.budget"), path: "/dashboard/orcamento", color: "#10B981" },
+        { title: t("sidebar.investments"), path: "/dashboard/investimentos", color: "#8B5CF6" },
+        { title: t("sidebar.goals"), path: "/dashboard/metas", color: "#F59E0B" },
+      ]
+    },
+    { 
+      title: "Automação", 
+      icon: Zap, 
+      path: "/dashboard/automacao" 
+    },
+    { 
+      title: "Relatórios", 
+      icon: FileText, 
+      path: "/dashboard/relatorios" 
+    },
+    { 
+      title: t("sidebar.assistant"), 
+      icon: MessageSquarePlus, 
+      path: "/dashboard/assistente" 
+    },
+    { 
+      title: t("sidebar.settings"), 
+      icon: Settings, 
+      children: [
+        { title: t("sidebar.profile"), path: "/dashboard/perfil", color: "#EC4899" },
+        { title: "Geral", path: "/dashboard/configuracoes", color: "#6366F1" },
+        { title: "Segurança", path: "/dashboard/configuracoes", color: "#EF4444" },
+      ]
+    },
+  ];
+
+  // Auto-expand menus when a child page is active
+  useEffect(() => {
+    const menusToExpand: string[] = [];
+    navigationItems.forEach(item => {
+      if (item.children) {
+        const hasActiveChild = item.children.some(child => activePage === child.title);
+        if (hasActiveChild) {
+          menusToExpand.push(item.title);
+        }
+      }
+    });
+    if (menusToExpand.length > 0) {
+      setExpandedMenus(prev => {
+        const newExpanded = [...new Set([...prev, ...menusToExpand])];
+        return newExpanded;
+      });
+    }
+  }, [activePage]);
   
   // Load sidebar state from localStorage on mount
   useEffect(() => {
@@ -108,49 +170,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         : [...prev, menuTitle]
     );
   };
-
-  // Navigation structure with collapsible menus
-  const navigationItems: NavItem[] = [
-    { 
-      title: t("sidebar.dashboard"), 
-      icon: Home, 
-      path: "/dashboard" 
-    },
-    { 
-      title: "Financeiro", 
-      icon: Wallet, 
-      children: [
-        { title: t("sidebar.transactions"), path: "/dashboard/transacoes", color: "#3B82F6" },
-        { title: t("sidebar.budget"), path: "/dashboard/orcamento", color: "#10B981" },
-        { title: t("sidebar.investments"), path: "/dashboard/investimentos", color: "#8B5CF6" },
-        { title: t("sidebar.goals"), path: "/dashboard/metas", color: "#F59E0B" },
-      ]
-    },
-    { 
-      title: "Automação", 
-      icon: Zap, 
-      path: "/dashboard/automacao" 
-    },
-    { 
-      title: "Relatórios", 
-      icon: FileText, 
-      path: "/dashboard/relatorios" 
-    },
-    { 
-      title: t("sidebar.assistant"), 
-      icon: MessageSquarePlus, 
-      path: "/dashboard/assistente" 
-    },
-    { 
-      title: t("sidebar.settings"), 
-      icon: Settings, 
-      children: [
-        { title: t("sidebar.profile"), path: "/dashboard/perfil", color: "#EC4899" },
-        { title: "Geral", path: "/dashboard/configuracoes", color: "#6366F1" },
-        { title: "Segurança", path: "/dashboard/configuracoes", color: "#EF4444" },
-      ]
-    },
-  ];
 
   const handleNavigate = (path: string) => {
     navigate(path);
