@@ -22,6 +22,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { TwoFactorSetup } from "@/components/auth/TwoFactorSetup";
 
 const Configuracoes = () => {
   useEffect(() => {
@@ -244,14 +245,8 @@ const Configuracoes = () => {
                 </CardTitle>
                 <CardDescription>{t("settings.security_desc")}</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                <Alert className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
-                  <Settings className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                  <AlertTitle>{t("settings.security_options")}</AlertTitle>
-                  <AlertDescription>
-                    {t("settings.security_options_desc")}
-                  </AlertDescription>
-                </Alert>
+              <CardContent>
+                <TwoFactorSetup />
               </CardContent>
             </Card>
           </TabsContent>

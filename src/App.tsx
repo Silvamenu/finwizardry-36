@@ -27,6 +27,7 @@ import Relatorios from "@/pages/dashboard/Relatorios";
 import Configuracoes from "@/pages/dashboard/Configuracoes";
 import Perfil from "@/pages/dashboard/Perfil";
 import Mensagens from "@/pages/dashboard/Mensagens";
+import MFAVerify from "@/pages/MFAVerify";
 import NotFound from "@/pages/NotFound";
 
 import "./sidebar-theme.css";
@@ -56,6 +57,7 @@ const AppRoutes = () => {
       <Route path="/" element={<Index />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/auth-callback" element={<AuthCallback />} />
+      <Route path="/mfa-verify" element={<MFAVerify />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       <Route path="/dashboard/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />

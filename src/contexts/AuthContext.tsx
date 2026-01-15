@@ -51,6 +51,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { error, data } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
       
+      // Check if user has MFA enabled and needs verification
+      const { data: aalData } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+      const { data: factorsData } = await supabase.auth.mfa.listFactors();
+      
+      const verifiedFactors = factorsData?.totp?.filter(f => f.status === 'verified') || [];
+      const needsMFA = aalData?.currentLevel === 'aal1' && 
+                       aalData?.nextLevel === 'aal2' && 
+                       verifiedFactors.length > 0;
+      
       toast.success('Login realizado com sucesso!');
       
       // Create a smooth transition effect
@@ -72,9 +81,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         transitionOverlay.classList.add('active');
       }, 50);
       
-      // Navigate to dashboard directly
+      // Navigate based on MFA status
       setTimeout(() => {
-        window.location.href = '/#/dashboard';
+        if (needsMFA) {
+          window.location.href = '/#/mfa-verify';
+        } else {
+          window.location.href = '/#/dashboard';
+        }
         
         // Fade out after navigation
         setTimeout(() => {
