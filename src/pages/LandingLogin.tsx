@@ -5,7 +5,7 @@ import { Mail, Lock, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useLandingAuth } from '@/contexts/LandingAuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import GoogleIcon from '@/components/auth/GoogleIcon';
 import { toast } from 'sonner';
 
@@ -14,7 +14,7 @@ const LandingLogin = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const { signInWithEmail, signInWithGoogle } = useLandingAuth();
+  const { signInWithEmail, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -29,9 +29,12 @@ const LandingLogin = () => {
 
   const handleGoogleLogin = async () => {
     setGoogleLoading(true);
-    const { error } = await signInWithGoogle();
+    try {
+      await signInWithGoogle();
+    } catch (error) {
+      // Error handled in context
+    }
     setGoogleLoading(false);
-    if (error) { toast.error(error.message || 'Erro ao fazer login com Google'); }
   };
 
   return (

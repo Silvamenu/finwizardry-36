@@ -5,23 +5,26 @@ import { Mail, Loader2, ArrowLeft, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useLandingAuth } from '@/contexts/LandingAuthContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 
 const LandingForgotPassword = () => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [sent, setSent] = useState(false);
-  const { resetPassword } = useLandingAuth();
+  const { resetPassword } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email) { toast.error('Digite seu email'); return; }
     setLoading(true);
-    const { error } = await resetPassword(email);
+    try {
+      await resetPassword(email);
+      setSent(true);
+    } catch (error) {
+      // Error already handled in context
+    }
     setLoading(false);
-    if (error) { toast.error(error.message || 'Erro ao enviar email'); } 
-    else { setSent(true); toast.success('Email de recuperação enviado!'); }
   };
 
   return (
