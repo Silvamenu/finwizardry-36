@@ -5,8 +5,8 @@ import { Lock, Loader2, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { useLandingAuth } from '@/contexts/LandingAuthContext';
-import { landingSupabase } from '@/integrations/supabase/landing-client';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 const LandingResetPassword = () => {
@@ -15,12 +15,12 @@ const LandingResetPassword = () => {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [isValidSession, setIsValidSession] = useState(false);
-  const { updatePassword } = useLandingAuth();
+  const { updatePassword } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     const checkSession = async () => {
-      const { data: { session } } = await landingSupabase.auth.getSession();
+      const { data: { session } } = await supabase.auth.getSession();
       if (session) { setIsValidSession(true); } 
       else { toast.error('Link de recuperação inválido ou expirado'); navigate('/login'); }
     };
@@ -36,7 +36,7 @@ const LandingResetPassword = () => {
     const { error } = await updatePassword(password);
     setLoading(false);
     if (error) { toast.error(error.message || 'Erro ao atualizar senha'); } 
-    else { setSuccess(true); toast.success('Senha atualizada com sucesso!'); setTimeout(() => navigate('/login'), 2000); }
+    else { setSuccess(true); toast.success('Senha atualizada com sucesso!'); setTimeout(() => navigate('/dashboard'), 2000); }
   };
 
   if (!isValidSession) {
@@ -56,7 +56,7 @@ const LandingResetPassword = () => {
                 <CheckCircle className="h-8 w-8 text-green-400" />
               </motion.div>
               <h1 className="text-2xl font-bold text-white mb-2">Senha atualizada!</h1>
-              <p className="text-gray-400">Redirecionando para o login...</p>
+              <p className="text-gray-400">Redirecionando para o dashboard...</p>
             </div>
           ) : (
             <>

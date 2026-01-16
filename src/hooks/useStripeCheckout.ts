@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { landingSupabase } from '@/integrations/supabase/landing-client';
-import { useLandingAuth } from '@/contexts/LandingAuthContext';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 
 type PlanId = 'standard' | 'pro';
 
 export const useStripeCheckout = () => {
   const [loading, setLoading] = useState<PlanId | null>(null);
-  const { session } = useLandingAuth();
+  const { session } = useAuth();
   const navigate = useNavigate();
 
   const handleCheckout = async (planId: PlanId) => {
@@ -21,20 +21,15 @@ export const useStripeCheckout = () => {
     setLoading(planId);
 
     try {
-      const { data, error } = await landingSupabase.functions.invoke('create-checkout', {
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
         body: { planId },
         headers: {
           Authorization: `Bearer ${session.access_token}`,
         },
       });
 
-      if (error) {
-        throw error;
-      }
-
-      if (data?.url) {
-        window.open(data.url, '_blank');
-      }
+      if (error) throw error;
+      if (data?.url) window.open(data.url, '_blank');
     } catch (error) {
       console.error('Checkout error:', error);
       toast.error('Erro ao iniciar checkout. Tente novamente.');
@@ -50,28 +45,19 @@ export const useStripeCheckout = () => {
     }
 
     try {
-      const { data, error } = await landingSupabase.functions.invoke('customer-portal', {
+      const { data, error } = await supabase.functions.invoke('customer-portal', {
         headers: {
           Authorization: `Bearer ${session.access_token}`,
         },
       });
 
-      if (error) {
-        throw error;
-      }
-
-      if (data?.url) {
-        window.open(data.url, '_blank');
-      }
+      if (error) throw error;
+      if (data?.url) window.open(data.url, '_blank');
     } catch (error) {
       console.error('Portal error:', error);
       toast.error('Erro ao abrir portal de assinaturas.');
     }
   };
 
-  return {
-    loading,
-    handleCheckout,
-    handleManageSubscription,
-  };
+  return { loading, handleCheckout, handleManageSubscription };
 };

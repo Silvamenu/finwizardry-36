@@ -5,7 +5,7 @@ import { CircleCheck, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { useLandingAuth } from "@/contexts/LandingAuthContext";
+import { useAuth } from "@/contexts/AuthContext";
 import { useStripeCheckout } from "@/hooks/useStripeCheckout";
 
 type PlanTier = "basic" | "standard" | "pro";
@@ -67,23 +67,16 @@ function PricingCard({
 }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
-  const { user, subscription } = useLandingAuth();
+  const { user, subscription } = useAuth();
   const { loading, handleCheckout, handleManageSubscription } = useStripeCheckout();
 
   const isCurrentPlan = subscription.plan === plan.planId;
   const isLoading = loading === plan.planId;
 
   const handleClick = () => {
-    if (plan.planId === "basic") {
-      // Basic plan is free, no checkout needed
-      return;
-    }
-
-    if (isCurrentPlan) {
-      handleManageSubscription();
-    } else {
-      handleCheckout(plan.planId as "standard" | "pro");
-    }
+    if (plan.planId === "basic") return;
+    if (isCurrentPlan) handleManageSubscription();
+    else handleCheckout(plan.planId as "standard" | "pro");
   };
 
   const getButtonText = () => {
@@ -98,60 +91,37 @@ function PricingCard({
       ref={ref}
       initial={{ opacity: 0, y: 40 }}
       animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
-      transition={{ 
-        duration: 0.8, 
-        delay: index * 0.12,
-        ease: [0.25, 0.46, 0.45, 0.94]
-      }}
+      transition={{ duration: 0.8, delay: index * 0.12, ease: [0.25, 0.46, 0.45, 0.94] }}
       className={cn(
         "relative flex flex-col rounded-2xl p-8",
         "bg-gradient-to-b from-white/10 to-white/5",
         "border border-white/10 backdrop-blur-sm",
         "transition-all duration-500 hover:border-white/20",
-        plan.featured && [
-          "border-blue-500/50 scale-105",
-          "shadow-[0_0_60px_rgba(59,130,246,0.3)]",
-        ],
-        isCurrentPlan && [
-          "border-green-500/50",
-          "shadow-[0_0_60px_rgba(34,197,94,0.3)]",
-        ]
+        plan.featured && ["border-blue-500/50 scale-105", "shadow-[0_0_60px_rgba(59,130,246,0.3)]"],
+        isCurrentPlan && ["border-green-500/50", "shadow-[0_0_60px_rgba(34,197,94,0.3)]"]
       )}
     >
-      {/* Featured glow effect */}
       {plan.featured && !isCurrentPlan && (
         <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-blue-500/10 to-transparent pointer-events-none" />
       )}
-
-      {/* Current plan glow effect */}
       {isCurrentPlan && (
         <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-green-500/10 to-transparent pointer-events-none" />
       )}
-
       <div className="relative z-10">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xl font-semibold text-white">{plan.title}</h3>
           <div className="flex gap-2">
             {isCurrentPlan && (
-              <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0">
-                Seu Plano
-              </Badge>
+              <Badge className="bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0">Seu Plano</Badge>
             )}
             {plan.featured && !isCurrentPlan && (
-              <Badge className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white border-0">
-                Mais popular
-              </Badge>
+              <Badge className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white border-0">Mais popular</Badge>
             )}
           </div>
         </div>
-
         <p className="text-4xl font-bold text-white mb-2">{plan.price}</p>
-        {plan.description && (
-          <p className="text-white/60 mb-6">{plan.description}</p>
-        )}
-
+        {plan.description && <p className="text-white/60 mb-6">{plan.description}</p>}
         <div className="h-px bg-white/10 mb-6" />
-
         <ul className="space-y-4 mb-8">
           {plan.features.map((feature) => (
             <li key={feature} className="flex items-center gap-3">
@@ -160,7 +130,6 @@ function PricingCard({
             </li>
           ))}
         </ul>
-
         <Button
           onClick={handleClick}
           disabled={isLoading || (plan.planId === "basic" && !user)}
@@ -183,14 +152,12 @@ function PricingCard({
 export default function LandingPricing() {
   const headerRef = useRef(null);
   const isHeaderInView = useInView(headerRef, { once: true, margin: "-100px" });
-  const { subscription, checkSubscription } = useLandingAuth();
+  const { subscription, checkSubscription } = useAuth();
 
-  // Check for success/cancel URL params
   React.useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get('success') === 'true') {
       checkSubscription();
-      // Clean URL
       window.history.replaceState({}, '', window.location.pathname);
     }
     if (params.get('canceled') === 'true') {
@@ -200,24 +167,18 @@ export default function LandingPricing() {
 
   return (
     <section id="pricing" className="relative py-32 bg-black overflow-hidden">
-      {/* Blue Glow Container Effect */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <div className="w-[80%] h-[60%] bg-blue-500/10 blur-[120px] rounded-full" />
       </div>
-
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           ref={headerRef}
           initial={{ opacity: 0, y: 25 }}
-          animate={
-            isHeaderInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 25 }
-          }
+          animate={isHeaderInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 25 }}
           transition={{ duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            Planos e Preços
-          </h2>
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Planos e Preços</h2>
           <p className="max-w-2xl mx-auto text-lg text-white/60">
             Escolha o plano ideal para suas necessidades financeiras.
           </p>
@@ -228,19 +189,13 @@ export default function LandingPricing() {
             </p>
           )}
         </motion.div>
-
-        {/* Pricing Cards with Blue Glow Container */}
         <div className="relative">
-          {/* The Blue Glow "Shelf" Effect */}
-          <div
-            className={cn(
-              "absolute -inset-8 rounded-3xl",
-              "bg-gradient-to-b from-blue-950/50 via-blue-900/20 to-transparent",
-              "border border-blue-500/20",
-              "shadow-[0_0_80px_rgba(59,130,246,0.15),inset_0_-20px_60px_rgba(59,130,246,0.1)]"
-            )}
-          />
-
+          <div className={cn(
+            "absolute -inset-8 rounded-3xl",
+            "bg-gradient-to-b from-blue-950/50 via-blue-900/20 to-transparent",
+            "border border-blue-500/20",
+            "shadow-[0_0_80px_rgba(59,130,246,0.15),inset_0_-20px_60px_rgba(59,130,246,0.1)]"
+          )} />
           <div className="relative grid grid-cols-1 md:grid-cols-3 gap-8 p-4">
             {pricingData.map((plan, index) => (
               <PricingCard key={plan.title} plan={plan} index={index} />

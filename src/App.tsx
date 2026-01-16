@@ -1,9 +1,6 @@
-
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { AuthProvider } from "./contexts/AuthContext";
-import { LandingAuthProvider } from "./contexts/LandingAuthContext";
-import { useAuth } from "./contexts/AuthContext";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { useState, useEffect } from "react";
 import { useThemeEffect } from "./hooks/useThemeEffect";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -12,14 +9,14 @@ import i18n from "./i18n";
 import { LoadingScreen } from "@/components/ui/loading-screen";
 import { Toaster } from "@/components/ui/sonner";
 
-// Landing pages (separate Supabase)
+// Landing pages
 import LandingIndex from "@/pages/LandingIndex";
 import LandingLogin from "@/pages/LandingLogin";
 import LandingSignup from "@/pages/LandingSignup";
 import LandingForgotPassword from "@/pages/LandingForgotPassword";
 import LandingResetPassword from "@/pages/LandingResetPassword";
 
-// Dashboard pages (main Supabase)
+// Dashboard pages
 import Dashboard from "@/pages/Dashboard";
 import Orcamento from "@/pages/dashboard/Orcamento";
 import Investimentos from "@/pages/dashboard/Investimentos";
@@ -38,122 +35,66 @@ import AuthCallback from "@/pages/AuthCallback";
 
 import "./sidebar-theme.css";
 
-const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  useThemeEffect();
-  return <>{children}</>;
-};
-
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const { user, loading } = useAuth();
   
-  if (loading) {
-    return <LoadingScreen />;
-  }
-  
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-
+  if (loading) return <LoadingScreen />;
+  if (!user) return <Navigate to="/login" replace />;
   return children;
 };
-
-const LandingRoutes = () => (
-  <LandingAuthProvider>
-    <Routes>
-      <Route path="/" element={<LandingIndex />} />
-      <Route path="/login" element={<LandingLogin />} />
-      <Route path="/signup" element={<LandingSignup />} />
-      <Route path="/forgot-password" element={<LandingForgotPassword />} />
-      <Route path="/reset-password" element={<LandingResetPassword />} />
-    </Routes>
-  </LandingAuthProvider>
-);
-
-const DashboardRoutes = () => (
-  <AuthProvider>
-    <ThemeAndLanguageProvider>
-      <Routes>
-        <Route path="/auth-callback" element={<AuthCallback />} />
-        <Route path="/mfa-verify" element={<MFAVerify />} />
-        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-        <Route path="/dashboard/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
-        <Route path="/dashboard/automacao" element={<ProtectedRoute><Automacao /></ProtectedRoute>} />
-        <Route path="/dashboard/relatorios" element={<ProtectedRoute><Relatorios /></ProtectedRoute>} />
-        <Route path="/dashboard/orcamento" element={<ProtectedRoute><Orcamento /></ProtectedRoute>} />
-        <Route path="/dashboard/investimentos" element={<ProtectedRoute><Investimentos /></ProtectedRoute>} />
-        <Route path="/dashboard/transacoes" element={<ProtectedRoute><Transacoes /></ProtectedRoute>} />
-        <Route path="/dashboard/metas" element={<ProtectedRoute><Metas /></ProtectedRoute>} />
-        <Route path="/dashboard/assistente" element={<ProtectedRoute><Assistente /></ProtectedRoute>} />
-        <Route path="/dashboard/configuracoes" element={<ProtectedRoute><Configuracoes /></ProtectedRoute>} />
-        <Route path="/dashboard/perfil" element={<ProtectedRoute><Perfil /></ProtectedRoute>} />
-        <Route path="/dashboard/mensagens" element={<ProtectedRoute><Mensagens /></ProtectedRoute>} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </ThemeAndLanguageProvider>
-  </AuthProvider>
-);
 
 const ThemeAndLanguageProvider = ({ children }: { children: React.ReactNode }) => {
   const { preferences } = useUserPreferences();
   useThemeEffect();
   
   useEffect(() => {
-    if (preferences.language) {
-      i18n.changeLanguage(preferences.language);
-    }
+    if (preferences.language) i18n.changeLanguage(preferences.language);
   }, [preferences.language]);
 
   return <>{children}</>;
 };
 
+const AppRoutes = () => (
+  <Routes>
+    {/* Landing pages */}
+    <Route path="/" element={<LandingIndex />} />
+    <Route path="/login" element={<LandingLogin />} />
+    <Route path="/signup" element={<LandingSignup />} />
+    <Route path="/forgot-password" element={<LandingForgotPassword />} />
+    <Route path="/reset-password" element={<LandingResetPassword />} />
+    <Route path="/auth-callback" element={<AuthCallback />} />
+    <Route path="/mfa-verify" element={<MFAVerify />} />
+    
+    {/* Dashboard routes */}
+    <Route path="/dashboard" element={<ProtectedRoute><ThemeAndLanguageProvider><Dashboard /></ThemeAndLanguageProvider></ProtectedRoute>} />
+    <Route path="/dashboard/analytics" element={<ProtectedRoute><ThemeAndLanguageProvider><Analytics /></ThemeAndLanguageProvider></ProtectedRoute>} />
+    <Route path="/dashboard/automacao" element={<ProtectedRoute><ThemeAndLanguageProvider><Automacao /></ThemeAndLanguageProvider></ProtectedRoute>} />
+    <Route path="/dashboard/relatorios" element={<ProtectedRoute><ThemeAndLanguageProvider><Relatorios /></ThemeAndLanguageProvider></ProtectedRoute>} />
+    <Route path="/dashboard/orcamento" element={<ProtectedRoute><ThemeAndLanguageProvider><Orcamento /></ThemeAndLanguageProvider></ProtectedRoute>} />
+    <Route path="/dashboard/investimentos" element={<ProtectedRoute><ThemeAndLanguageProvider><Investimentos /></ThemeAndLanguageProvider></ProtectedRoute>} />
+    <Route path="/dashboard/transacoes" element={<ProtectedRoute><ThemeAndLanguageProvider><Transacoes /></ThemeAndLanguageProvider></ProtectedRoute>} />
+    <Route path="/dashboard/metas" element={<ProtectedRoute><ThemeAndLanguageProvider><Metas /></ThemeAndLanguageProvider></ProtectedRoute>} />
+    <Route path="/dashboard/assistente" element={<ProtectedRoute><ThemeAndLanguageProvider><Assistente /></ThemeAndLanguageProvider></ProtectedRoute>} />
+    <Route path="/dashboard/configuracoes" element={<ProtectedRoute><ThemeAndLanguageProvider><Configuracoes /></ThemeAndLanguageProvider></ProtectedRoute>} />
+    <Route path="/dashboard/perfil" element={<ProtectedRoute><ThemeAndLanguageProvider><Perfil /></ThemeAndLanguageProvider></ProtectedRoute>} />
+    <Route path="/dashboard/mensagens" element={<ProtectedRoute><ThemeAndLanguageProvider><Mensagens /></ThemeAndLanguageProvider></ProtectedRoute>} />
+    <Route path="*" element={<NotFound />} />
+  </Routes>
+);
+
 const App = () => {
   const [queryClient] = useState(() => new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: 1,
-        refetchOnWindowFocus: false,
-      },
-    },
+    defaultOptions: { queries: { retry: 1, refetchOnWindowFocus: false } },
   }));
 
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <BrowserRouter>
-          <Routes>
-            {/* Landing pages with separate Supabase */}
-            <Route path="/" element={<LandingAuthProvider><LandingIndex /></LandingAuthProvider>} />
-            <Route path="/login" element={<LandingAuthProvider><LandingLogin /></LandingAuthProvider>} />
-            <Route path="/signup" element={<LandingAuthProvider><LandingSignup /></LandingAuthProvider>} />
-            <Route path="/forgot-password" element={<LandingAuthProvider><LandingForgotPassword /></LandingAuthProvider>} />
-            <Route path="/reset-password" element={<LandingAuthProvider><LandingResetPassword /></LandingAuthProvider>} />
-            
-            {/* Dashboard routes with main Supabase */}
-            <Route path="/auth-callback" element={<AuthProvider><AuthCallback /></AuthProvider>} />
-            <Route path="/mfa-verify" element={<AuthProvider><MFAVerify /></AuthProvider>} />
-            <Route path="/dashboard/*" element={
-              <AuthProvider>
-                <ThemeAndLanguageProvider>
-                  <Routes>
-                    <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-                    <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
-                    <Route path="/automacao" element={<ProtectedRoute><Automacao /></ProtectedRoute>} />
-                    <Route path="/relatorios" element={<ProtectedRoute><Relatorios /></ProtectedRoute>} />
-                    <Route path="/orcamento" element={<ProtectedRoute><Orcamento /></ProtectedRoute>} />
-                    <Route path="/investimentos" element={<ProtectedRoute><Investimentos /></ProtectedRoute>} />
-                    <Route path="/transacoes" element={<ProtectedRoute><Transacoes /></ProtectedRoute>} />
-                    <Route path="/metas" element={<ProtectedRoute><Metas /></ProtectedRoute>} />
-                    <Route path="/assistente" element={<ProtectedRoute><Assistente /></ProtectedRoute>} />
-                    <Route path="/configuracoes" element={<ProtectedRoute><Configuracoes /></ProtectedRoute>} />
-                    <Route path="/perfil" element={<ProtectedRoute><Perfil /></ProtectedRoute>} />
-                    <Route path="/mensagens" element={<ProtectedRoute><Mensagens /></ProtectedRoute>} />
-                  </Routes>
-                </ThemeAndLanguageProvider>
-              </AuthProvider>
-            } />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          <Toaster />
+          <AuthProvider>
+            <AppRoutes />
+            <Toaster />
+          </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
