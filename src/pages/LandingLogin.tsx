@@ -24,7 +24,7 @@ const LandingLogin = () => {
     const { error } = await signInWithEmail(email, password);
     setLoading(false);
     if (error) { toast.error(error.message || 'Erro ao fazer login'); } 
-    else { toast.success('Login realizado com sucesso!'); navigate('/'); }
+    else { toast.success('Login realizado com sucesso!'); navigate('/dashboard'); }
   };
 
   const handleGoogleLogin = async () => {

@@ -153,7 +153,7 @@ export const LandingAuthProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const { error } = await landingSupabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/`,
+        redirectTo: `${window.location.origin}/dashboard`,
       },
     });
     return { error };
