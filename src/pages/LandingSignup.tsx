@@ -27,7 +27,7 @@ const LandingSignup = () => {
     const { error } = await signUpWithEmail(email, password);
     setLoading(false);
     if (error) { toast.error(error.message || 'Erro ao criar conta'); } 
-    else { toast.success('Conta criada com sucesso!'); navigate('/'); }
+    else { toast.success('Conta criada com sucesso!'); navigate('/dashboard'); }
   };
 
   const handleGoogleSignup = async () => {
